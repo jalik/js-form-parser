@@ -1,0 +1,42 @@
+{
+  "name": "jk-form-parser",
+  "version": "0.1.0",
+  "description": "Parse data from forms",
+  "license": "MIT",
+  "keywords": [
+    "form",
+    "data",
+    "parser"
+  ],
+  "author": {
+    "name": "Karl STEIN",
+    "email": "karl.stein.pro@gmail.com",
+    "url": "https://github.com/jalik"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jalik/jk-form-parser.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jalik/jk-form-parser/issues"
+  },
+  "main": "dist/jk-form-parser.js",
+  "scripts": {
+    "build": "./node_modules/.bin/webpack --config webpack.config.js",
+    "build:prod": "./node_modules/.bin/webpack --config webpack.config.js -p",
+    "prepublish": "npm run build:prod && npm test",
+    "test": "npm run build && jest",
+    "watch": "./node_modules/.bin/webpack --config webpack.config.js --watch"
+  },
+  "dependencies": {
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.1.1",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-env": "^1.6.1",
+    "jest": "^21.2.1",
+    "webpack": "^3.5.3"
+  }
+}
