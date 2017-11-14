@@ -115,7 +115,7 @@ module.exports = {
             ignoreUnchecked: false,
             nullify: true,
             parseValues: true,
-            smartTyping: true,
+            smartParsing: true,
             trimValues: true
         }, options);
 
@@ -136,24 +136,25 @@ module.exports = {
                 continue;
             }
             // Ignore buttons
-            if (isButton && options.ignoreButtons) {
+            if (options.ignoreButtons && isButton) {
                 continue;
             }
             // Ignore disabled element
-            if (field.disabled && options.ignoreDisabled) {
+            if (options.ignoreDisabled && field.disabled) {
                 continue;
             }
             // Ignore unchecked element
-            if (isCheckable && !field.checked && options.ignoreUnchecked) {
+            if (options.ignoreUnchecked && (isCheckable && !field.checked)) {
                 continue;
             }
 
             let value = field.value;
 
+            // Fetch value from special fields
             switch (field.localName) {
                 case "input":
-                    // Field is checkable
                     if (isCheckable) {
+                        // Keep value only if element is checked
                         value = field.checked ? value : undefined;
                     }
                     break;
@@ -162,6 +163,7 @@ module.exports = {
                     if (field.multiple) {
                         value = [];
 
+                        // Collect values of selected options
                         if (field.options instanceof HTMLCollection) {
                             for (let o = 0; o < field.options.length; o += 1) {
                                 if (field.options[o].selected) {
@@ -173,69 +175,88 @@ module.exports = {
                     break;
             }
 
-            // Parse value excepted for password fields
-            if (options.parseValues && !_.contains(["password", "textarea"], field.type)) {
-                // Force parsing using a defined type
-                if (field.dataset && field.dataset.type) {
-                    switch (field.dataset.type) {
+            if (options.parseValues) {
+                // Parse value excepted for special fields
+                if (!_.contains(["email", "file", "password", "search", "url"], field.type)
+                    && !_.contains(["textarea"], field.localName)) {
 
-                        case "boolean":
-                            if (value instanceof Array) {
-                                for (let k = 0; k < value.length; k += 1) {
-                                    value[k] = this.parseBoolean(value[k]);
+                    // Parse value using the "data-type" attribute
+                    if (field.dataset && field.dataset.type) {
+                        switch (field.dataset.type) {
+                            case "auto":
+                                if (value instanceof Array) {
+                                    for (let k = 0; k < value.length; k += 1) {
+                                        value[k] = this.parseValue(value[k]);
+                                    }
+                                } else {
+                                    value = this.parseValue(value);
                                 }
-                            } else {
-                                value = this.parseBoolean(value);
-                            }
-                            break;
+                                break;
 
-                        case "number":
-                            if (value instanceof Array) {
-                                for (let k = 0; k < value.length; k += 1) {
-                                    value[k] = this.parseNumber(value[k]);
+                            case "boolean":
+                                if (value instanceof Array) {
+                                    for (let k = 0; k < value.length; k += 1) {
+                                        value[k] = this.parseBoolean(value[k]);
+                                    }
+                                } else {
+                                    value = this.parseBoolean(value);
                                 }
-                            } else {
-                                value = this.parseNumber(value);
-                            }
-                            break;
+                                break;
+
+                            case "number":
+                                if (value instanceof Array) {
+                                    for (let k = 0; k < value.length; k += 1) {
+                                        value[k] = this.parseNumber(value[k]);
+                                    }
+                                } else {
+                                    value = this.parseNumber(value);
+                                }
+                                break;
+
+                            case "string":
+                                // Keep value as string
+                                break;
+
+                            default:
+                                console.warn(`unknown data-type "${field.dataset.type}" for field "${field.name}"`);
+                        }
                     }
-                }
-                // Parse value based on field type
-                else if (options.smartTyping || _.contains(["number"], field.type)) {
-                    switch (field.type) {
-
-                        case "number":
-                            if (value instanceof Array) {
-                                for (let k = 0; k < value.length; k += 1) {
-                                    value[k] = this.parseValue(value[k], "number");
+                    // Parse value using the "type" attribute
+                    else if (options.smartParsing) {
+                        switch (field.type) {
+                            case "number":
+                            case "range":
+                                if (value instanceof Array) {
+                                    for (let k = 0; k < value.length; k += 1) {
+                                        value[k] = this.parseNumber(value[k]);
+                                    }
+                                } else {
+                                    value = this.parseNumber(value);
                                 }
-                            } else {
-                                value = this.parseValue(value, "number");
+                                break;
+                        }
+                    } else {
+                        // Parse value using regular expression
+                        if (value instanceof Array) {
+                            for (let k = 0; k < value.length; k += 1) {
+                                value[k] = this.parseValue(value[k]);
                             }
-                            break;
-
-                        default:
-                            if (value instanceof Array) {
-                                for (let k = 0; k < value.length; k += 1) {
-                                    value[k] = this.parseValue(value[k], field.type);
-                                }
-                            } else {
-                                value = this.parseValue(value, field.type);
-                            }
-                            break;
+                        } else {
+                            value = this.parseValue(value);
+                        }
                     }
                 }
             }
 
             // Removes extra spaces
-            if (options.trim && !_.contains(["password"], field.type)) {
+            if (options.trimValues && !_.contains(["password"], field.type)) {
                 if (value instanceof Array) {
                     for (let k = 0; k < value.length; k += 1) {
-                        if (typeof value[k] === "string") {
+                        if (typeof value[k] === "string" && value[k].length) {
                             value[k] = value[k].trim();
                         }
                     }
-                } else if (typeof value === "string") {
+                } else if (typeof value === "string" && value.length) {
                     value = value.trim();
                 }
             }
@@ -258,16 +279,16 @@ module.exports = {
                 if (value instanceof Array) {
                     for (let k = 0; k < value.length; k += 1) {
                         if (typeof value[k] === "string" && value[k].length) {
-                            value[k] = options.cleanFunction(value[k], field.name);
+                            value[k] = options.cleanFunction(value[k], field.name, field);
                         }
                     }
                 } else if (typeof value === "string" && value.length) {
-                    value = options.cleanFunction(value, field.name);
+                    value = options.cleanFunction(value, field.name, field);
                 }
             }
 
             // Ignore empty value
-            if (options.ignoreEmpty && (value === null || value === undefined)) {
+            if (options.ignoreEmpty && (value === "" || value === null || value === undefined)) {
                 continue;
             }
 
@@ -332,11 +353,11 @@ module.exports = {
         }
         // Float
         if (/^-?[0-9]+\.[0-9]+$/.test(value)) {
-            return parseFloat(value);
+            return Number.parseFloat(value);
         }
         // Integer
         if (/^-?[0-9]+$/.test(value)) {
-            return parseInt(value);
+            return Number.parseInt(value);
         }
         return null;
     },
@@ -347,36 +368,36 @@ module.exports = {
      * @param type
      * @returns {string|number|boolean|null}
      */
-    parseValue(value, type) {
+    parseValue(value, type = "auto") {
         if (typeof value === "string") {
             if (value.length > 0) {
 
-                if (type === "string") {
-                    value = String(value);
-
-                } else {
-                    // Boolean
-                    if (type === "boolean") {
-                        return this.parseBoolean(value);
-                    }
-                    else {
+                switch (type) {
+                    case "auto":
                         const bool = this.parseBoolean(value);
 
                         if (typeof bool === "boolean") {
-                            return bool;
+                            value = bool;
+                            break;
                         }
-                    }
-                    // Number
-                    if (type === "number") {
-                        return this.parseNumber(value);
-                    }
-                    else {
+
                         const number = this.parseNumber(value);
 
                         if (typeof number === "number") {
-                            return number;
+                            value = number;
                         }
-                    }
+                        break;
+
+                    case "boolean":
+                        value = this.parseBoolean(value);
+                        break;
+
+                    case "number":
+                        value = this.parseNumber(value);
+                        break;
+
+                    case "string":
+                        break;
                 }
             }
         }

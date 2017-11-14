@@ -163,6 +163,6 @@ export default {
      * @return {Element}
      */
     createTextInput(attrs) {
-        return this.createElement("input", _.extend(attrs, {type: "text"}));
+        return this.createElement("input", _.extend({type: "text"}, attrs));
     },
 };

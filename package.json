@@ -1,7 +1,7 @@
 {
   "name": "jk-form-parser",
-  "version": "0.1.0",
-  "description": "Parse data from forms",
+  "version": "1.0.0",
+  "description": "Parse form data with ease",
   "license": "MIT",
   "keywords": [
     "form",
