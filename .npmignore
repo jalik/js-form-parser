@@ -2,5 +2,6 @@
 .idea
 src
 test
+webpack.config.js
 gulpfile.js
 npm-debug.log
