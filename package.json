@@ -24,8 +24,8 @@
   "scripts": {
     "build": "./node_modules/.bin/webpack --config webpack.config.js",
     "build:prod": "./node_modules/.bin/webpack --config webpack.config.js -p",
-    "prepublish": "npm run build:prod && npm test",
-    "test": "npm run build && jest",
+    "prepublish": "npm run build && npm run build:prod && npm test",
+    "test": "jest",
     "watch": "./node_modules/.bin/webpack --config webpack.config.js --watch"
   },
   "dependencies": {

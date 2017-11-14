@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import FormUtils from "../dist/jk-form-parser";
+import FormUtils from "../src/jk-form-parser";
 import TestUtils from "./lib";
 
 // Define constants

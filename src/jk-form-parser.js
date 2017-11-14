@@ -24,7 +24,7 @@
 
 import _ from "underscore";
 
-module.exports = {
+export default {
 
     /**
      * Builds an object from a string (ex: [colors][0][code])
