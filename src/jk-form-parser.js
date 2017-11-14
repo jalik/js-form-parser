@@ -116,7 +116,7 @@ module.exports = {
             nullify: true,
             parseValues: true,
             smartTyping: true,
-            trim: true
+            trimValues: true
         }, options);
 
         let fields = {};

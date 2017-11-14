@@ -105,7 +105,7 @@ const fields = FormUtils.parseForm(form, {
     // Parse values based on field type (ex: type="number" will parse to number)
     smartTyping: true,
     // Remove extra spaces
-    trim: true 
+    trimValues: true 
 });
 ```
 

@@ -743,25 +743,25 @@ describe("Form parsing", () => {
         });
     });
 
-    test(`parseForm(form, {trim: true}) should trim text values`, () => {
+    test(`parseForm(form, {trimValues: true}) should trim text values`, () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({
             name: "text",
             value: ` ${STRING} `
         }));
 
-        const r = FormUtils.parseForm(form, {trim: true});
+        const r = FormUtils.parseForm(form, {trimValues: true});
         expect(r).toEqual({text: STRING});
     });
 
-    test(`parseForm(form, {trim: false}) should not trim text values`, () => {
+    test(`parseForm(form, {trimValues: false}) should not trim text values`, () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({
             name: "text",
             value: ` ${STRING} `
         }));
 
-        const r = FormUtils.parseForm(form, {trim: false});
+        const r = FormUtils.parseForm(form, {trimValues: false});
         expect(r).toEqual({text: ` ${STRING} `});
     });
 
@@ -772,7 +772,7 @@ describe("Form parsing", () => {
             value: " "
         }));
 
-        const r = FormUtils.parseForm(form, {nullify: true, trim: true});
+        const r = FormUtils.parseForm(form, {nullify: true, trimValues: true});
         expect(r).toEqual({text: null});
     });
 
@@ -783,7 +783,7 @@ describe("Form parsing", () => {
             value: " "
         }));
 
-        const r = FormUtils.parseForm(form, {nullify: false, trim: true});
+        const r = FormUtils.parseForm(form, {nullify: false, trimValues: true});
         expect(r).toEqual({text: ""});
     });
 
