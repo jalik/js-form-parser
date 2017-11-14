@@ -1,6 +1,6 @@
 # jk-form-parser
 
-Get form fields into a single object with clean parsed values.
+Parse complex forms with minimum effort.
 
 ## Introduction
 
