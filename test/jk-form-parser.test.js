@@ -35,6 +35,11 @@ const INTEGER_STRING = "0100";
 const STRING = "hello";
 
 
+it(`lib should be importable from package`, () => {
+    expect(FormUtils.parseForm).not.toBe(null);
+    expect(FormUtils.parseForm).not.toBe(undefined);
+});
+
 describe("Parsing boolean", () => {
 
     test(`parseBoolean(null) should return null`, () => {
