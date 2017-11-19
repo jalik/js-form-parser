@@ -352,11 +352,11 @@ export default {
             value = value.replace(/,/g, ".");
         }
         // Float
-        if (/^-?[0-9]+\.[0-9]+$/.test(value)) {
+        if (/^[+-]?[0-9]*[.,][0-9]+$/.test(value)) {
             return Number.parseFloat(value);
         }
         // Integer
-        if (/^-?[0-9]+$/.test(value)) {
+        if (/^[+-]?[0-9]+$/.test(value)) {
             return Number.parseInt(value);
         }
         return null;

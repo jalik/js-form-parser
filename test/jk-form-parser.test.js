@@ -85,6 +85,14 @@ describe("Parsing number", () => {
         expect(FormUtils.parseNumber(FLOAT_STRING)).toEqual(FLOAT);
     });
 
+    test(`parseNumber("-${FLOAT_STRING}") should return a negative float`, () => {
+        expect(FormUtils.parseNumber(`-${FLOAT_STRING}`)).toEqual(-FLOAT);
+    });
+
+    test(`parseNumber("+${FLOAT_STRING}") should return a positive float`, () => {
+        expect(FormUtils.parseNumber(`+${FLOAT_STRING}`)).toEqual(FLOAT);
+    });
+
     test(`parseNumber("${FLOAT_STRING_COMMA}") should return a float`, () => {
         expect(FormUtils.parseNumber(FLOAT_STRING_COMMA)).toEqual(FLOAT);
     });
@@ -95,6 +103,14 @@ describe("Parsing number", () => {
 
     test(`parseNumber("${INTEGER_STRING}") should return an integer`, () => {
         expect(FormUtils.parseNumber(INTEGER_STRING)).toEqual(INTEGER);
+    });
+
+    test(`parseNumber("-${INTEGER_STRING}") should return a negative integer`, () => {
+        expect(FormUtils.parseNumber(`-${INTEGER_STRING}`)).toEqual(-INTEGER);
+    });
+
+    test(`parseNumber("+${INTEGER_STRING}") should return a positive integer`, () => {
+        expect(FormUtils.parseNumber(`+${INTEGER_STRING}`)).toEqual(INTEGER);
     });
 });
 
