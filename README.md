@@ -219,7 +219,7 @@ const fields = FormUtils.parseForm(form);
 
 The generated `fields` constant will look like this :
 
-```json
+```
 {
   "array": ["B", "C"],
   "colors": ["white", undefined, "red"]
@@ -330,7 +330,7 @@ const form = document.getElementById("my-form");
 const fields = FormUtils.parseForm(form, {
     cleanFunction(value, name, field) {
         // Apply uppercase to lastName field
-        if (name === "lastName") {
+        if (name === "lastName" || /name/gi.test(field.name)) {
             value = value.toUpperCase();
         }
         
@@ -343,6 +343,10 @@ const fields = FormUtils.parseForm(form, {
 ```
 
 ## Changelog
+
+### v1.0.1
+- Updates documentation
+- Removes dependency to `underscore`
 
 ### v1.0.0
 - First public release

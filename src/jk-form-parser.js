@@ -22,8 +22,6 @@
  * SOFTWARE.
  */
 
-import _ from "underscore";
-
 export default {
 
     /**
@@ -107,7 +105,7 @@ export default {
         }
 
         // Default options
-        options = _.extend({
+        options = this.extend({
             cleanFunction: null,
             ignoreButtons: true,
             ignoreDisabled: true,
@@ -124,15 +122,15 @@ export default {
 
         for (let i = 0; i < elements.length; i += 1) {
             const field = elements[i];
-            const isButton = field.localName === "button" || _.contains(["button", "reset", "submit"], field.type);
-            const isCheckable = _.contains(["checkbox", "radio"], field.type) || field.hasOwnProperty("checked");
+            const isButton = field.localName === "button" || this.contains(["button", "reset", "submit"], field.type);
+            const isCheckable = this.contains(["checkbox", "radio"], field.type) || field.hasOwnProperty("checked");
 
             // Ignore element without a valid name
             if (!field.name || !/^[a-zA-Z_][a-zA-Z0-9_\[\]]+$/.test(field.name)) {
                 continue;
             }
             // Ignore non-form element
-            if (!_.contains(["button", "input", "select", "textarea"], field.localName)) {
+            if (!this.contains(["button", "input", "select", "textarea"], field.localName)) {
                 continue;
             }
             // Ignore buttons
@@ -177,8 +175,8 @@ export default {
 
             if (options.parseValues) {
                 // Parse value excepted for special fields
-                if (!_.contains(["email", "file", "password", "search", "url"], field.type)
-                    && !_.contains(["textarea"], field.localName)) {
+                if (!this.contains(["email", "file", "password", "search", "url"], field.type)
+                    && !this.contains(["textarea"], field.localName)) {
 
                     // Parse value using the "data-type" attribute
                     if (field.dataset && field.dataset.type) {
@@ -249,7 +247,7 @@ export default {
             }
 
             // Removes extra spaces
-            if (options.trimValues && !_.contains(["password"], field.type)) {
+            if (options.trimValues && !this.contains(["password"], field.type)) {
                 if (value instanceof Array) {
                     for (let k = 0; k < value.length; k += 1) {
                         if (typeof value[k] === "string" && value[k].length) {
@@ -320,6 +318,61 @@ export default {
             }
         }
         return fields;
+    },
+
+    /**
+     * Checks if value is in list
+     * @param list
+     * @param value
+     * @return {boolean}
+     */
+    contains(list, value) {
+        let result = false;
+
+        if (list instanceof Array) {
+            for (let i = 0; i < list.length; i += 1) {
+                if (list[i] === value) {
+                    result = true;
+                    break;
+                }
+            }
+        }
+        return result;
+    },
+
+    /**
+     * Merge objects
+     * @return {*}
+     */
+    extend() {
+        const args = Array.prototype.slice.call(arguments);
+        let recursive = false;
+        let a = args.shift();
+
+        if (typeof a === "boolean") {
+            recursive = a;
+            a = args.shift();
+        }
+
+        for (let i = 0; i < args.length; i += 1) {
+            const b = args[i];
+
+            if (typeof b === "object" && b !== null && b !== undefined
+                && typeof a === "object" && a !== null && a !== undefined) {
+                for (let key in b) {
+                    if (b.hasOwnProperty(key)) {
+                        if (recursive && typeof b[key] === "object" && b[key] !== null && b[key] !== undefined) {
+                            a[key] = this.extend(a[key], b[key]);
+                        } else {
+                            a[key] = b[key];
+                        }
+                    }
+                }
+            } else if (b !== null && b !== undefined) {
+                a = b;
+            }
+        }
+        return a
     },
 
     /**

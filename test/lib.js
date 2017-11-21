@@ -21,7 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import _ from "underscore";
+
+import FormUtils from "../src/jk-form-parser";
 
 export default {
 
@@ -31,7 +32,7 @@ export default {
      * @return {Element}
      */
     createButton(attrs) {
-        return this.createElement("button", _.extend(attrs, {type: "button"}));
+        return this.createElement("button", FormUtils.extend(attrs, {type: "button"}));
     },
 
     /**
@@ -40,25 +41,7 @@ export default {
      * @return {Element}
      */
     createCheckbox(attrs) {
-        return this.createElement("input", _.extend(attrs, {type: "checkbox"}));
-    },
-
-    /**
-     * Creates a date input
-     * @param attrs
-     * @return {Element}
-     */
-    createDateInput(attrs) {
-        return this.createElement("input", _.extend(attrs, {type: "date"}));
-    },
-
-    /**
-     * Creates a datetime input
-     * @param attrs
-     * @return {Element}
-     */
-    createDatetimeInput(attrs) {
-        return this.createElement("input", _.extend(attrs, {type: "datetime"}));
+        return this.createElement("input", FormUtils.extend(attrs, {type: "checkbox"}));
     },
 
     /**
@@ -84,7 +67,7 @@ export default {
      * @return {Element}
      */
     createFileInput(attrs) {
-        return this.createElement("input", _.extend(attrs, {type: "file"}));
+        return this.createElement("input", FormUtils.extend(attrs, {type: "file"}));
     },
 
     /**
@@ -101,7 +84,7 @@ export default {
      * @return {Element}
      */
     createHiddenInput(attrs) {
-        return this.createElement("input", _.extend(attrs, {type: "hidden"}));
+        return this.createElement("input", FormUtils.extend(attrs, {type: "hidden"}));
     },
 
     /**
@@ -110,7 +93,7 @@ export default {
      * @return {Element}
      */
     createNumberInput(attrs) {
-        return this.createElement("input", _.extend(attrs, {type: "number"}));
+        return this.createElement("input", FormUtils.extend(attrs, {type: "number"}));
     },
 
     /**
@@ -119,7 +102,7 @@ export default {
      * @return {Element}
      */
     createPasswordInput(attrs) {
-        return this.createElement("input", _.extend(attrs, {type: "password"}));
+        return this.createElement("input", FormUtils.extend(attrs, {type: "password"}));
     },
 
     /**
@@ -128,7 +111,7 @@ export default {
      * @return {Element}
      */
     createRadio(attrs) {
-        return this.createElement("input", _.extend(attrs, {type: "radio"}));
+        return this.createElement("input", FormUtils.extend(attrs, {type: "radio"}));
     },
 
     /**
@@ -137,11 +120,17 @@ export default {
      * @return {Element}
      */
     createSelect(attrs) {
-        const select = this.createElement("select", _.extend(_.omit(attrs, "options"), {}));
+        const options = (attrs || {}).options;
 
-        if (attrs["options"] instanceof Array) {
-            for (let i = 0; i < attrs["options"].length; i += 1) {
-                const option = this.createElement("option", attrs["options"][i]);
+        if (attrs.hasOwnProperty("options")) {
+            delete attrs.options;
+        }
+
+        const select = this.createElement("select", FormUtils.extend(attrs, {}));
+
+        if (options instanceof Array) {
+            for (let i = 0; i < options.length; i += 1) {
+                const option = this.createElement("option", options[i]);
                 select.appendChild(option);
             }
         }
@@ -154,7 +143,7 @@ export default {
      * @return {Element}
      */
     createTextarea(attrs) {
-        return this.createElement("textarea", _.extend(attrs, {}));
+        return this.createElement("textarea", FormUtils.extend(attrs, {}));
     },
 
     /**
@@ -163,6 +152,6 @@ export default {
      * @return {Element}
      */
     createTextInput(attrs) {
-        return this.createElement("input", _.extend({type: "text"}, attrs));
+        return this.createElement("input", FormUtils.extend({type: "text"}, attrs));
     },
 };

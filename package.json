@@ -1,12 +1,13 @@
 {
   "name": "jk-form-parser",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Parse complex forms with minimum effort.",
   "license": "MIT",
   "keywords": [
     "form",
     "data",
-    "parser"
+    "parser",
+    "parsing"
   ],
   "author": {
     "name": "Karl STEIN",
@@ -28,9 +29,7 @@
     "test": "jest",
     "watch": "./node_modules/.bin/webpack --config webpack.config.js --watch"
   },
-  "dependencies": {
-    "underscore": "^1.8.3"
-  },
+  "dependencies": {},
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",

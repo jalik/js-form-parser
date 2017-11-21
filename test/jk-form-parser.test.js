@@ -34,229 +34,16 @@ const INTEGER = 100;
 const INTEGER_STRING = "0100";
 const STRING = "hello";
 
+describe(`FormUtils`, () => {
 
-it(`lib should be importable from package`, () => {
-    expect(FormUtils.parseForm).not.toBe(null);
-    expect(FormUtils.parseForm).not.toBe(undefined);
-});
-
-describe("Parsing boolean", () => {
-
-    test(`parseBoolean(null) should return null`, () => {
-        expect(FormUtils.parseBoolean(null)).toEqual(null);
-    });
-
-    test(`parseBoolean(undefined) should return null`, () => {
-        expect(FormUtils.parseBoolean(undefined)).toEqual(null);
-    });
-
-    test(`parseBoolean(true) should return true`, () => {
-        expect(FormUtils.parseBoolean(true)).toEqual(true);
-    });
-
-    test(`parseBoolean("${TRUE}") should return true`, () => {
-        expect(FormUtils.parseBoolean(TRUE)).toEqual(true);
-    });
-
-    test(`parseBoolean(false) should return false`, () => {
-        expect(FormUtils.parseBoolean(false)).toEqual(false);
-    });
-
-    test(`parseBoolean("${FALSE}") should return false`, () => {
-        expect(FormUtils.parseBoolean(FALSE)).toEqual(false);
+    it(`should be importable from package`, () => {
+        expect(typeof FormUtils.parseForm).toEqual("function");
     });
 });
 
-describe("Parsing number", () => {
+describe("buildObject()", () => {
 
-    test(`parseNumber(null) should return null`, () => {
-        expect(FormUtils.parseNumber(null)).toEqual(null);
-    });
-
-    test(`parseNumber(undefined) should return null`, () => {
-        expect(FormUtils.parseNumber(undefined)).toEqual(null);
-    });
-
-    test(`parseNumber(${FLOAT}) should return a float`, () => {
-        expect(FormUtils.parseNumber(FLOAT)).toEqual(FLOAT);
-    });
-
-    test(`parseNumber("${FLOAT_STRING}") should return a float`, () => {
-        expect(FormUtils.parseNumber(FLOAT_STRING)).toEqual(FLOAT);
-    });
-
-    test(`parseNumber("-${FLOAT_STRING}") should return a negative float`, () => {
-        expect(FormUtils.parseNumber(`-${FLOAT_STRING}`)).toEqual(-FLOAT);
-    });
-
-    test(`parseNumber("+${FLOAT_STRING}") should return a positive float`, () => {
-        expect(FormUtils.parseNumber(`+${FLOAT_STRING}`)).toEqual(FLOAT);
-    });
-
-    test(`parseNumber("${FLOAT_STRING_COMMA}") should return a float`, () => {
-        expect(FormUtils.parseNumber(FLOAT_STRING_COMMA)).toEqual(FLOAT);
-    });
-
-    test(`parseNumber(${INTEGER}) should return an integer`, () => {
-        expect(FormUtils.parseNumber(INTEGER)).toEqual(INTEGER);
-    });
-
-    test(`parseNumber("${INTEGER_STRING}") should return an integer`, () => {
-        expect(FormUtils.parseNumber(INTEGER_STRING)).toEqual(INTEGER);
-    });
-
-    test(`parseNumber("-${INTEGER_STRING}") should return a negative integer`, () => {
-        expect(FormUtils.parseNumber(`-${INTEGER_STRING}`)).toEqual(-INTEGER);
-    });
-
-    test(`parseNumber("+${INTEGER_STRING}") should return a positive integer`, () => {
-        expect(FormUtils.parseNumber(`+${INTEGER_STRING}`)).toEqual(INTEGER);
-    });
-});
-
-describe("Parsing value", () => {
-
-    test(`parseValue() should return undefined`, () => {
-        expect(FormUtils.parseValue()).toEqual(undefined);
-    });
-
-    test(`parseValue(null) should return null`, () => {
-        expect(FormUtils.parseValue(null)).toEqual(null);
-    });
-
-    test(`parseValue('') should return ''`, () => {
-        expect(FormUtils.parseValue("")).toEqual("");
-    });
-
-    test(`parseValue("${TRUE}") should return true`, () => {
-        expect(FormUtils.parseValue(TRUE)).toEqual(true);
-    });
-
-    test(`parseValue("${TRUE}", "auto") should return true`, () => {
-        expect(FormUtils.parseValue(TRUE, "auto")).toEqual(true);
-    });
-
-    test(`parseValue("${TRUE}", "boolean") should return true`, () => {
-        expect(FormUtils.parseValue(TRUE, "boolean")).toEqual(true);
-    });
-
-    test(`parseValue("${TRUE}", "number") should return null`, () => {
-        expect(FormUtils.parseValue(TRUE, "number")).toEqual(null);
-    });
-
-    test(`parseValue("${TRUE}", "string") should return "true"`, () => {
-        expect(FormUtils.parseValue(TRUE, "string")).toEqual(TRUE);
-    });
-
-    test(`parseValue("${FALSE}") should return false`, () => {
-        expect(FormUtils.parseValue(FALSE)).toEqual(false);
-    });
-
-    test(`parseValue("${FALSE}", "auto") should return false`, () => {
-        expect(FormUtils.parseValue(FALSE, "auto")).toEqual(false);
-    });
-
-    test(`parseValue("${FALSE}", "boolean") should return false`, () => {
-        expect(FormUtils.parseValue(FALSE, "boolean")).toEqual(false);
-    });
-
-    test(`parseValue("${FALSE}", "number") should return null`, () => {
-        expect(FormUtils.parseValue(FALSE, "number")).toEqual(null);
-    });
-
-    test(`parseValue("${FALSE}", "string") should return "false"`, () => {
-        expect(FormUtils.parseValue(FALSE, "string")).toEqual(FALSE);
-    });
-
-    test(`parseValue("${FLOAT_STRING}") should return ${FLOAT}`, () => {
-        expect(FormUtils.parseValue(FLOAT_STRING)).toEqual(FLOAT);
-    });
-
-    test(`parseValue("${FLOAT_STRING}", "auto") should return ${FLOAT}`, () => {
-        expect(FormUtils.parseValue(FLOAT_STRING, "auto")).toEqual(FLOAT);
-    });
-
-    test(`parseValue("${FLOAT_STRING}", "boolean") should return null`, () => {
-        expect(FormUtils.parseValue(FLOAT_STRING, "boolean")).toEqual(null);
-    });
-
-    test(`parseValue("${FLOAT_STRING}", "number") should return ${FLOAT}`, () => {
-        expect(FormUtils.parseValue(FLOAT_STRING, "number")).toEqual(FLOAT);
-    });
-
-    test(`parseValue("${FLOAT_STRING}", "string") should return "${FLOAT}"`, () => {
-        expect(FormUtils.parseValue(FLOAT_STRING, "string")).toEqual(FLOAT_STRING);
-    });
-
-    test(`parseValue("${INTEGER_STRING}") should return ${INTEGER}`, () => {
-        expect(FormUtils.parseValue(INTEGER_STRING)).toEqual(INTEGER);
-    });
-
-    test(`parseValue("${INTEGER_STRING}", "auto") should return ${INTEGER}`, () => {
-        expect(FormUtils.parseValue(INTEGER_STRING, "auto")).toEqual(INTEGER);
-    });
-
-    test(`parseValue("${INTEGER_STRING}", "boolean") should return null`, () => {
-        expect(FormUtils.parseValue(INTEGER_STRING, "boolean")).toEqual(null);
-    });
-
-    test(`parseValue("${INTEGER_STRING}", "number") should return ${INTEGER}`, () => {
-        expect(FormUtils.parseValue(INTEGER_STRING, "number")).toEqual(INTEGER);
-    });
-
-    test(`parseValue("${INTEGER_STRING}", "string") should return "${INTEGER}"`, () => {
-        expect(FormUtils.parseValue(INTEGER_STRING, "string")).toEqual(INTEGER_STRING);
-    });
-
-    test(`parseValue("${STRING}") should return "${STRING}"`, () => {
-        expect(FormUtils.parseValue(STRING)).toEqual(STRING);
-    });
-
-    test(`parseValue("${STRING}", "auto") should return "${STRING}"`, () => {
-        expect(FormUtils.parseValue(STRING, "auto")).toEqual(STRING);
-    });
-
-    test(`parseValue("${STRING}", "boolean") should return null`, () => {
-        expect(FormUtils.parseValue(STRING, "boolean")).toEqual(null);
-    });
-
-    test(`parseValue("${STRING}", "number") should return null`, () => {
-        expect(FormUtils.parseValue(STRING, "number")).toEqual(null);
-    });
-
-    test(`parseValue("${STRING}", "string") should return "${STRING}"`, () => {
-        expect(FormUtils.parseValue(STRING, "string")).toEqual(STRING);
-    });
-
-    describe("Parsing value with extra spaces", () => {
-
-        test(`parseValue(" ${FALSE} ", "boolean") should return false`, () => {
-            expect(FormUtils.parseValue(` ${FALSE} `, "boolean")).toEqual(false);
-        });
-
-        test(`parseValue(" ${TRUE} ", "boolean") should return true`, () => {
-            expect(FormUtils.parseValue(` ${TRUE} `, "boolean")).toEqual(true);
-        });
-
-        test(`parseValue(" ${FLOAT_STRING} ", "number") should return "${FLOAT}"`, () => {
-            expect(FormUtils.parseValue(` ${FLOAT_STRING} `, "number")).toEqual(FLOAT);
-        });
-
-        test(`parseValue(" ${FLOAT_STRING_COMMA} ", "number") should return "${FLOAT}"`, () => {
-            expect(FormUtils.parseValue(` ${FLOAT_STRING_COMMA} `, "number")).toEqual(FLOAT);
-        });
-
-        test(`parseValue(" ${INTEGER_STRING} ", "number") should return "${INTEGER}"`, () => {
-            expect(FormUtils.parseValue(` ${INTEGER_STRING} `, "number")).toEqual(INTEGER);
-        });
-
-        test(`parseValue(" ${STRING} ", "string") should return " ${STRING} "`, () => {
-            expect(FormUtils.parseValue(` ${STRING} `, "string")).toEqual(` ${STRING} `);
-        });
-    });
-});
-
-describe("Building array from string", () => {
+    // Testing with arrays
 
     test(`buildObject("[]", "${STRING}", null) should return ["${STRING}"]`, () => {
         const r = FormUtils.buildObject("[]", STRING, null);
@@ -297,9 +84,8 @@ describe("Building array from string", () => {
         const r = FormUtils.buildObject("[2][2]", STRING, null);
         expect(r).toEqual([undefined, undefined, [undefined, undefined, STRING]]);
     });
-});
 
-describe("Building object from string", () => {
+    // Testing with object
 
     test(`buildObject("[a]", ${INTEGER}, null) should return {a: ${INTEGER}}`, () => {
         const r = FormUtils.buildObject("[a]", INTEGER, null);
@@ -310,6 +96,8 @@ describe("Building object from string", () => {
         const r = FormUtils.buildObject("[a]", STRING, null);
         expect(r).toEqual({a: STRING});
     });
+
+    // Testing with array and object
 
     test(`buildObject("[a][]", "${STRING}", null) should return {a:["${STRING}"]}`, () => {
         const r = FormUtils.buildObject("[a][]", STRING, null);
@@ -355,7 +143,93 @@ describe("Building object from string", () => {
     });
 });
 
-describe("Parsing form", () => {
+describe("contains()", () => {
+
+    it(`contains([], null) should return false`, () => {
+        expect(FormUtils.contains([], null)).toEqual(false);
+    });
+
+    it(`contains([null], null) should return true`, () => {
+        expect(FormUtils.contains([null], null)).toEqual(true);
+    });
+
+    it(`contains(["a"], null) should return false`, () => {
+        expect(FormUtils.contains(["a"], null)).toEqual(false);
+    });
+
+    it(`contains(["a", null], "a") should return true`, () => {
+        expect(FormUtils.contains(["a", null], "a")).toEqual(true);
+    });
+
+    it(`contains([true], true) should return true`, () => {
+        expect(FormUtils.contains([true], true)).toEqual(true);
+    });
+
+    it(`contains([false], false) should return true`, () => {
+        expect(FormUtils.contains([false], false)).toEqual(true);
+    });
+
+    it(`contains([1], "1") should return false`, () => {
+        expect(FormUtils.contains([1], "1")).toEqual(false);
+    });
+
+    it(`contains([1], 1) should return true`, () => {
+        expect(FormUtils.contains([1], 1)).toEqual(true);
+    });
+});
+
+describe("extend()", () => {
+
+    it(`extend(null, null) should return null`, () => {
+        expect(FormUtils.extend(null, null)).toEqual(null);
+    });
+
+    it(`extend(null, {a: true}) should return an object`, () => {
+        expect(FormUtils.extend(null, {a: true})).toEqual({a: true});
+    });
+
+    it(`extend({a: true}, null) should return an object`, () => {
+        expect(FormUtils.extend({a: true}, null)).toEqual({a: true});
+    });
+
+    it(`extend({a: true}, {a: false}) should merge objects`, () => {
+        expect(FormUtils.extend({a: true}, {a: false})).toEqual({a: false});
+        expect(FormUtils.extend({a: true}, {b: false})).toEqual({a: true, b: false});
+    });
+
+    it(`extend({a: true}, {b: {c: false}}) should merge objects recursively`, () => {
+        expect(FormUtils.extend({a: true}, {b: {c: false}})).toEqual({a: true, b: {c: false}});
+    });
+});
+
+describe("parseBoolean()", () => {
+
+    test(`parseBoolean(null) should return null`, () => {
+        expect(FormUtils.parseBoolean(null)).toEqual(null);
+    });
+
+    test(`parseBoolean(undefined) should return null`, () => {
+        expect(FormUtils.parseBoolean(undefined)).toEqual(null);
+    });
+
+    test(`parseBoolean(true) should return true`, () => {
+        expect(FormUtils.parseBoolean(true)).toEqual(true);
+    });
+
+    test(`parseBoolean("${TRUE}") should return true`, () => {
+        expect(FormUtils.parseBoolean(TRUE)).toEqual(true);
+    });
+
+    test(`parseBoolean(false) should return false`, () => {
+        expect(FormUtils.parseBoolean(false)).toEqual(false);
+    });
+
+    test(`parseBoolean("${FALSE}") should return false`, () => {
+        expect(FormUtils.parseBoolean(FALSE)).toEqual(false);
+    });
+});
+
+describe("parseForm()", () => {
 
     describe("Parsing fields with options {parseValues: true, smartParsing: true}", () => {
 
@@ -973,6 +847,195 @@ describe("Parsing form", () => {
 
             const r = FormUtils.parseForm(form, {parseValues: true});
             expect(r).toEqual({textarea: INTEGER_STRING});
+        });
+    });
+});
+
+describe("parseNumber()", () => {
+
+    test(`parseNumber(null) should return null`, () => {
+        expect(FormUtils.parseNumber(null)).toEqual(null);
+    });
+
+    test(`parseNumber(undefined) should return null`, () => {
+        expect(FormUtils.parseNumber(undefined)).toEqual(null);
+    });
+
+    test(`parseNumber(${FLOAT}) should return a float`, () => {
+        expect(FormUtils.parseNumber(FLOAT)).toEqual(FLOAT);
+    });
+
+    test(`parseNumber("${FLOAT_STRING}") should return a float`, () => {
+        expect(FormUtils.parseNumber(FLOAT_STRING)).toEqual(FLOAT);
+    });
+
+    test(`parseNumber("-${FLOAT_STRING}") should return a negative float`, () => {
+        expect(FormUtils.parseNumber(`-${FLOAT_STRING}`)).toEqual(-FLOAT);
+    });
+
+    test(`parseNumber("+${FLOAT_STRING}") should return a positive float`, () => {
+        expect(FormUtils.parseNumber(`+${FLOAT_STRING}`)).toEqual(FLOAT);
+    });
+
+    test(`parseNumber("${FLOAT_STRING_COMMA}") should return a float`, () => {
+        expect(FormUtils.parseNumber(FLOAT_STRING_COMMA)).toEqual(FLOAT);
+    });
+
+    test(`parseNumber(${INTEGER}) should return an integer`, () => {
+        expect(FormUtils.parseNumber(INTEGER)).toEqual(INTEGER);
+    });
+
+    test(`parseNumber("${INTEGER_STRING}") should return an integer`, () => {
+        expect(FormUtils.parseNumber(INTEGER_STRING)).toEqual(INTEGER);
+    });
+
+    test(`parseNumber("-${INTEGER_STRING}") should return a negative integer`, () => {
+        expect(FormUtils.parseNumber(`-${INTEGER_STRING}`)).toEqual(-INTEGER);
+    });
+
+    test(`parseNumber("+${INTEGER_STRING}") should return a positive integer`, () => {
+        expect(FormUtils.parseNumber(`+${INTEGER_STRING}`)).toEqual(INTEGER);
+    });
+});
+
+describe("parseValue()", () => {
+
+    test(`parseValue() should return undefined`, () => {
+        expect(FormUtils.parseValue()).toEqual(undefined);
+    });
+
+    test(`parseValue(null) should return null`, () => {
+        expect(FormUtils.parseValue(null)).toEqual(null);
+    });
+
+    test(`parseValue('') should return ''`, () => {
+        expect(FormUtils.parseValue("")).toEqual("");
+    });
+
+    test(`parseValue("${TRUE}") should return true`, () => {
+        expect(FormUtils.parseValue(TRUE)).toEqual(true);
+    });
+
+    test(`parseValue("${TRUE}", "auto") should return true`, () => {
+        expect(FormUtils.parseValue(TRUE, "auto")).toEqual(true);
+    });
+
+    test(`parseValue("${TRUE}", "boolean") should return true`, () => {
+        expect(FormUtils.parseValue(TRUE, "boolean")).toEqual(true);
+    });
+
+    test(`parseValue("${TRUE}", "number") should return null`, () => {
+        expect(FormUtils.parseValue(TRUE, "number")).toEqual(null);
+    });
+
+    test(`parseValue("${TRUE}", "string") should return "true"`, () => {
+        expect(FormUtils.parseValue(TRUE, "string")).toEqual(TRUE);
+    });
+
+    test(`parseValue("${FALSE}") should return false`, () => {
+        expect(FormUtils.parseValue(FALSE)).toEqual(false);
+    });
+
+    test(`parseValue("${FALSE}", "auto") should return false`, () => {
+        expect(FormUtils.parseValue(FALSE, "auto")).toEqual(false);
+    });
+
+    test(`parseValue("${FALSE}", "boolean") should return false`, () => {
+        expect(FormUtils.parseValue(FALSE, "boolean")).toEqual(false);
+    });
+
+    test(`parseValue("${FALSE}", "number") should return null`, () => {
+        expect(FormUtils.parseValue(FALSE, "number")).toEqual(null);
+    });
+
+    test(`parseValue("${FALSE}", "string") should return "false"`, () => {
+        expect(FormUtils.parseValue(FALSE, "string")).toEqual(FALSE);
+    });
+
+    test(`parseValue("${FLOAT_STRING}") should return ${FLOAT}`, () => {
+        expect(FormUtils.parseValue(FLOAT_STRING)).toEqual(FLOAT);
+    });
+
+    test(`parseValue("${FLOAT_STRING}", "auto") should return ${FLOAT}`, () => {
+        expect(FormUtils.parseValue(FLOAT_STRING, "auto")).toEqual(FLOAT);
+    });
+
+    test(`parseValue("${FLOAT_STRING}", "boolean") should return null`, () => {
+        expect(FormUtils.parseValue(FLOAT_STRING, "boolean")).toEqual(null);
+    });
+
+    test(`parseValue("${FLOAT_STRING}", "number") should return ${FLOAT}`, () => {
+        expect(FormUtils.parseValue(FLOAT_STRING, "number")).toEqual(FLOAT);
+    });
+
+    test(`parseValue("${FLOAT_STRING}", "string") should return "${FLOAT}"`, () => {
+        expect(FormUtils.parseValue(FLOAT_STRING, "string")).toEqual(FLOAT_STRING);
+    });
+
+    test(`parseValue("${INTEGER_STRING}") should return ${INTEGER}`, () => {
+        expect(FormUtils.parseValue(INTEGER_STRING)).toEqual(INTEGER);
+    });
+
+    test(`parseValue("${INTEGER_STRING}", "auto") should return ${INTEGER}`, () => {
+        expect(FormUtils.parseValue(INTEGER_STRING, "auto")).toEqual(INTEGER);
+    });
+
+    test(`parseValue("${INTEGER_STRING}", "boolean") should return null`, () => {
+        expect(FormUtils.parseValue(INTEGER_STRING, "boolean")).toEqual(null);
+    });
+
+    test(`parseValue("${INTEGER_STRING}", "number") should return ${INTEGER}`, () => {
+        expect(FormUtils.parseValue(INTEGER_STRING, "number")).toEqual(INTEGER);
+    });
+
+    test(`parseValue("${INTEGER_STRING}", "string") should return "${INTEGER}"`, () => {
+        expect(FormUtils.parseValue(INTEGER_STRING, "string")).toEqual(INTEGER_STRING);
+    });
+
+    test(`parseValue("${STRING}") should return "${STRING}"`, () => {
+        expect(FormUtils.parseValue(STRING)).toEqual(STRING);
+    });
+
+    test(`parseValue("${STRING}", "auto") should return "${STRING}"`, () => {
+        expect(FormUtils.parseValue(STRING, "auto")).toEqual(STRING);
+    });
+
+    test(`parseValue("${STRING}", "boolean") should return null`, () => {
+        expect(FormUtils.parseValue(STRING, "boolean")).toEqual(null);
+    });
+
+    test(`parseValue("${STRING}", "number") should return null`, () => {
+        expect(FormUtils.parseValue(STRING, "number")).toEqual(null);
+    });
+
+    test(`parseValue("${STRING}", "string") should return "${STRING}"`, () => {
+        expect(FormUtils.parseValue(STRING, "string")).toEqual(STRING);
+    });
+
+    describe("Parsing value with extra spaces", () => {
+
+        test(`parseValue(" ${FALSE} ", "boolean") should return false`, () => {
+            expect(FormUtils.parseValue(` ${FALSE} `, "boolean")).toEqual(false);
+        });
+
+        test(`parseValue(" ${TRUE} ", "boolean") should return true`, () => {
+            expect(FormUtils.parseValue(` ${TRUE} `, "boolean")).toEqual(true);
+        });
+
+        test(`parseValue(" ${FLOAT_STRING} ", "number") should return "${FLOAT}"`, () => {
+            expect(FormUtils.parseValue(` ${FLOAT_STRING} `, "number")).toEqual(FLOAT);
+        });
+
+        test(`parseValue(" ${FLOAT_STRING_COMMA} ", "number") should return "${FLOAT}"`, () => {
+            expect(FormUtils.parseValue(` ${FLOAT_STRING_COMMA} `, "number")).toEqual(FLOAT);
+        });
+
+        test(`parseValue(" ${INTEGER_STRING} ", "number") should return "${INTEGER}"`, () => {
+            expect(FormUtils.parseValue(` ${INTEGER_STRING} `, "number")).toEqual(INTEGER);
+        });
+
+        test(`parseValue(" ${STRING} ", "string") should return " ${STRING} "`, () => {
+            expect(FormUtils.parseValue(` ${STRING} `, "string")).toEqual(` ${STRING} `);
         });
     });
 });
