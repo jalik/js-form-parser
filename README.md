@@ -344,7 +344,7 @@ const fields = FormUtils.parseForm(form, {
 
 ## Changelog
 
-### v1.0.1
+### v1.0.2
 - Updates documentation
 - Removes dependency to `underscore`
 
@@ -357,4 +357,4 @@ The code is released under the [MIT License](http://www.opensource.org/licenses/
 
 If you find this lib useful and would like to support my work, donations are welcome :)
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SS78MUMW8AH4N)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6UA5YELH55WLC)
