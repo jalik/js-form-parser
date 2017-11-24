@@ -58,6 +58,10 @@ const form = document.getElementById("my-form");
 
 // Parse form values with explicit options, which are optional
 const fields = FormUtils.parseForm(form, {
+    // Filters returned fields
+    cleanFunction(value, field) { return value; },
+    // Filters returned fields
+    filterFunction(field) { return true; },
     // Don't get buttons
     ignoreButtons: true,
     // Don't get disabled fields
@@ -316,9 +320,9 @@ The generated `fields` constant will look like this :
 }
 ```
 
-## Using a custom clean function
+## Filtering returned fields
 
-All string values can be cleaned using the `cleanFunction(value, name, field)` option in the `parseForm()` function. The clean function will be called with any value that is a string of length > 0.
+You can get only the fields you want with `filterFunction(field)` option in the `parseForm()` method. The filter function will be called with all fields and must return `true` to return the field.
 
 ```js
 const FormUtils = require("jk-form-parser");
@@ -328,9 +332,28 @@ const form = document.getElementById("my-form");
 
 // Parse form values using default options
 const fields = FormUtils.parseForm(form, {
-    cleanFunction(value, name, field) {
+    filterFunction(field) {
+        // returns only text fields
+        return field.type === "text";   
+    }
+});
+```
+
+## Cleaning returned values
+
+All string values can be cleaned using the `cleanFunction(value, field)` option in the `parseForm()` method. The clean function will be called with any value that is a string of length > 0.
+
+```js
+const FormUtils = require("jk-form-parser");
+
+// Get an existing HTML form element
+const form = document.getElementById("my-form");
+
+// Parse form values using default options
+const fields = FormUtils.parseForm(form, {
+    cleanFunction(value, field) {
         // Apply uppercase to lastName field
-        if (name === "lastName" || /name/gi.test(field.name)) {
+        if (field.name === "lastName" || /name/gi.test(field.name)) {
             value = value.toUpperCase();
         }
         
@@ -343,6 +366,11 @@ const fields = FormUtils.parseForm(form, {
 ```
 
 ## Changelog
+
+### v1.0.3
+- Fixes error with unchecked fields being parsed
+- Changes signature of method `cleanFunction(value, field)` called by `parseForm()`
+- Adds option `filterFunction: Function(field)` to filter returned fields with `parseForm()`
 
 ### v1.0.2
 - Updates documentation

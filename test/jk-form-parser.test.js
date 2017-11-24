@@ -299,6 +299,46 @@ describe("parseForm()", () => {
             expect(r).toEqual({radio: form.elements["1"].value});
         });
 
+        test(`parseForm(form, options) should not return values of unchecked fields`, () => {
+            const form = TestUtils.createForm();
+            form.appendChild(TestUtils.createRadio({
+                checked: false,
+                dataset: {type: "boolean"},
+                name: "options[checkbox]",
+                value: "true"
+            }));
+            form.appendChild(TestUtils.createRadio({
+                checked: false,
+                dataset: {type: "number"},
+                name: "options[choice]",
+                value: "1"
+            }));
+            form.appendChild(TestUtils.createRadio({
+                checked: false,
+                dataset: {type: "number"},
+                name: "options[choice]",
+                value: "2"
+            }));
+            form.appendChild(TestUtils.createRadio({
+                checked: false,
+                dataset: {type: "number"},
+                name: "options[radio]",
+                value: "1"
+            }));
+            form.appendChild(TestUtils.createRadio({
+                checked: false,
+                dataset: {type: "number"},
+                name: "options[radio]",
+                value: "2"
+            }));
+
+            const r = FormUtils.parseForm(form, {parseValues: true, smartParsing: true});
+            console.log(r);
+            expect(r).toEqual({
+                options: {}
+            });
+        });
+
         test(`parseForm(form, options) should return values of file inputs`, () => {
             const form = TestUtils.createForm();
             form.appendChild(TestUtils.createFileInput({
@@ -420,11 +460,24 @@ describe("parseForm()", () => {
                 }));
 
                 const r = FormUtils.parseForm(form, {
-                    cleanFunction: function (value) {
+                    cleanFunction(value) {
                         return value.replace(/<\/?[^>]+>/gm, "");
                     }
                 });
                 expect(r).toEqual({text: ""});
+            });
+
+            test(`parseForm(form, {filterFunction: Function}) should return allowed fields only`, () => {
+                const form = TestUtils.createForm();
+                form.appendChild(TestUtils.createTextInput({name: "text", value: "test"}));
+                form.appendChild(TestUtils.createNumberInput({name: "num", value: 2}));
+
+                const r = FormUtils.parseForm(form, {
+                    filterFunction(field) {
+                        return field.type === "text";
+                    }
+                });
+                expect(r).toEqual({text: "test"});
             });
 
             test(`parseForm(form, {cleanFunction: null}) should not execute clean function on string values`, () => {

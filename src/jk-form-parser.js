@@ -107,6 +107,7 @@ export default {
         // Default options
         options = this.extend({
             cleanFunction: null,
+            filterFunction: null,
             ignoreButtons: true,
             ignoreDisabled: true,
             ignoreEmpty: false,
@@ -145,6 +146,10 @@ export default {
             if (options.ignoreUnchecked && (isCheckable && !field.checked)) {
                 continue;
             }
+            // Ignore element based on filter
+            if (typeof options.filterFunction === "function" && options.filterFunction(field) !== true) {
+                continue;
+            }
 
             let value = field.value;
 
@@ -175,7 +180,8 @@ export default {
 
             if (options.parseValues) {
                 // Parse value excepted for special fields
-                if (!this.contains(["email", "file", "password", "search", "url"], field.type)
+                if ((!isCheckable || field.checked)
+                    && !this.contains(["email", "file", "password", "search", "url"], field.type)
                     && !this.contains(["textarea"], field.localName)) {
 
                     // Parse value using the "data-type" attribute
@@ -277,11 +283,11 @@ export default {
                 if (value instanceof Array) {
                     for (let k = 0; k < value.length; k += 1) {
                         if (typeof value[k] === "string" && value[k].length) {
-                            value[k] = options.cleanFunction(value[k], field.name, field);
+                            value[k] = options.cleanFunction(value[k], field);
                         }
                     }
                 } else if (typeof value === "string" && value.length) {
-                    value = options.cleanFunction(value, field.name, field);
+                    value = options.cleanFunction(value, field);
                 }
             }
 
