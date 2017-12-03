@@ -231,7 +231,24 @@ describe("parseBoolean()", () => {
 
 describe("parseForm()", () => {
 
-    describe("Parsing fields with options {parseValues: true, smartParsing: true}", () => {
+    test(`should return empty array if no checkbox is checked`, () => {
+        const form = TestUtils.createForm();
+        form.appendChild(TestUtils.createCheckbox({
+            checked: false,
+            name: "items[]",
+            value: 0
+        }));
+        form.appendChild(TestUtils.createCheckbox({
+            checked: false,
+            name: "items[]",
+            value: 1
+        }));
+
+        const r = FormUtils.parseForm(form, {dynamicTyping: true, smartTyping: true});
+        expect(r).toEqual({items: []});
+    });
+
+    describe("Parsing fields with options {dynamicTyping: true, smartTyping: true}", () => {
 
         test(`parseForm(form, options) should not return values of unknown fields`, () => {
             const form = TestUtils.createForm();
@@ -239,7 +256,7 @@ describe("parseForm()", () => {
                 value: STRING
             }));
 
-            const r = FormUtils.parseForm(form, {parseValues: true, smartParsing: true});
+            const r = FormUtils.parseForm(form, {dynamicTyping: true, smartTyping: true});
             expect(r).toEqual({});
         });
 
@@ -251,7 +268,7 @@ describe("parseForm()", () => {
                 value: INTEGER_STRING
             }));
 
-            const r = FormUtils.parseForm(form, {parseValues: true, smartParsing: true});
+            const r = FormUtils.parseForm(form, {dynamicTyping: true, smartTyping: true});
             expect(r).toEqual({number: INTEGER_STRING});
         });
 
@@ -273,7 +290,7 @@ describe("parseForm()", () => {
                 value: "C"
             }));
 
-            const r = FormUtils.parseForm(form, {parseValues: true, smartParsing: true});
+            const r = FormUtils.parseForm(form, {dynamicTyping: true, smartTyping: true});
             expect(r).toEqual({
                 checkboxes: [
                     form.elements["0"].value,
@@ -295,7 +312,7 @@ describe("parseForm()", () => {
                 value: "B"
             }));
 
-            const r = FormUtils.parseForm(form, {parseValues: true, smartParsing: true});
+            const r = FormUtils.parseForm(form, {dynamicTyping: true, smartTyping: true});
             expect(r).toEqual({radio: form.elements["1"].value});
         });
 
@@ -332,7 +349,7 @@ describe("parseForm()", () => {
                 value: "2"
             }));
 
-            const r = FormUtils.parseForm(form, {parseValues: true, smartParsing: true});
+            const r = FormUtils.parseForm(form, {dynamicTyping: true, smartTyping: true});
             console.log(r);
             expect(r).toEqual({
                 options: {}
@@ -346,7 +363,7 @@ describe("parseForm()", () => {
                 value: STRING
             }));
 
-            const r = FormUtils.parseForm(form, {parseValues: true, smartParsing: true});
+            const r = FormUtils.parseForm(form, {dynamicTyping: true, smartTyping: true});
             expect(r).toEqual({file: STRING});
         });
 
@@ -357,7 +374,7 @@ describe("parseForm()", () => {
                 value: STRING
             }));
 
-            const r = FormUtils.parseForm(form, {parseValues: true, smartParsing: true});
+            const r = FormUtils.parseForm(form, {dynamicTyping: true, smartTyping: true});
             expect(r).toEqual({hidden: STRING});
         });
 
@@ -368,7 +385,7 @@ describe("parseForm()", () => {
                 value: INTEGER
             }));
 
-            const r = FormUtils.parseForm(form, {parseValues: true, smartParsing: true});
+            const r = FormUtils.parseForm(form, {dynamicTyping: true, smartTyping: true});
             expect(r).toEqual({number: INTEGER});
         });
 
@@ -380,7 +397,7 @@ describe("parseForm()", () => {
                 value: STRING
             }));
 
-            const r = FormUtils.parseForm(form, {parseValues: true, smartParsing: true});
+            const r = FormUtils.parseForm(form, {dynamicTyping: true, smartTyping: true});
             expect(r).toEqual({email: STRING});
         });
 
@@ -391,7 +408,7 @@ describe("parseForm()", () => {
                 value: STRING
             }));
 
-            const r = FormUtils.parseForm(form, {parseValues: true, smartParsing: true});
+            const r = FormUtils.parseForm(form, {dynamicTyping: true, smartTyping: true});
             expect(r).toEqual({password: STRING});
         });
 
@@ -405,7 +422,7 @@ describe("parseForm()", () => {
                 ]
             }));
 
-            const r = FormUtils.parseForm(form, {parseValues: true, smartParsing: true});
+            const r = FormUtils.parseForm(form, {dynamicTyping: true, smartTyping: true});
             expect(r).toEqual({select: "B"});
         });
 
@@ -421,7 +438,7 @@ describe("parseForm()", () => {
                 ]
             }));
 
-            const r = FormUtils.parseForm(form, {parseValues: true, smartParsing: true});
+            const r = FormUtils.parseForm(form, {dynamicTyping: true, smartTyping: true});
             expect(r).toEqual({select: ["B", "C"]});
         });
 
@@ -432,7 +449,7 @@ describe("parseForm()", () => {
                 value: STRING
             }));
 
-            const r = FormUtils.parseForm(form, {parseValues: true, smartParsing: true});
+            const r = FormUtils.parseForm(form, {dynamicTyping: true, smartTyping: true});
             expect(r).toEqual({text: STRING});
         });
 
@@ -443,7 +460,7 @@ describe("parseForm()", () => {
                 value: STRING
             }));
 
-            const r = FormUtils.parseForm(form, {parseValues: true, smartParsing: true});
+            const r = FormUtils.parseForm(form, {dynamicTyping: true, smartTyping: true});
             expect(r).toEqual({textarea: STRING});
         });
     });
@@ -633,7 +650,7 @@ describe("parseForm()", () => {
                     value: " "
                 }));
 
-                const r = FormUtils.parseForm(form, {nullify: true, trimValues: true});
+                const r = FormUtils.parseForm(form, {nullify: true, trim: true});
                 expect(r).toEqual({text: null});
             });
 
@@ -644,14 +661,14 @@ describe("parseForm()", () => {
                     value: " "
                 }));
 
-                const r = FormUtils.parseForm(form, {nullify: false, trimValues: true});
+                const r = FormUtils.parseForm(form, {nullify: false, trim: true});
                 expect(r).toEqual({text: ""});
             });
         });
 
-        describe("parseValues option", () => {
+        describe("dynamicTyping option", () => {
 
-            test(`parseForm(form, {parseValues: true, smartParsing: false}) should parse all values`, () => {
+            test(`parseForm(form, {dynamicTyping: true, smartTyping: false}) should parse all values`, () => {
                 const form = TestUtils.createForm();
                 form.appendChild(TestUtils.createTextInput({
                     dataset: {type: "boolean"},
@@ -672,7 +689,7 @@ describe("parseForm()", () => {
                     value: INTEGER_STRING
                 }));
 
-                const r = FormUtils.parseForm(form, {parseValues: true, smartParsing: false});
+                const r = FormUtils.parseForm(form, {dynamicTyping: true, smartTyping: false});
                 expect(r).toEqual({
                     bool_true: true,
                     bool_false: false,
@@ -681,7 +698,7 @@ describe("parseForm()", () => {
                 });
             });
 
-            test(`parseForm(form, {parseValues: false}) should not parse any value`, () => {
+            test(`parseForm(form, {dynamicTyping: false}) should not parse any value`, () => {
                 const form = TestUtils.createForm();
                 form.appendChild(TestUtils.createTextInput({
                     dataset: {type: "boolean"},
@@ -702,7 +719,7 @@ describe("parseForm()", () => {
                     value: INTEGER_STRING
                 }));
 
-                const r = FormUtils.parseForm(form, {parseValues: false});
+                const r = FormUtils.parseForm(form, {dynamicTyping: false});
                 expect(r).toEqual({
                     bool_true: TRUE,
                     bool_false: FALSE,
@@ -712,9 +729,9 @@ describe("parseForm()", () => {
             });
         });
 
-        describe("smartParsing option", () => {
+        describe("smartTyping option", () => {
 
-            test(`parseForm(form, {smartParsing: true}) should parse values using type attribute`, () => {
+            test(`parseForm(form, {smartTyping: true}) should parse values using type attribute`, () => {
                 const form = TestUtils.createForm();
                 form.appendChild(TestUtils.createTextInput({
                     name: "bool_true",
@@ -742,7 +759,7 @@ describe("parseForm()", () => {
                     value: INTEGER_STRING
                 }));
 
-                const r = FormUtils.parseForm(form, {parseValues: true, smartParsing: true});
+                const r = FormUtils.parseForm(form, {dynamicTyping: true, smartTyping: true});
                 expect(r).toEqual({
                     bool_true: TRUE,
                     bool_false: false,
@@ -753,7 +770,7 @@ describe("parseForm()", () => {
                 });
             });
 
-            test(`parseForm(form, {smartParsing: false}) should not parse values using type attribute`, () => {
+            test(`parseForm(form, {smartTyping: false}) should not parse values using type attribute`, () => {
                 const form = TestUtils.createForm();
                 form.appendChild(TestUtils.createTextInput({
                     name: "bool_true",
@@ -781,7 +798,7 @@ describe("parseForm()", () => {
                     value: INTEGER_STRING
                 }));
 
-                const r = FormUtils.parseForm(form, {parseValues: true, smartParsing: false});
+                const r = FormUtils.parseForm(form, {dynamicTyping: true, smartTyping: false});
                 expect(r).toEqual({
                     bool_true: true,
                     bool_false: false,
@@ -793,38 +810,38 @@ describe("parseForm()", () => {
             });
         });
 
-        describe("trimValues option", () => {
+        describe("trim option", () => {
 
-            test(`parseForm(form, {trimValues: true}) should trim text values`, () => {
+            test(`parseForm(form, {trim: true}) should trim text values`, () => {
                 const form = TestUtils.createForm();
                 form.appendChild(TestUtils.createTextInput({
                     name: "text",
                     value: ` ${STRING} `
                 }));
 
-                const r = FormUtils.parseForm(form, {trimValues: true});
+                const r = FormUtils.parseForm(form, {trim: true});
                 expect(r).toEqual({text: STRING});
             });
 
-            test(`parseForm(form, {trimValues: false}) should not trim text values`, () => {
+            test(`parseForm(form, {trim: false}) should not trim text values`, () => {
                 const form = TestUtils.createForm();
                 form.appendChild(TestUtils.createTextInput({
                     name: "text",
                     value: ` ${STRING} `
                 }));
 
-                const r = FormUtils.parseForm(form, {trimValues: false});
+                const r = FormUtils.parseForm(form, {trim: false});
                 expect(r).toEqual({text: ` ${STRING} `});
             });
 
-            test(`parseForm(form, {trimValues: true}) should not trim password values`, () => {
+            test(`parseForm(form, {trim: true}) should not trim password values`, () => {
                 const form = TestUtils.createForm();
                 form.appendChild(TestUtils.createPasswordInput({
                     name: "password",
                     value: ` ${STRING} `
                 }));
 
-                const r = FormUtils.parseForm(form, {trimValues: true});
+                const r = FormUtils.parseForm(form, {trim: true});
                 expect(r).toEqual({password: ` ${STRING} `});
             });
         });
@@ -840,7 +857,7 @@ describe("parseForm()", () => {
                 value: INTEGER_STRING
             }));
 
-            const r = FormUtils.parseForm(form, {parseValues: true});
+            const r = FormUtils.parseForm(form, {dynamicTyping: true});
             expect(r).toEqual({email: INTEGER_STRING});
         });
 
@@ -852,7 +869,7 @@ describe("parseForm()", () => {
                 value: INTEGER_STRING
             }));
 
-            const r = FormUtils.parseForm(form, {parseValues: true});
+            const r = FormUtils.parseForm(form, {dynamicTyping: true});
             expect(r).toEqual({file: INTEGER_STRING});
         });
 
@@ -863,7 +880,7 @@ describe("parseForm()", () => {
                 value: INTEGER_STRING
             }));
 
-            const r = FormUtils.parseForm(form, {parseValues: true});
+            const r = FormUtils.parseForm(form, {dynamicTyping: true});
             expect(r).toEqual({password: INTEGER_STRING});
         });
 
@@ -875,7 +892,7 @@ describe("parseForm()", () => {
                 value: INTEGER_STRING
             }));
 
-            const r = FormUtils.parseForm(form, {parseValues: true});
+            const r = FormUtils.parseForm(form, {dynamicTyping: true});
             expect(r).toEqual({search: INTEGER_STRING});
         });
 
@@ -887,7 +904,7 @@ describe("parseForm()", () => {
                 value: INTEGER_STRING
             }));
 
-            const r = FormUtils.parseForm(form, {parseValues: true});
+            const r = FormUtils.parseForm(form, {dynamicTyping: true});
             expect(r).toEqual({url: INTEGER_STRING});
         });
 
@@ -898,7 +915,7 @@ describe("parseForm()", () => {
                 value: INTEGER_STRING
             }));
 
-            const r = FormUtils.parseForm(form, {parseValues: true});
+            const r = FormUtils.parseForm(form, {dynamicTyping: true});
             expect(r).toEqual({textarea: INTEGER_STRING});
         });
     });

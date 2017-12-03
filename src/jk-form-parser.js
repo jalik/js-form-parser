@@ -107,16 +107,30 @@ export default {
         // Default options
         options = this.extend({
             cleanFunction: null,
+            dynamicTyping: true,
             filterFunction: null,
             ignoreButtons: true,
             ignoreDisabled: true,
             ignoreEmpty: false,
             ignoreUnchecked: false,
             nullify: true,
-            parseValues: true,
-            smartParsing: true,
-            trimValues: true
+            smartTyping: true,
+            trim: true
         }, options);
+
+        // Check deprecated options
+        if (options.hasOwnProperty("parseValues")) {
+            console.warn(`option "parseValues" is deprecated, rename it to "dynamicTyping" instead`);
+            options.dynamicTyping = options.parseValues;
+        }
+        if (options.hasOwnProperty("smartParsing")) {
+            console.warn(`option "smartParsing" is deprecated, rename it to "smartTyping" instead`);
+            options.smartTyping = options.smartParsing;
+        }
+        if (options.hasOwnProperty("trimValues")) {
+            console.warn(`option "trimValues" is deprecated, rename it to "trim" instead`);
+            options.trim = options.trimValues;
+        }
 
         let fields = {};
         const elements = form.elements;
@@ -178,7 +192,7 @@ export default {
                     break;
             }
 
-            if (options.parseValues) {
+            if (options.dynamicTyping) {
                 // Parse value excepted for special fields
                 if ((!isCheckable || field.checked)
                     && !this.contains(["email", "file", "password", "search", "url"], field.type)
@@ -226,7 +240,7 @@ export default {
                         }
                     }
                     // Parse value using the "type" attribute
-                    else if (options.smartParsing) {
+                    else if (options.smartTyping) {
                         switch (field.type) {
                             case "number":
                             case "range":
@@ -253,7 +267,7 @@ export default {
             }
 
             // Removes extra spaces
-            if (options.trimValues && !this.contains(["password"], field.type)) {
+            if (options.trim && !this.contains(["password"], field.type)) {
                 if (value instanceof Array) {
                     for (let k = 0; k < value.length; k += 1) {
                         if (typeof value[k] === "string" && value[k].length) {

@@ -29,7 +29,7 @@ First of all, you have to define fields types in the HTML code using the `data-t
 <input name="anything_2" type="text" value="false" data-type="auto">
 ```
 
-If no `data-type` attribute is set, the `type` attribute will be used (for `input` elements at least), this behavior is active by default with the combination of this options `{parseValues: true, smartParsing: true}` in the `parseForm()` function.
+If no `data-type` attribute is set, the `type` attribute will be used (for `input` elements at least), this behavior is active by default with the combination of this options `{dynamicTyping: true, smartTyping: true}` in the `parseForm()` function.
 
 ## Getting fields from a form
 
@@ -73,11 +73,11 @@ const fields = FormUtils.parseForm(form, {
     // Replace empty strings with null
     nullify: true,
     // Parse values to the best type (ex: "001" => 1)
-    parseValues: true,
+    dynamicTyping: true,
     // Parse values based on field type (ex: type="number" will parse to number)
-    smartParsing: true,
+    smartTyping: true,
     // Remove extra spaces
-    trimValues: true 
+    trim: true 
 });
 ```
 
@@ -366,6 +366,11 @@ const fields = FormUtils.parseForm(form, {
 ```
 
 ## Changelog
+
+### v1.0.4
+- Renames option `parseValues` to `dynamicTyping` in `parseForm()` method
+- Renames option `smartParsing` to `smartTyping` in `parseForm()` method
+- Renames option `trimValues` to `trim` in `parseForm()` method
 
 ### v1.0.3
 - Fixes error with unchecked fields being parsed
