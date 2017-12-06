@@ -141,7 +141,7 @@ export default {
             const isCheckable = this.contains(["checkbox", "radio"], field.type) || field.hasOwnProperty("checked");
 
             // Ignore element without a valid name
-            if (!field.name || !/^[a-zA-Z_][a-zA-Z0-9_\[\]]+$/.test(field.name)) {
+            if (!field.name || !/^[a-zA-Z_](?:[a-zA-Z0-9_\[\]]+)?$/.test(field.name)) {
                 continue;
             }
             // Ignore non-form element

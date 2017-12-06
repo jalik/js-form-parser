@@ -367,6 +367,9 @@ const fields = FormUtils.parseForm(form, {
 
 ## Changelog
 
+### v1.0.5
+- Fixes method `parseForm()` not returning fields with a name that is one character long
+
 ### v1.0.4
 - Renames option `parseValues` to `dynamicTyping` in `parseForm()` method
 - Renames option `smartParsing` to `smartTyping` in `parseForm()` method

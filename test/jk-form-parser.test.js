@@ -231,6 +231,20 @@ describe("parseBoolean()", () => {
 
 describe("parseForm()", () => {
 
+    test(`should return fields with a name of one character long`, () => {
+        const form = TestUtils.createForm();
+        form.appendChild(TestUtils.createHiddenInput({
+            dataset: {type: "number"},
+            name: "x",
+            value: "-149.345564",
+            readonly: true,
+            required: true
+        }));
+
+        const r = FormUtils.parseForm(form, {dynamicTyping: true, smartTyping: true});
+        expect(r).toEqual({x: -149.345564});
+    });
+
     test(`should return empty array if no checkbox is checked`, () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createCheckbox({
