@@ -27,18 +27,14 @@ const Package = require("./package.json");
 const isProd = process.argv.indexOf("-p") !== -1;
 const filename = Package.name + (isProd ? ".min" : "");
 
+const paths = {
+    dist: path.join(__dirname, "aio"),
+    src: path.join(__dirname, "src"),
+};
+
 module.exports = {
     entry: {
-        bundle: path.join(__dirname, "src", `${Package.name}.js`)
-    },
-    output: {
-        libraryTarget: "umd",
-        path: path.join(__dirname, "dist"),
-        filename: `${filename}.js`
-    },
-    resolve: {
-        extensions: [".js"],
-        modules: [path.join(__dirname, "src"), "node_modules"]
+        bundle: path.join(paths.src, `${Package.name}.js`)
     },
     module: {
         rules: [
@@ -48,5 +44,14 @@ module.exports = {
                 loader: "babel-loader"
             }
         ]
+    },
+    output: {
+        libraryTarget: "umd",
+        path: paths.dist,
+        filename: `${filename}.js`
+    },
+    resolve: {
+        extensions: [".js"],
+        modules: [paths.src, "node_modules"]
     }
 };

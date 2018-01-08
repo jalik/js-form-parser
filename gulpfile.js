@@ -24,9 +24,9 @@
 
 const gulp = require("gulp");
 const babel = require("gulp-babel");
-const stripComments = require('gulp-strip-comments');
+const stripComments = require("gulp-strip-comments");
 const watch = require("gulp-watch");
-const distDir = "dist";
+const distPath = "dist";
 
 // Compile JavaScript files
 gulp.task("build", () => {
@@ -35,7 +35,7 @@ gulp.task("build", () => {
     ])
         .pipe(babel({presets: ["env"]}))
         .pipe(stripComments())
-        .pipe(gulp.dest(distDir));
+        .pipe(gulp.dest(distPath));
 });
 
 // Compile source files

@@ -1,6 +1,18 @@
-.babelrc
+# Ignore projet files
 .idea
-src
-test
-webpack.config.js
+*.iml
+
+# Ignore build settings
+.babelrc
+gulpfile.js
 npm-debug.log
+webpack.config.js
+
+# Ignore sources
+src
+
+# Ignore tests
+test
+
+# Ignore compiled package
+aio
