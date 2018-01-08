@@ -22,31 +22,29 @@
  * SOFTWARE.
  */
 
-const path = require("path");
-const Package = require("./package.json");
-const isProd = process.argv.indexOf("-p") !== -1;
-const filename = Package.name + (isProd ? ".min" : "");
+const gulp = require("gulp");
+const babel = require("gulp-babel");
+const stripComments = require('gulp-strip-comments');
+const watch = require("gulp-watch");
+const distDir = "dist";
 
-module.exports = {
-    entry: {
-        bundle: path.join(__dirname, "src", `${Package.name}.js`)
-    },
-    output: {
-        libraryTarget: "umd",
-        path: path.join(__dirname, "dist"),
-        filename: `${filename}.js`
-    },
-    resolve: {
-        extensions: [".js"],
-        modules: [path.join(__dirname, "src"), "node_modules"]
-    },
-    module: {
-        rules: [
-            {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                loader: "babel-loader"
-            }
-        ]
-    }
-};
+// Compile JavaScript files
+gulp.task("build", () => {
+    return gulp.src([
+        "src/**/*.js"
+    ])
+        .pipe(babel({presets: ["env"]}))
+        .pipe(stripComments())
+        .pipe(gulp.dest(distDir));
+});
+
+// Compile source files
+gulp.task("default", ["build"]);
+
+// Prepare files for publication
+gulp.task("prepublish", ["build"]);
+
+// Rebuild automatically
+gulp.task("watch", () => {
+    gulp.watch(["src/**/*.js"], ["build"]);
+});
