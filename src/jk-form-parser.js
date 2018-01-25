@@ -37,13 +37,14 @@ export default {
         }
 
         // Check missing brackets
-        if (context === undefined || context === null) {
+        if (typeof context === "undefined" || context === null) {
             let opening = str.match(/\[/g).length;
             let closing = str.match(/]/g).length;
 
             if (opening > closing) {
                 throw new SyntaxError("Missing closing ']' in '" + str + "'");
-            } else if (closing < opening) {
+            }
+            else if (closing < opening) {
                 throw new SyntaxError("Missing opening '[' in '" + str + "'");
             }
         }
@@ -58,25 +59,25 @@ export default {
 
             // Object
             if (keyLen && /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(key)) {
-                if (context === undefined || context === null) {
+                if (typeof context === "undefined" || context === null) {
                     context = {};
                 }
                 const result = this.buildObject(subtree, value, context[key]);
 
-                if (result !== undefined) {
+                if (typeof result !== "undefined") {
                     context[key] = result;
                 }
             }
             // Array
             else {
-                if (context === undefined || context === null) {
+                if (typeof context === "undefined" || context === null) {
                     context = [];
                 }
                 // Dynamic index
                 if (keyLen === 0) {
                     const result = this.buildObject(subtree, value, context[key]);
 
-                    if (result !== undefined) {
+                    if (typeof result !== "undefined") {
                         context.push(result);
                     }
                 }
@@ -84,7 +85,7 @@ export default {
                 else if (/^[0-9]+$/.test(key)) {
                     const result = this.buildObject(subtree, value, context[key]);
 
-                    if (result !== undefined) {
+                    if (typeof result !== "undefined") {
                         context[parseInt(key)] = result;
                     }
                 }
@@ -306,7 +307,7 @@ export default {
             }
 
             // Ignore empty value
-            if (options.ignoreEmpty && (value === "" || value === null || value === undefined)) {
+            if (options.ignoreEmpty && (value === "" || value === null || typeof value === "undefined")) {
                 continue;
             }
 
@@ -330,7 +331,7 @@ export default {
                 if (field.checked) {
                     fields[name] = value;
                 }
-                else if (fields[name] === undefined) {
+                else if (typeof fields[name] === "undefined") {
                     fields[name] = null;
                 }
             } else {
@@ -377,18 +378,18 @@ export default {
         for (let i = 0; i < args.length; i += 1) {
             const b = args[i];
 
-            if (typeof b === "object" && b !== null && b !== undefined
-                && typeof a === "object" && a !== null && a !== undefined) {
+            if (typeof b === "object" && b !== null && typeof b !== "undefined"
+                && typeof a === "object" && a !== null && typeof a !== "undefined") {
                 for (let key in b) {
                     if (b.hasOwnProperty(key)) {
-                        if (recursive && typeof b[key] === "object" && b[key] !== null && b[key] !== undefined) {
+                        if (recursive && typeof b[key] === "object" && b[key] !== null && typeof b[key] !== "undefined") {
                             a[key] = this.extend(a[key], b[key]);
                         } else {
                             a[key] = b[key];
                         }
                     }
                 }
-            } else if (b !== null && b !== undefined) {
+            } else if (b !== null && typeof b !== "undefined") {
                 a = b;
             }
         }
