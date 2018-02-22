@@ -378,11 +378,11 @@ export default {
         for (let i = 0; i < args.length; i += 1) {
             const b = args[i];
 
-            if (typeof b === "object" && b !== null && typeof b !== "undefined"
-                && typeof a === "object" && a !== null && typeof a !== "undefined") {
+            if (typeof b === "object" && b !== null
+                && typeof a === "object" && a !== null) {
                 for (let key in b) {
                     if (b.hasOwnProperty(key)) {
-                        if (recursive && typeof b[key] === "object" && b[key] !== null && typeof b[key] !== "undefined") {
+                        if (recursive && typeof b[key] === "object" && b[key] !== null) {
                             a[key] = this.extend(a[key], b[key]);
                         } else {
                             a[key] = b[key];
@@ -393,7 +393,7 @@ export default {
                 a = b;
             }
         }
-        return a
+        return a;
     },
 
     /**
