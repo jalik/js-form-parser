@@ -38,14 +38,15 @@ export default {
 
         // Check missing brackets
         if (typeof context === "undefined" || context === null) {
-            let opening = str.match(/\[/g).length;
-            let closing = str.match(/]/g).length;
+            const opening = str.match(/\[/g).length;
+            const closing = str.match(/]/g).length;
 
-            if (opening > closing) {
-                throw new SyntaxError("Missing closing ']' in '" + str + "'");
-            }
-            else if (closing < opening) {
-                throw new SyntaxError("Missing opening '[' in '" + str + "'");
+            if (opening !== closing) {
+                if (opening > closing) {
+                    throw new SyntaxError("Missing closing ']' in '" + str + "'");
+                } else {
+                    throw new SyntaxError("Missing opening '[' in '" + str + "'");
+                }
             }
         }
 
