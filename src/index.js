@@ -22,6 +22,8 @@
  * SOFTWARE.
  */
 
+import {extendRecursively} from "@jalik/extend";
+
 export default {
 
     /**
@@ -107,7 +109,7 @@ export default {
         }
 
         // Default options
-        options = this.extend({
+        options = extendRecursively({
             cleanFunction: null,
             dynamicTyping: true,
             filterFunction: null,
@@ -360,41 +362,6 @@ export default {
             }
         }
         return result;
-    },
-
-    /**
-     * Merge objects
-     * @return {*}
-     */
-    extend() {
-        const args = Array.prototype.slice.call(arguments);
-        let recursive = false;
-        let a = args.shift();
-
-        if (typeof a === "boolean") {
-            recursive = a;
-            a = args.shift();
-        }
-
-        for (let i = 0; i < args.length; i += 1) {
-            const b = args[i];
-
-            if (typeof b === "object" && b !== null
-                && typeof a === "object" && a !== null) {
-                for (let key in b) {
-                    if (b.hasOwnProperty(key)) {
-                        if (recursive && typeof b[key] === "object" && b[key] !== null) {
-                            a[key] = this.extend(a[key], b[key]);
-                        } else {
-                            a[key] = b[key];
-                        }
-                    }
-                }
-            } else if (b !== null && typeof b !== "undefined") {
-                a = b;
-            }
-        }
-        return a;
     },
 
     /**

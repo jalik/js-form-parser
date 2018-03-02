@@ -179,30 +179,6 @@ describe("contains()", () => {
     });
 });
 
-describe("extend()", () => {
-
-    it(`extend(null, null) should return null`, () => {
-        expect(FormUtils.extend(null, null)).toEqual(null);
-    });
-
-    it(`extend(null, {a: true}) should return an object`, () => {
-        expect(FormUtils.extend(null, {a: true})).toEqual({a: true});
-    });
-
-    it(`extend({a: true}, null) should return an object`, () => {
-        expect(FormUtils.extend({a: true}, null)).toEqual({a: true});
-    });
-
-    it(`extend({a: true}, {a: false}) should merge objects`, () => {
-        expect(FormUtils.extend({a: true}, {a: false})).toEqual({a: false});
-        expect(FormUtils.extend({a: true}, {b: false})).toEqual({a: true, b: false});
-    });
-
-    it(`extend({a: true}, {b: {c: false}}) should merge objects recursively`, () => {
-        expect(FormUtils.extend({a: true}, {b: {c: false}})).toEqual({a: true, b: {c: false}});
-    });
-});
-
 describe("parseBoolean()", () => {
 
     test(`parseBoolean(null) should return null`, () => {
