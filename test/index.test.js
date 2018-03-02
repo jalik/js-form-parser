@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-import FormUtils from "../src/jk-form-parser";
+import FormUtils from "../src/index";
 import TestUtils from "./lib";
 
 // Define constants

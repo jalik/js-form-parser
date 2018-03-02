@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-import FormUtils from "../src/jk-form-parser";
+import FormUtils from "../src/index";
 
 export default {
 
@@ -153,5 +153,5 @@ export default {
      */
     createTextInput(attrs) {
         return this.createElement("input", FormUtils.extend({type: "text"}, attrs));
-    },
+    }
 };

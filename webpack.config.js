@@ -34,7 +34,7 @@ const paths = {
 
 module.exports = {
     entry: {
-        bundle: path.join(paths.src, `${Package.name}.js`)
+        bundle: path.join(paths.src, `index.js`)
     },
     module: {
         rules: [
