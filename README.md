@@ -367,6 +367,9 @@ const fields = FormUtils.parseForm(form, {
 
 ## Changelog
 
+### v1.0.6
+- Fixes method `parseForm()` not returning fields with a name that contains dashes (ex: `x-custom-field`)
+
 ### v1.0.5
 - Fixes method `parseForm()` not returning fields with a name that is one character long
 
