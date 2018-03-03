@@ -208,6 +208,17 @@ describe("parseBoolean()", () => {
 
 describe("parseForm()", () => {
 
+    test(`should return fields with a name containing dashes`, () => {
+        const form = TestUtils.createForm();
+        form.appendChild(TestUtils.createTextarea({
+            name: "x-custom-field",
+            value: "poKPOJFzqjDOP",
+        }));
+
+        const r = FormUtils.parseForm(form, {dynamicTyping: true, smartTyping: true});
+        expect(r).toEqual({"x-custom-field": "poKPOJFzqjDOP"});
+    });
+
     test(`should return fields with a name of one character long`, () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createHiddenInput({
