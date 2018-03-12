@@ -1,4 +1,4 @@
-# jk-form-parser
+# Form Parser
 
 Parse complex forms with minimum effort.
 
@@ -51,13 +51,13 @@ You can get fields from this form in a single object with minimum effort by usin
 **Note:** The form object must be an `HTMLFormElement`.
 
 ```js
-const FormUtils = require("jk-form-parser");
+import FormParser from "@jalik/form-parser";
 
 // Get an existing HTML form element
 const form = document.getElementById("my-form");
 
 // Parse form values with explicit options, which are optional
-const fields = FormUtils.parseForm(form, {
+const fields = FormParser.parseForm(form, {
     // Filters returned fields
     cleanFunction(value, field) { return value; },
     // Filters returned fields
@@ -156,13 +156,13 @@ Below is a more complete form example (pay attention to comments, values and att
 And to get form fields :
 
 ```js
-const FormUtils = require("jk-form-parser");
+import FormParser from "@jalik/form-parser";
 
 // Get an existing HTML form element
 const form = document.getElementById("my-form");
 
 // Parse form values using default options
-const fields = FormUtils.parseForm(form);
+const fields = FormParser.parseForm(form);
 ```
 
 The generated `fields` constant will look like this :
@@ -212,13 +212,13 @@ To get an array of values from a form, use this syntax :
 To get form fields :
 
 ```js
-const FormUtils = require("jk-form-parser");
+import FormParser from "@jalik/form-parser";
 
 // Get an existing HTML form element
 const form = document.getElementById("my-form");
 
 // Parse form values using default options
-const fields = FormUtils.parseForm(form);
+const fields = FormParser.parseForm(form);
 ```
 
 The generated `fields` constant will look like this :
@@ -245,13 +245,13 @@ To get an object from a form, use this syntax :
 To get fields :
 
 ```js
-const FormUtils = require("jk-form-parser");
+import FormParser from "@jalik/form-parser";
 
 // Get an existing HTML form element
 const form = document.getElementById("my-form");
 
 // Parse form values using default options
-const fields = FormUtils.parseForm(form);
+const fields = FormParser.parseForm(form);
 ```
 
 The generated `fields` constant will look like this :
@@ -285,13 +285,13 @@ As far as I know there is no depth limit.
 To get fields :
 
 ```js
-const FormUtils = require("jk-form-parser");
+import FormParser from "@jalik/form-parser";
 
 // Get an existing HTML form element
 const form = document.getElementById("my-form");
 
 // Parse form values using default options
-const fields = FormUtils.parseForm(form);
+const fields = FormParser.parseForm(form);
 ```
 
 The generated `fields` constant will look like this :
@@ -325,13 +325,13 @@ The generated `fields` constant will look like this :
 You can get only the fields you want with `filterFunction(field)` option in the `parseForm()` method. The filter function will be called with all fields and must return `true` to return the field.
 
 ```js
-const FormUtils = require("jk-form-parser");
+import FormParser from "@jalik/form-parser";
 
 // Get an existing HTML form element
 const form = document.getElementById("my-form");
 
 // Parse form values using default options
-const fields = FormUtils.parseForm(form, {
+const fields = FormParser.parseForm(form, {
     filterFunction(field) {
         // returns only text fields
         return field.type === "text";   
@@ -344,13 +344,13 @@ const fields = FormUtils.parseForm(form, {
 All string values can be cleaned using the `cleanFunction(value, field)` option in the `parseForm()` method. The clean function will be called with any value that is a string of length > 0.
 
 ```js
-const FormUtils = require("jk-form-parser");
+import FormParser from "@jalik/form-parser";
 
 // Get an existing HTML form element
 const form = document.getElementById("my-form");
 
 // Parse form values using default options
-const fields = FormUtils.parseForm(form, {
+const fields = FormParser.parseForm(form, {
     cleanFunction(value, field) {
         // Apply uppercase to lastName field
         if (field.name === "lastName" || /name/gi.test(field.name)) {
@@ -366,6 +366,9 @@ const fields = FormUtils.parseForm(form, {
 ```
 
 ## Changelog
+
+### v1.0.8
+- Does not filter field names anymore
 
 ### v1.0.6
 - Fixes method `parseForm()` not returning fields with a name that contains dashes (ex: `x-custom-field`)
