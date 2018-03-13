@@ -25,7 +25,7 @@
   "scripts": {
     "build": "./node_modules/.bin/gulp build",
     "build:prod": "./node_modules/.bin/gulp prepublish",
-    "package": "./node_modules/.bin/webpack && ./node_modules/.bin/webpack -p",
+    "package": "./node_modules/.bin/webpack -p",
     "prepare": "npm run build:prod && npm test",
     "prepublishOnly": "npm test",
     "test": "./node_modules/.bin/jest",
