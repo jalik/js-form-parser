@@ -15,43 +15,44 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
 
-const path = require("path");
-const Package = require("./package.json");
-const isProd = process.argv.indexOf("-p") !== -1;
-const filename = Package.name + (isProd ? ".min" : "");
+const path = require('path');
+const Package = require('./package.json');
+
+const isProd = process.argv.indexOf('-p') !== -1;
+const filename = Package.name + (isProd ? '.min' : '');
 
 const paths = {
-    dist: path.join(__dirname, "aio"),
-    src: path.join(__dirname, "src"),
+  dist: path.join(__dirname, 'aio'),
+  src: path.join(__dirname, 'src'),
 };
 
 module.exports = {
-    entry: {
-        bundle: path.join(paths.src, "index.js")
-    },
-    module: {
-        rules: [
-            {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                loader: "babel-loader"
-            }
-        ]
-    },
-    output: {
-        libraryTarget: "umd",
-        path: paths.dist,
-        filename: `${filename}.js`
-    },
-    resolve: {
-        extensions: [".js"],
-        modules: [paths.src, "node_modules"]
-    }
+  entry: {
+    bundle: path.join(paths.src, 'index.js'),
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader',
+      },
+    ],
+  },
+  output: {
+    libraryTarget: 'umd',
+    path: paths.dist,
+    filename: `${filename}.js`,
+  },
+  resolve: {
+    extensions: ['.js'],
+    modules: [paths.src, 'node_modules'],
+  },
 };

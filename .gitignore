@@ -4,7 +4,6 @@
 
 # Ignore npm files
 node_modules
-npm-debug.log
 
 # Ignore compiled sources
 aio

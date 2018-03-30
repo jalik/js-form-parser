@@ -15,36 +15,46 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
 
-const gulp = require("gulp");
-const babel = require("gulp-babel");
-const stripComments = require("gulp-strip-comments");
-const watch = require("gulp-watch");
-const distPath = "dist";
+const babel = require('gulp-babel');
+const del = require('del');
+const eslint = require('gulp-eslint');
+const gulp = require('gulp');
+const watch = require('gulp-watch');
 
-// Compile JavaScript files
-gulp.task("build", () => {
-    return gulp.src([
-        "src/**/*.js"
-    ])
-        .pipe(babel({presets: ["env"]}))
-        .pipe(stripComments())
-        .pipe(gulp.dest(distPath));
-});
+const buildPath = 'dist';
 
-// Compile source files
-gulp.task("default", ["build"]);
+// Compile JS files
+gulp.task('build', () => gulp.src([
+  'src/**/*.js',
+])
+  .pipe(babel())
+  .pipe(gulp.dest(buildPath)));
+
+// Remove compiled files
+gulp.task('clean', () => del([buildPath]));
+
+// Check code quality
+gulp.task('eslint', () => gulp.src([
+  'src/**/*.js',
+  'test/**/*.js',
+  '!node_modules/**',
+])
+  .pipe(eslint())
+  .pipe(eslint.formatEach())
+  .pipe(eslint.failAfterError()));
 
 // Prepare files for publication
-gulp.task("prepublish", ["build"]);
+gulp.task('prepublish', gulp.series('clean', 'eslint', 'build'));
 
 // Rebuild automatically
-gulp.task("watch", () => {
-    gulp.watch(["src/**/*.js"], ["build"]);
-});
+gulp.task('watch', () => watch(['src/**/*.js'], ['build']));
+
+// Compile source files
+gulp.task('default', gulp.series('prepublish'));
