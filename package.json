@@ -25,6 +25,8 @@
   "scripts": {
     "build": "./node_modules/.bin/gulp build",
     "build:prod": "./node_modules/.bin/gulp prepublish",
+    "lint": "./node_modules/.bin/eslint .",
+    "lint-fix": "./node_modules/.bin/eslint --fix .",
     "package": "./node_modules/.bin/webpack -p",
     "prepare": "npm run build:prod && npm test",
     "prepublishOnly": "npm test",
