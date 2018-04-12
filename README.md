@@ -265,6 +265,38 @@ The generated `fields` constant will look like this :
 }
 ```
 
+## Parsing a single field
+
+You can even parse a single field using the same logic of dynamic typing and smart typing based on field type or field dataset... 
+This can be useful in a React application with controlled components for example.
+
+```js
+import FormParser from "@jalik/form-parser";
+
+// Age field is an input of type number
+const ageField = document.getElementById("age-field");
+
+// Get the age as number (ex: age = 30)
+const age = FormParser.parseField(ageField, {
+  dynamicTyping: true,
+  nullify: true,
+  smartTyping: true,
+  trim: true,
+});
+
+// Colors is a select allowing multiple values to be selected
+const colorsSelect = document.getElementById("colors-select");
+
+// Get the colors as array (ex: colors = ['blue', 'green'])
+const colors = FormParser.parseField(colorsSelect, {
+  dynamicTyping: true,
+  nullify: true,
+  smartTyping: true,
+  trim: true,
+});
+
+```
+
 ## Creating complex forms
 
 You can construct complex and deep objects using a mix of arrays and object attributes.

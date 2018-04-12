@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.1.0
+- Adds method `nullify(value)`
+- Adds method `parseField(field, options)`
+- Adds method `trim(value)`
+
 ## v1.0.8
 - Does not filter field names anymore
 

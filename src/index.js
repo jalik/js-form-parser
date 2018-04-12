@@ -24,8 +24,7 @@
 
 import { extendRecursively } from '@jalik/extend';
 
-export default {
-
+const FormParser = {
   /**
    * Builds an object from a string (ex: [colors][0][code])
    * @param str
@@ -117,23 +116,212 @@ export default {
     return result;
   },
 
+  /**
+   * Checks if the field is a button
+   * @param field
+   * @return {*|boolean}
+   */
   isButton(field) {
     return field && (field.localName === 'button' || this.contains(['button', 'reset', 'submit'], field.type));
   },
 
+  /**
+   * Checks if the field is checkable
+   * @param field
+   * @return {*|boolean}
+   */
   isCheckableField(field) {
     return field && (this.contains(['checkbox', 'radio'], field.type));
+  },
+
+  /**
+   * Replaces empty string by null value
+   * @param value
+   * @return {Object|string|Array|*}
+   */
+  nullify(value) {
+    let newValue = value;
+
+    if (newValue instanceof Array) {
+      for (let i = 0; i < newValue.length; i += 1) {
+        newValue[i] = this.nullify(newValue[i]);
+      }
+    } else if (typeof newValue === 'object' && newValue !== null) {
+      const keys = Object.keys(newValue);
+
+      for (let i = 0; i < keys.length; i += 1) {
+        const key = keys[i];
+        newValue[key] = this.nullify(newValue[key]);
+      }
+    } else if (typeof newValue === 'string' && newValue === '') {
+      newValue = null;
+    }
+    return newValue;
+  },
+
+  /**
+   * Returns a boolean
+   * @param value
+   * @return {boolean|null}
+   */
+  parseBoolean(value) {
+    let bool = value;
+
+    if (typeof bool === 'string') {
+      bool = bool.trim();
+    }
+    if (/^(true|1)$/i.test(bool)) {
+      return true;
+    }
+    if (/^(false|0)$/i.test(bool)) {
+      return false;
+    }
+    return null;
+  },
+
+  /**
+   * Returns the parsed value of the field
+   * @param field
+   * @param options
+   * @return {any}
+   */
+  parseField(field, options) {
+    // Check field instance
+    if (!(field instanceof HTMLElement)) {
+      throw new TypeError('field is not an instance of HTMLElement');
+    }
+    // Check field name
+    if (!this.contains(['button', 'input', 'select', 'textarea'], field.localName)) {
+      throw new TypeError('field is not a form field (button, input, select, textarea)');
+    }
+
+    // Set default options
+    const opt = extendRecursively({
+      dynamicTyping: true,
+      nullify: true,
+      smartTyping: true,
+      trim: true,
+    }, options);
+
+    const isCheckable = this.isCheckableField(field);
+    let { value } = field;
+
+    // Fetch value from special fields
+    switch (field.localName) {
+      case 'input':
+        if (isCheckable) {
+          // Keep value only if element is checked
+          value = field.checked ? value : undefined;
+        }
+        break;
+      case 'select':
+        if (field.multiple) {
+          value = [];
+
+          // Collect values of selected options
+          if (field.options instanceof HTMLCollection) {
+            for (let o = 0; o < field.options.length; o += 1) {
+              if (field.options[o].selected) {
+                value.push(field.options[o].value);
+              }
+            }
+          }
+        }
+        break;
+      default:
+    }
+
+    if (opt.dynamicTyping) {
+      // Parse value excepted for special fields
+      if ((!isCheckable || field.checked)
+        && !this.contains(['email', 'file', 'password', 'search', 'url'], field.type)
+        && !this.contains(['textarea'], field.localName)) {
+        // Parse value using the "data-type" attribute
+        if (field.dataset && field.dataset.type) {
+          switch (field.dataset.type) {
+            case 'auto':
+              if (value instanceof Array) {
+                for (let k = 0; k < value.length; k += 1) {
+                  value[k] = this.parseValue(value[k]);
+                }
+              } else {
+                value = this.parseValue(value);
+              }
+              break;
+
+            case 'boolean':
+              if (value instanceof Array) {
+                for (let k = 0; k < value.length; k += 1) {
+                  value[k] = this.parseBoolean(value[k]);
+                }
+              } else {
+                value = this.parseBoolean(value);
+              }
+              break;
+
+            case 'number':
+              if (value instanceof Array) {
+                for (let k = 0; k < value.length; k += 1) {
+                  value[k] = this.parseNumber(value[k]);
+                }
+              } else {
+                value = this.parseNumber(value);
+              }
+              break;
+
+            case 'string':
+              // Keep value as string
+              break;
+
+            default:
+              console.warn(`unknown data-type "${field.dataset.type}" for field "${field.name}"`);
+          }
+        } else if (opt.smartTyping) {
+          // Parse value using the "type" attribute
+          switch (field.type) {
+            case 'number':
+            case 'range':
+              if (value instanceof Array) {
+                for (let k = 0; k < value.length; k += 1) {
+                  value[k] = this.parseNumber(value[k]);
+                }
+              } else {
+                value = this.parseNumber(value);
+              }
+              break;
+            default:
+          }
+        } else if (value instanceof Array) {
+          // Parse value using regular expression
+          for (let k = 0; k < value.length; k += 1) {
+            value[k] = this.parseValue(value[k]);
+          }
+        } else {
+          value = this.parseValue(value);
+        }
+      }
+    }
+
+    // Removes extra spaces
+    if (opt.trim && field.type !== 'password') {
+      value = this.trim(value);
+    }
+    // Replaces empty strings with null
+    if (opt.nullify) {
+      value = this.nullify(value);
+    }
+    return value;
   },
 
   /**
    * Returns form values as an object
    * @param form
    * @param options
-   * @return {{}}
+   * @return {object}
    */
   parseForm(form, options) {
     if (!(form instanceof HTMLFormElement)) {
-      throw new TypeError('form is not an HTMLFormElement');
+      throw new TypeError('form is not an instance of HTMLFormElement');
     }
 
     // Default options
@@ -203,129 +391,8 @@ export default {
         continue;
       }
 
-      let { value } = field;
-
-      // Fetch value from special fields
-      switch (field.localName) {
-        case 'input':
-          if (isCheckable) {
-            // Keep value only if element is checked
-            value = field.checked ? value : undefined;
-          }
-          break;
-        case 'select':
-          if (field.multiple) {
-            value = [];
-
-            // Collect values of selected options
-            if (field.options instanceof HTMLCollection) {
-              for (let o = 0; o < field.options.length; o += 1) {
-                if (field.options[o].selected) {
-                  value.push(field.options[o].value);
-                }
-              }
-            }
-          }
-          break;
-        default:
-      }
-
-      if (opt.dynamicTyping) {
-        // Parse value excepted for special fields
-        if ((!isCheckable || field.checked)
-          && !this.contains(['email', 'file', 'password', 'search', 'url'], field.type)
-          && !this.contains(['textarea'], field.localName)) {
-          // Parse value using the "data-type" attribute
-          if (field.dataset && field.dataset.type) {
-            switch (field.dataset.type) {
-              case 'auto':
-                if (value instanceof Array) {
-                  for (let k = 0; k < value.length; k += 1) {
-                    value[k] = this.parseValue(value[k]);
-                  }
-                } else {
-                  value = this.parseValue(value);
-                }
-                break;
-
-              case 'boolean':
-                if (value instanceof Array) {
-                  for (let k = 0; k < value.length; k += 1) {
-                    value[k] = this.parseBoolean(value[k]);
-                  }
-                } else {
-                  value = this.parseBoolean(value);
-                }
-                break;
-
-              case 'number':
-                if (value instanceof Array) {
-                  for (let k = 0; k < value.length; k += 1) {
-                    value[k] = this.parseNumber(value[k]);
-                  }
-                } else {
-                  value = this.parseNumber(value);
-                }
-                break;
-
-              case 'string':
-                // Keep value as string
-                break;
-
-              default:
-                console.warn(`unknown data-type "${field.dataset.type}" for field "${field.name}"`);
-            }
-          } else if (opt.smartTyping) {
-            // Parse value using the "type" attribute
-            switch (field.type) {
-              case 'number':
-              case 'range':
-                if (value instanceof Array) {
-                  for (let k = 0; k < value.length; k += 1) {
-                    value[k] = this.parseNumber(value[k]);
-                  }
-                } else {
-                  value = this.parseNumber(value);
-                }
-                break;
-              default:
-            }
-          } else if (value instanceof Array) {
-            // Parse value using regular expression
-            for (let k = 0; k < value.length; k += 1) {
-              value[k] = this.parseValue(value[k]);
-            }
-          } else {
-            value = this.parseValue(value);
-          }
-        }
-      }
-
-      // Removes extra spaces
-      if (opt.trim && !this.contains(['password'], field.type)) {
-        if (value instanceof Array) {
-          for (let k = 0; k < value.length; k += 1) {
-            if (typeof value[k] === 'string' && value[k].length) {
-              value[k] = value[k].trim();
-            }
-          }
-        } else if (typeof value === 'string' && value.length) {
-          value = value.trim();
-        }
-      }
-
-      // Replaces empty strings with null
-      if (opt.nullify) {
-        if (value instanceof Array) {
-          for (let k = 0; k < value.length; k += 1) {
-            if (value[k] === '') {
-              value[k] = null;
-            }
-          }
-        } else if (value === '') {
-          value = null;
-        }
-      }
+      // Parse field value
+      let value = this.parseField(field, opt);
 
       // Execute custom clean function
       if (typeof opt.cleanFunction === 'function') {
@@ -377,26 +444,6 @@ export default {
   },
 
   /**
-   * Returns a boolean
-   * @param value
-   * @return {boolean|null}
-   */
-  parseBoolean(value) {
-    let bool = value;
-
-    if (typeof bool === 'string') {
-      bool = bool.trim();
-    }
-    if (/^true$/i.test(bool)) {
-      return true;
-    }
-    if (/^false$/i.test(bool)) {
-      return false;
-    }
-    return null;
-  },
-
-  /**
    * Returns a number
    * @param value
    * @return {number|null}
@@ -404,20 +451,22 @@ export default {
   parseNumber(value) {
     let number = value;
 
-    if (typeof number === 'string') {
-      number = number.trim();
-      // Replace comma with dot (for languages where numbers contain a comma instead of a dot)
-      number = number.replace(/,/g, '.');
+    if (typeof value !== 'number') {
+      if (typeof value === 'string') {
+        // Remove spaces
+        number = value.replace(/ /g, '');
+      }
+
+      if (/^[+-]?[0-9]*[.,][0-9]+$/.test(number)) {
+        // Replace comma with dot (for languages where number contain a comma instead of a dot)
+        number = Number.parseFloat(String(number).replace(/,/g, '.'));
+      } else if (/^[+-]?[0-9]+$/.test(number)) {
+        number = Number.parseInt(number, 10);
+      } else {
+        number = null;
+      }
     }
-    // Float
-    if (/^[+-]?[0-9]*[.,][0-9]+$/.test(number)) {
-      return Number.parseFloat(number);
-    }
-    // Integer
-    if (/^[+-]?[0-9]+$/.test(number)) {
-      return Number.parseInt(number, 10);
-    }
-    return null;
+    return number;
   },
 
   /**
@@ -427,42 +476,65 @@ export default {
    * @returns {string|number|boolean|null}
    */
   parseValue(value, type = 'auto') {
-    let val = value;
+    let newVal = value;
 
-    if (typeof val === 'string') {
-      if (val.length > 0) {
+    if (typeof newVal === 'string') {
+      if (newVal.length > 0) {
         switch (type) {
           case 'auto': {
-            const bool = this.parseBoolean(val);
+            const bool = this.parseBoolean(newVal);
 
             if (typeof bool === 'boolean') {
-              val = bool;
+              newVal = bool;
               break;
             }
 
-            const number = this.parseNumber(val);
+            const number = this.parseNumber(newVal);
 
             if (typeof number === 'number') {
-              val = number;
+              newVal = number;
             }
             break;
           }
-
           case 'boolean':
-            val = this.parseBoolean(val);
+            newVal = this.parseBoolean(newVal);
             break;
-
           case 'number':
-            val = this.parseNumber(val);
+            newVal = this.parseNumber(newVal);
             break;
-
           case 'string':
             break;
-
           default:
         }
       }
     }
-    return val;
+    return newVal;
+  },
+
+  /**
+   * Removes extra spaces
+   * @param value
+   * @return {Object|string|Array|*}
+   */
+  trim(value) {
+    let newValue = value;
+
+    if (newValue instanceof Array) {
+      for (let i = 0; i < newValue.length; i += 1) {
+        newValue[i] = this.trim(newValue[i]);
+      }
+    } else if (typeof newValue === 'object' && newValue !== null) {
+      const keys = Object.keys(newValue);
+
+      for (let i = 0; i < keys.length; i += 1) {
+        const key = keys[i];
+        newValue[key] = this.trim(newValue[key]);
+      }
+    } else if (typeof newValue === 'string' && newValue.length > 0) {
+      newValue = newValue.trim();
+    }
+    return newValue;
   },
 };
+
+export default FormParser;
