@@ -35,7 +35,7 @@
     "watch": "./node_modules/.bin/gulp watch"
   },
   "dependencies": {
-    "@jalik/extend": "^1.0.1"
+    "@jalik/extend": "^1.0.2"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
