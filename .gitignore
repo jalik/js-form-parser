@@ -1,10 +1,10 @@
-# Ignore project settings
-.idea
+# Project settings
+.idea/
 *.iml
 
-# Ignore npm files
-node_modules
+# Npm files
+node_modules/
 
-# Ignore compiled sources
-aio
-dist
+# Compiled files
+aio/
+dist/
