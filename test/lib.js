@@ -58,7 +58,13 @@ export default {
       const attr = keys[i];
 
       if (typeof attrs[attr] !== 'undefined') {
-        element[attr] = attrs[attr];
+        if (attr === 'dataset' || attr === 'style') {
+          Object.entries(attrs[attr]).forEach(([k, v]) => {
+            element[attr][k] = v;
+          });
+        } else {
+          element.setAttribute(attr, attrs[attr]);
+        }
       }
     }
     return element;
@@ -147,7 +153,12 @@ export default {
    * @return {Element}
    */
   createTextarea(attrs) {
-    return this.createElement('textarea', extend(attrs, {}));
+    const element = this.createElement('textarea', extend(attrs, {}));
+
+    if (typeof attrs.value !== 'undefined') {
+      element.appendChild(document.createTextNode(attrs.value));
+    }
+    return element;
   },
 
   /**

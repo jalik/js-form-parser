@@ -243,7 +243,7 @@ describe('parseField()', () => {
         { value: '123', selected: true },
         { value: '456', selected: true },
         { value: '789', selected: true },
-        { value: '000', selected: false },
+        { value: '000' },
       ],
     });
     expect(FormParser.parseField(field))
@@ -256,11 +256,11 @@ describe('parseForm()', () => {
     const form = TestUtils.createForm();
     form.appendChild(TestUtils.createTextarea({
       name: 'x-custom-field',
-      value: 'poKPOJFzqjDOP',
+      value: STRING,
     }));
 
     const r = FormParser.parseForm(form, { dynamicTyping: true, smartTyping: true });
-    expect(r).toEqual({ 'x-custom-field': 'poKPOJFzqjDOP' });
+    expect(r).toEqual({ 'x-custom-field': STRING });
   });
 
   test('should return fields with a name of one character long', () => {
@@ -280,12 +280,10 @@ describe('parseForm()', () => {
   test('should return empty array if no checkbox is checked', () => {
     const form = TestUtils.createForm();
     form.appendChild(TestUtils.createCheckbox({
-      checked: false,
       name: 'items[]',
       value: 0,
     }));
     form.appendChild(TestUtils.createCheckbox({
-      checked: false,
       name: 'items[]',
       value: 1,
     }));
@@ -325,7 +323,6 @@ describe('parseForm()', () => {
         value: 'A',
       }));
       form.appendChild(TestUtils.createCheckbox({
-        checked: false,
         name: 'checkboxes[]',
         value: 'B',
       }));
@@ -347,7 +344,6 @@ describe('parseForm()', () => {
     test('parseForm(form, options) should return values of checked radios', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createRadio({
-        checked: false,
         name: 'radio',
         value: 'A',
       }));
@@ -364,31 +360,26 @@ describe('parseForm()', () => {
     test('parseForm(form, options) should not return values of unchecked fields', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createRadio({
-        checked: false,
         dataset: { type: 'boolean' },
         name: 'options[checkbox]',
         value: 'true',
       }));
       form.appendChild(TestUtils.createRadio({
-        checked: false,
         dataset: { type: 'number' },
         name: 'options[choice]',
         value: '1',
       }));
       form.appendChild(TestUtils.createRadio({
-        checked: false,
         dataset: { type: 'number' },
         name: 'options[choice]',
         value: '2',
       }));
       form.appendChild(TestUtils.createRadio({
-        checked: false,
         dataset: { type: 'number' },
         name: 'options[radio]',
         value: '1',
       }));
       form.appendChild(TestUtils.createRadio({
-        checked: false,
         dataset: { type: 'number' },
         name: 'options[radio]',
         value: '2',
@@ -404,11 +395,14 @@ describe('parseForm()', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createFileInput({
         name: 'file',
-        value: STRING,
       }));
 
-      const r = FormParser.parseForm(form, { dynamicTyping: true, smartTyping: true });
-      expect(r).toEqual({ file: STRING });
+      const r = FormParser.parseForm(form, {
+        dynamicTyping: true,
+        nullify: true,
+        smartTyping: true,
+      });
+      expect(r).toEqual({ file: null });
     });
 
     test('parseForm(form, options) should return values of hidden inputs', () => {
@@ -657,7 +651,6 @@ describe('parseForm()', () => {
       test('parseForm(form, {ignoreUnchecked: true}) should not return unchecked fields', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createCheckbox({
-          checked: false,
           name: 'checkbox',
           value: STRING,
         }));
@@ -669,7 +662,6 @@ describe('parseForm()', () => {
       test('parseForm(form, {ignoreUnchecked: false}) should return unchecked fields', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createCheckbox({
-          checked: false,
           name: 'checkbox',
           value: STRING,
         }));
@@ -896,14 +888,15 @@ describe('parseForm()', () => {
 
     test('parseForm(form) should not parse file fields', () => {
       const form = TestUtils.createForm();
-      form.appendChild(TestUtils.createTextInput({
+      form.appendChild(TestUtils.createFileInput({
         name: 'file',
-        type: 'file',
-        value: INTEGER_STRING,
       }));
 
-      const r = FormParser.parseForm(form, { dynamicTyping: true });
-      expect(r).toEqual({ file: INTEGER_STRING });
+      const r = FormParser.parseForm(form, {
+        dynamicTyping: true,
+        nullify: true,
+      });
+      expect(r).toEqual({ file: null });
     });
 
     test('parseForm(form) should not parse password fields', () => {
