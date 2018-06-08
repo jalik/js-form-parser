@@ -30,7 +30,7 @@ const watch = require('gulp-watch');
 
 const buildPath = 'dist';
 
-// Compile JS files
+// Compile source files
 gulp.task('build', () => gulp.src([
   'src/**/*.js',
 ])
@@ -50,11 +50,11 @@ gulp.task('eslint', () => gulp.src([
   .pipe(eslint.formatEach())
   .pipe(eslint.failAfterError()));
 
-// Prepare files for publication
-gulp.task('prepublish', gulp.series('clean', 'eslint', 'build'));
+// Prepare files for production
+gulp.task('prepare', gulp.series('clean', 'eslint', 'build'));
 
 // Rebuild automatically
 gulp.task('watch', () => watch(['src/**/*.js'], ['build']));
 
-// Compile source files
-gulp.task('default', gulp.series('prepublish'));
+// Prepare files for production
+gulp.task('default', gulp.series('prepare'));

@@ -1,9 +1,9 @@
-# Project files
+# IDE files
 .idea/
 *.iml
 
-# Webpack bundle
-aio/
+# Compiled bundle
+bundle/
 
 # Source files
 src/

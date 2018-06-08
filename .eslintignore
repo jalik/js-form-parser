@@ -1,4 +1,9 @@
-.idea
-aio
-dist
-node_modules
+# IDE files
+.idea/
+
+# Compiled files
+bundle/
+dist/
+
+# Node modules
+node_modules/

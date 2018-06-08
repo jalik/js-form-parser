@@ -1,4 +1,4 @@
-# Project settings
+# IDE files
 .idea/
 *.iml
 
@@ -6,5 +6,5 @@
 node_modules/
 
 # Compiled files
-aio/
+bundle/
 dist/

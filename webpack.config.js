@@ -29,7 +29,7 @@ const isProd = process.argv.indexOf('-p') !== -1;
 const filename = Package.name + (isProd ? '.min' : '');
 
 const paths = {
-  dist: path.join(__dirname, 'aio'),
+  dist: path.join(__dirname, 'bundle'),
   src: path.join(__dirname, 'src'),
 };
 

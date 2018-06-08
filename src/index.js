@@ -274,6 +274,7 @@ const FormParser = {
               break;
 
             default:
+              // eslint-disable-next-line no-console
               console.warn(`unknown data-type "${field.dataset.type}" for field "${field.name}"`);
           }
         } else if (opt.smartTyping) {
@@ -340,14 +341,17 @@ const FormParser = {
 
     // Check deprecated options
     if (typeof opt.parseValues !== 'undefined') {
+      // eslint-disable-next-line no-console
       console.warn('option "parseValues" is deprecated, rename it to "dynamicTyping" instead');
       opt.dynamicTyping = opt.parseValues;
     }
     if (typeof opt.smartParsing !== 'undefined') {
+      // eslint-disable-next-line no-console
       console.warn('option "smartParsing" is deprecated, rename it to "smartTyping" instead');
       opt.smartTyping = opt.smartParsing;
     }
     if (typeof opt.trimValues !== 'undefined') {
+      // eslint-disable-next-line no-console
       console.warn('option "trimValues" is deprecated, rename it to "trim" instead');
       opt.trim = opt.trimValues;
     }
