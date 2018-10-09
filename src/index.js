@@ -41,8 +41,8 @@ const FormParser = {
 
     // Check missing brackets
     if (typeof ctx === 'undefined' || ctx === null) {
-      const opening = str.match(/\[/g).length;
-      const closing = str.match(/]/g).length;
+      const opening = (str.match(/\[/g) || []).length;
+      const closing = (str.match(/]/g) || []).length;
 
       if (opening !== closing) {
         if (opening > closing) {
@@ -55,7 +55,13 @@ const FormParser = {
 
     const index = str.indexOf('[');
 
-    if (index !== -1) {
+    if (index === -1) {
+      ctx = this.buildObject(`[${str}]`, value, ctx);
+    } else if (index > 0) {
+      const rootField = str.substr(0, index);
+      const subtree = str.substr(index);
+      ctx = this.buildObject(`[${rootField}]${subtree}`, value, ctx);
+    } else {
       const end = str.indexOf(']', index + 1);
       const subtree = str.substr(end + 1);
       const key = str.substring(index + 1, end);
@@ -183,7 +189,7 @@ const FormParser = {
    * Returns the parsed value of the field
    * @param field
    * @param options
-   * @return {any}
+   * @return {*}
    */
   parseField(field, options) {
     // Check field instance

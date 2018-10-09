@@ -95,6 +95,40 @@ describe('buildObject()', () => {
     expect(r).toEqual({ a: STRING });
   });
 
+  // Root field
+
+  test(`buildObject("a[b]", "${STRING}", null) should return {a:{b:"${STRING}"}}`, () => {
+    const r = FormParser.buildObject('a[b]', STRING, null);
+    expect(r).toEqual({ a: { b: STRING } });
+  });
+
+  test(`buildObject("a[b]", "${STRING}", {}) should return {a:{b:"${STRING}"}}`, () => {
+    const r = FormParser.buildObject('a[b]', STRING, {});
+    expect(r).toEqual({ a: { b: STRING } });
+  });
+
+  test(`buildObject("a[b]", "${STRING}", {a:{}}) should return {a:{b:"${STRING}"}}`, () => {
+    const r = FormParser.buildObject('a[b]', STRING, { a: {} });
+    expect(r).toEqual({ a: { b: STRING } });
+  });
+
+  // Single field
+
+  test(`buildObject("a", "${STRING}", null) should return {a:"${STRING}"}`, () => {
+    const r = FormParser.buildObject('a', STRING, null);
+    expect(r).toEqual({ a: STRING });
+  });
+
+  test(`buildObject("a", "${STRING}", {}) should return {a:"${STRING}"}`, () => {
+    const r = FormParser.buildObject('a', STRING, {});
+    expect(r).toEqual({ a: STRING });
+  });
+
+  test(`buildObject("a", "${STRING}", {a:null}) should return {a:"${STRING}"}`, () => {
+    const r = FormParser.buildObject('a', STRING, { a: null });
+    expect(r).toEqual({ a: STRING });
+  });
+
   // Testing with array and object
 
   test(`buildObject("[a][]", "${STRING}", null) should return {a:["${STRING}"]}`, () => {

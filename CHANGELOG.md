@@ -1,5 +1,10 @@
 # Changelog
 
+## CURRENT
+- Adds support for more patterns in method `buildObject()`:
+  - `buildObject('customField', value, context)`
+  - `buildObject('customField[attr]', value, context)`
+
 ## v1.1.1
 - Updates dependencies
 
