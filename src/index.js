@@ -56,45 +56,64 @@ const FormParser = {
     const index = str.indexOf('[');
 
     if (index === -1) {
+      // Field without brackets and without attribute
+      // ex: customField
       ctx = this.buildObject(`[${str}]`, value, ctx);
     } else if (index > 0) {
+      // Field without brackets and with attribute
+      // ex: customField[attr]
       const rootField = str.substr(0, index);
       const subtree = str.substr(index);
       ctx = this.buildObject(`[${rootField}]${subtree}`, value, ctx);
     } else {
+      // Field with brackets
+      // ex: [customField]
       const end = str.indexOf(']', index + 1);
       const subtree = str.substr(end + 1);
       const key = str.substring(index + 1, end);
       const keyLen = key.length;
 
-      // Object
-      if (keyLen && /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(key)) {
+      // Object attribute
+      // ex: [customField1]
+      if (keyLen > 0 && /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(key)) {
         if (typeof ctx === 'undefined' || ctx === null) {
           ctx = {};
         }
         const result = this.buildObject(subtree, value, ctx[key]);
 
         if (typeof result !== 'undefined') {
+          // Put value in attribute
           ctx[key] = result;
+        } else {
+          // Remove attribute
+          delete ctx[key];
         }
       } else {
-        // Array
         if (typeof ctx === 'undefined' || ctx === null) {
           ctx = [];
         }
-        // Dynamic index
+
         if (keyLen === 0) {
-          const result = this.buildObject(subtree, value, ctx[key]);
+          // Array with dynamic index
+          // ex: []
+          const result = this.buildObject(subtree, value, null);
 
           if (typeof result !== 'undefined') {
+            // Put value at the end of the array
             ctx.push(result);
           }
         } else if (/^[0-9]+$/.test(key)) {
-          // Static index
+          // Array with static index
+          // ex: [0]
           const result = this.buildObject(subtree, value, ctx[key]);
+          const keyIndex = parseInt(key, 10);
 
           if (typeof result !== 'undefined') {
-            ctx[Number.parseInt(key, 10)] = result;
+            // Put value at the specified index
+            ctx[keyIndex] = result;
+          } else {
+            // Remove existing value
+            ctx.splice(keyIndex, 1);
           }
         }
       }
@@ -469,9 +488,9 @@ const FormParser = {
 
       if (/^[+-]?[0-9]*[.,][0-9]+$/.test(number)) {
         // Replace comma with dot (for languages where number contain a comma instead of a dot)
-        number = Number.parseFloat(String(number).replace(/,/g, '.'));
+        number = parseFloat(String(number).replace(/,/g, '.'));
       } else if (/^[+-]?[0-9]+$/.test(number)) {
-        number = Number.parseInt(number, 10);
+        number = parseInt(number, 10);
       } else {
         number = null;
       }

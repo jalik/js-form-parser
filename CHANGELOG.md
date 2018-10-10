@@ -4,6 +4,12 @@
 - Adds support for more patterns in method `buildObject()`:
   - `buildObject('customField', value, context)`
   - `buildObject('customField[attr]', value, context)`
+  - `buildObject('customFields[0]', value, context)`
+- Changes behavior of method `buildObject()` to remove `undefined` fields:
+  - Array index with value `undefined` is removed from the result
+    - (ex: calling `buildObject('items[0]', undefined, {items:[1,2]})` returns `{items:[2]}`)
+  - Object attribute with value `undefined` is removed from the result
+    - (ex: calling `buildObject('obj[a]', undefined, {obj:{a:1,b:2}})` returns `{obj:{b:2}}`)
 
 ## v1.1.1
 - Updates dependencies

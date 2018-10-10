@@ -83,6 +83,18 @@ describe('buildObject()', () => {
     expect(r).toEqual([undefined, undefined, [undefined, undefined, STRING]]);
   });
 
+  // Removing index
+
+  test('buildObject("a[0]", undefined, {a:[1,2]}) should return {a:[2]}}', () => {
+    const r = FormParser.buildObject('a[0]', undefined, { a: [1, 2] });
+    expect(r).toEqual({ a: [2] });
+  });
+
+  test('buildObject("a[b]", undefined, {a:{b:1,c:2}}) should return {a:{c:2}}', () => {
+    const r = FormParser.buildObject('a[b]', undefined, { a: { b: 1, c: 2 } });
+    expect(r).toEqual({ a: { c: 2 } });
+  });
+
   // Testing with object
 
   test(`buildObject("[a]", ${INTEGER}, null) should return {a: ${INTEGER}}`, () => {
