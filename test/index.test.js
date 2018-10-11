@@ -1195,4 +1195,3 @@ describe('trim()', () => {
       .toEqual({ a: 'a', b: 'b', c: 'c' });
   });
 });
-
