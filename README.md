@@ -1,4 +1,4 @@
-# Form Parser
+# @jalik/form-parser
 
 Parse complex forms with minimum effort.
 
