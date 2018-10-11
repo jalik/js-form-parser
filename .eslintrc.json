@@ -2,11 +2,13 @@
   "env": {
     "browser": true,
     "es6": true,
-    "jest": true
+    "jest": true,
+    "node": true
   },
   "extends": "airbnb",
   "plugins": [
     "import",
-    "jest"
+    "jest",
+    "jsx-a11y"
   ]
 }
