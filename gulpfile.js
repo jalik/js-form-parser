@@ -26,35 +26,57 @@ const babel = require('gulp-babel');
 const del = require('del');
 const eslint = require('gulp-eslint');
 const gulp = require('gulp');
-const watch = require('gulp-watch');
+const path = require('path');
 
-const buildPath = 'dist';
+const buildPath = path.resolve('dist');
+const srcPath = path.resolve('src');
+const testPath = path.resolve('test');
 
-// Compile source files
-gulp.task('build', () => gulp.src([
-  'src/**/*.js',
-])
-  .pipe(babel())
+// Compile JS files
+gulp.task('build:js', () => gulp.src([
+  path.join(srcPath, '**', '*.js'),
+]).pipe(babel())
   .pipe(gulp.dest(buildPath)));
 
-// Remove compiled files
-gulp.task('clean', () => del([buildPath]));
+// Compile all files
+gulp.task('build', gulp.parallel(
+  'build:js',
+));
 
-// Check code quality
+// Delete previous compiled files
+gulp.task('clean', () => del([
+  buildPath,
+]));
+
+// Run JS lint
 gulp.task('eslint', () => gulp.src([
-  'src/**/*.js',
-  'test/**/*.js',
-  '!node_modules/**',
-])
-  .pipe(eslint())
+  path.join(srcPath, '**', '*.js'),
+  path.join(testPath, '**', '*.js'),
+  path.join('!node_modules', '**'),
+]).pipe(eslint())
   .pipe(eslint.formatEach())
   .pipe(eslint.failAfterError()));
 
 // Prepare files for production
-gulp.task('prepare', gulp.series('clean', 'eslint', 'build'));
+gulp.task('prepare', gulp.series(
+  'clean',
+  'eslint',
+  'build',
+));
 
-// Rebuild automatically
-gulp.task('watch', () => watch(['src/**/*.js'], ['build']));
+// Rebuild JS automatically
+gulp.task('watch:js', () => gulp.watch([
+  path.join(srcPath, '**', '*.js'),
+], gulp.parallel(
+  'build:js',
+)));
 
-// Prepare files for production
-gulp.task('default', gulp.series('prepare'));
+// Rebuild sources automatically
+gulp.task('watch', gulp.parallel(
+  'watch:js',
+));
+
+// Default task
+gulp.task('default', gulp.series(
+  'prepare',
+));
