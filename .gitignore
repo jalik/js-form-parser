@@ -1,10 +1,9 @@
-# IDE files
+# Project settings
 .idea/
 *.iml
 
-# Npm files
+# npm packages
 node_modules/
 
 # Compiled files
-bundle/
-dist/
+/dist/

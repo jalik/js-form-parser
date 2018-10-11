@@ -1,19 +1,19 @@
-# IDE files
+# Project settings
 .idea/
 *.iml
-
-# Compiled bundle
-bundle/
-
-# Source files
-src/
-
-# Test files
-test/
 
 # Tools settings
 .babelrc
 .eslintignore
 .eslintrc.json
+.gitignore
 gulpfile.js
-webpack.config.js
+
+# npm packages
+node_modules/
+
+# Source files
+/src/
+
+# Test files
+/test/
