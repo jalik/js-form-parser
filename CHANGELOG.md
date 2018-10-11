@@ -1,6 +1,8 @@
 # Changelog
 
-## CURRENT
+## v1.2.0
+- Updates dependencies
+- Removes unused devDependencies
 - Adds support for more patterns in method `buildObject()`:
   - `buildObject('customField', value, context)`
   - `buildObject('customField[attr]', value, context)`
