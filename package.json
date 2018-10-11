@@ -18,10 +18,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jalik/jk-form-parser.git"
+    "url": "https://github.com/jalik/js-form-parser.git"
   },
   "bugs": {
-    "url": "https://github.com/jalik/jk-form-parser/issues"
+    "url": "https://github.com/jalik/js-form-parser/issues"
   },
   "main": "dist/index.js",
   "scripts": {
