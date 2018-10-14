@@ -397,6 +397,28 @@ const fields = FormParser.parseForm(form, {
 });
 ```
 
+## Parsing a single field
+
+The lib allows you to parse a single field with the same options you would pass to the `parseForm(form, options)`, using the `parseField(field, options)` method.
+
+```js
+import FormParser from '@jalik/form-parser';
+
+// Define parsing options
+const parsingOptions = {
+    nullify: true,
+    dynamicTyping: true,
+    smartTyping: true,
+    trim: true 
+};
+
+// Get input element
+const input = document.getElementById('#customField');
+
+// Parse input value
+const value = FormParser.parseField(input, options);
+```
+
 ## Changelog
 
 History of releases is in the [changelog](./CHANGELOG.md).
