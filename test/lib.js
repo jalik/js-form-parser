@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-import { extend } from '@jalik/extend';
+import deepExtend from '@jalik/deep-extend';
 
 export default {
 
@@ -32,7 +32,7 @@ export default {
    * @return {Element}
    */
   createButton(attrs) {
-    return this.createElement('button', extend(attrs, { type: 'button' }));
+    return this.createElement('button', deepExtend(attrs, { type: 'button' }));
   },
 
   /**
@@ -41,7 +41,7 @@ export default {
    * @return {Element}
    */
   createCheckbox(attrs) {
-    return this.createElement('input', extend(attrs, { type: 'checkbox' }));
+    return this.createElement('input', deepExtend(attrs, { type: 'checkbox' }));
   },
 
   /**
@@ -76,7 +76,7 @@ export default {
    * @return {Element}
    */
   createFileInput(attrs) {
-    return this.createElement('input', extend(attrs, { type: 'file' }));
+    return this.createElement('input', deepExtend(attrs, { type: 'file' }));
   },
 
   /**
@@ -93,7 +93,7 @@ export default {
    * @return {Element}
    */
   createHiddenInput(attrs) {
-    return this.createElement('input', extend(attrs, { type: 'hidden' }));
+    return this.createElement('input', deepExtend(attrs, { type: 'hidden' }));
   },
 
   /**
@@ -102,7 +102,7 @@ export default {
    * @return {Element}
    */
   createNumberInput(attrs) {
-    return this.createElement('input', extend(attrs, { type: 'number' }));
+    return this.createElement('input', deepExtend(attrs, { type: 'number' }));
   },
 
   /**
@@ -111,7 +111,7 @@ export default {
    * @return {Element}
    */
   createPasswordInput(attrs) {
-    return this.createElement('input', extend(attrs, { type: 'password' }));
+    return this.createElement('input', deepExtend(attrs, { type: 'password' }));
   },
 
   /**
@@ -120,7 +120,7 @@ export default {
    * @return {Element}
    */
   createRadio(attrs) {
-    return this.createElement('input', extend(attrs, { type: 'radio' }));
+    return this.createElement('input', deepExtend(attrs, { type: 'radio' }));
   },
 
   /**
@@ -130,7 +130,7 @@ export default {
    */
   createSelect(attrs) {
     const { options } = attrs || {};
-    const selectAttributes = extend(attrs, {});
+    const selectAttributes = deepExtend(attrs, {});
 
     if (typeof selectAttributes.options !== 'undefined') {
       delete selectAttributes.options;
@@ -153,7 +153,7 @@ export default {
    * @return {Element}
    */
   createTextarea(attrs) {
-    const element = this.createElement('textarea', extend(attrs, {}));
+    const element = this.createElement('textarea', deepExtend(attrs, {}));
 
     if (typeof attrs.value !== 'undefined') {
       element.appendChild(document.createTextNode(attrs.value));
@@ -167,6 +167,6 @@ export default {
    * @return {Element}
    */
   createTextInput(attrs) {
-    return this.createElement('input', extend({ type: 'text' }, attrs));
+    return this.createElement('input', deepExtend({ type: 'text' }, attrs));
   },
 };

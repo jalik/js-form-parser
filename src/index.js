@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-import { extendRecursively } from '@jalik/extend';
+import deepExtend from '@jalik/deep-extend';
 
 const FormParser = {
   /**
@@ -221,7 +221,7 @@ const FormParser = {
     }
 
     // Set default options
-    const opt = extendRecursively({
+    const opt = deepExtend({
       dynamicTyping: true,
       nullify: true,
       smartTyping: true,
@@ -351,7 +351,7 @@ const FormParser = {
     }
 
     // Default options
-    const opt = extendRecursively({
+    const opt = deepExtend({
       cleanFunction: null,
       dynamicTyping: true,
       filterFunction: null,
