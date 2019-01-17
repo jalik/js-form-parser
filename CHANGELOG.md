@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.2.2
+- Updates dependencies
+
 ## v1.2.1
 - Updates dependencies
 
