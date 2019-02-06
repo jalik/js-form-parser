@@ -18,9 +18,9 @@ First of all, you have to define fields types in the HTML code using the `data-t
 <!-- This will convert "true" to boolean -->
 <input name="boolean" type="text" value="true" data-type="boolean">
 <!-- This will convert "01" to number -->
-<input name="integer" type="text" value="01" data-type="numeric">
+<input name="integer" type="text" value="01" data-type="number">
 <!-- This will convert "09.99" to number -->
-<input name="float" type="text" value="09.99" data-type="numeric">
+<input name="float" type="text" value="09.99" data-type="number">
 <!-- This will keep "0963" as a string -->
 <input name="string" type="text" value="0963" data-type="string">
 <!-- This will convert "13.37" to a number using regular expression -->
