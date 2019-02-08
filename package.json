@@ -34,24 +34,24 @@
     "watch": "npx gulp watch"
   },
   "dependencies": {
-    "@jalik/deep-extend": "^1.0.2"
+    "@jalik/deep-extend": "^1.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",
-    "@babel/preset-env": "^7.2.3",
-    "acorn": "^6.0.5",
-    "ajv": "^6.7.0",
+    "@babel/preset-env": "^7.3.1",
+    "acorn": "^6.0.7",
+    "ajv": "^6.8.1",
     "babel-core": "^7.0.0-bridge.0",
     "del": "^3.0.0",
-    "eslint": "^5.12.0",
+    "eslint": "^5.13.0",
     "eslint-config-airbnb": "^17.1.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-jest": "^22.1.3",
-    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-jest": "^22.2.2",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react": "^7.12.4",
     "gulp": "^4.0.0",
     "gulp-babel": "^8.0.0",
     "gulp-eslint": "^5.0.0",
-    "jest": "^23.6.0"
+    "jest": "^24.1.0"
   }
 }
