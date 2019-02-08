@@ -25,7 +25,6 @@
 import deepExtend from '@jalik/deep-extend';
 
 export default {
-
   /**
    * Creates a button
    * @param attrs
