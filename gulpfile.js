@@ -60,8 +60,8 @@ gulp.task('eslint', () => gulp.src([
 // Prepare files for production
 gulp.task('prepare', gulp.series(
   'clean',
-  'eslint',
   'build',
+  'eslint',
 ));
 
 // Rebuild JS automatically
