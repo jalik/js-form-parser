@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.0.0
+- Updates dependencies
+
+**BREAKING CHANGES:**
+- Exports functions using named export instead of default export syntax
+
 ## v1.3.0
 - Lib available in ES6+ syntax (see `src` folder) to enable auto-completion in IDEs
 - Updates dependencies

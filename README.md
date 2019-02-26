@@ -51,13 +51,13 @@ You can get fields from this form in a single object with minimum effort by usin
 **Note:** The form object must be an `HTMLFormElement`.
 
 ```js
-import FormParser from "@jalik/form-parser";
+import { parseForm } from "@jalik/form-parser";
 
 // Get an existing HTML form element
 const form = document.getElementById("my-form");
 
 // Parse form values with explicit options, which are optional
-const fields = FormParser.parseForm(form, {
+const fields = parseForm(form, {
     // Filters returned fields
     cleanFunction(value, field) { return value; },
     // Filters returned fields
@@ -156,13 +156,13 @@ Below is a more complete form example (pay attention to comments, values and att
 And to get form fields :
 
 ```js
-import FormParser from "@jalik/form-parser";
+import { parseForm } from "@jalik/form-parser";
 
 // Get an existing HTML form element
 const form = document.getElementById("my-form");
 
 // Parse form values using default options
-const fields = FormParser.parseForm(form);
+const fields = parseForm(form);
 ```
 
 The generated `fields` constant will look like this :
@@ -212,13 +212,13 @@ To get an array of values from a form, use this syntax :
 To get form fields :
 
 ```js
-import FormParser from "@jalik/form-parser";
+import { parseForm } from "@jalik/form-parser";
 
 // Get an existing HTML form element
 const form = document.getElementById("my-form");
 
 // Parse form values using default options
-const fields = FormParser.parseForm(form);
+const fields = parseForm(form);
 ```
 
 The generated `fields` constant will look like this :
@@ -245,13 +245,13 @@ To get an object from a form, use this syntax :
 To get fields :
 
 ```js
-import FormParser from "@jalik/form-parser";
+import { parseForm } from "@jalik/form-parser";
 
 // Get an existing HTML form element
 const form = document.getElementById("my-form");
 
 // Parse form values using default options
-const fields = FormParser.parseForm(form);
+const fields = parseForm(form);
 ```
 
 The generated `fields` constant will look like this :
@@ -271,13 +271,13 @@ You can even parse a single field using the same logic of dynamic typing and sma
 This can be useful in a React application with controlled components for example.
 
 ```js
-import FormParser from "@jalik/form-parser";
+import { parseField } from "@jalik/form-parser";
 
 // Age field is an input of type number
 const ageField = document.getElementById("age-field");
 
 // Get the age as number (ex: age = 30)
-const age = FormParser.parseField(ageField, {
+const age = parseField(ageField, {
   dynamicTyping: true,
   nullify: true,
   smartTyping: true,
@@ -288,7 +288,7 @@ const age = FormParser.parseField(ageField, {
 const colorsSelect = document.getElementById("colors-select");
 
 // Get the colors as array (ex: colors = ['blue', 'green'])
-const colors = FormParser.parseField(colorsSelect, {
+const colors = parseField(colorsSelect, {
   dynamicTyping: true,
   nullify: true,
   smartTyping: true,
@@ -317,13 +317,13 @@ As far as I know there is no depth limit.
 To get fields :
 
 ```js
-import FormParser from "@jalik/form-parser";
+import { parseForm } from "@jalik/form-parser";
 
 // Get an existing HTML form element
 const form = document.getElementById("my-form");
 
 // Parse form values using default options
-const fields = FormParser.parseForm(form);
+const fields = parseForm(form);
 ```
 
 The generated `fields` constant will look like this :
@@ -357,13 +357,13 @@ The generated `fields` constant will look like this :
 You can get only the fields you want with `filterFunction(field)` option in the `parseForm()` method. The filter function will be called with all fields and must return `true` to return the field.
 
 ```js
-import FormParser from "@jalik/form-parser";
+import { parseForm } from "@jalik/form-parser";
 
 // Get an existing HTML form element
 const form = document.getElementById("my-form");
 
 // Parse form values using default options
-const fields = FormParser.parseForm(form, {
+const fields = parseForm(form, {
     filterFunction(field) {
         // returns only text fields
         return field.type === "text";   
@@ -376,13 +376,13 @@ const fields = FormParser.parseForm(form, {
 All string values can be cleaned using the `cleanFunction(value, field)` option in the `parseForm()` method. The clean function will be called with any value that is a string of length > 0.
 
 ```js
-import FormParser from "@jalik/form-parser";
+import { parseForm } from "@jalik/form-parser";
 
 // Get an existing HTML form element
 const form = document.getElementById("my-form");
 
 // Parse form values using default options
-const fields = FormParser.parseForm(form, {
+const fields = parseForm(form, {
     cleanFunction(value, field) {
         // Apply uppercase to lastName field
         if (field.name === "lastName" || /name/gi.test(field.name)) {
@@ -402,7 +402,7 @@ const fields = FormParser.parseForm(form, {
 The lib allows you to parse a single field with the same options you would pass to the `parseForm(form, options)`, using the `parseField(field, options)` method.
 
 ```js
-import FormParser from '@jalik/form-parser';
+import { parseField } from '@jalik/form-parser';
 
 // Define parsing options
 const parsingOptions = {
@@ -416,7 +416,7 @@ const parsingOptions = {
 const input = document.getElementById('#customField');
 
 // Parse input value
-const value = FormParser.parseField(input, options);
+const value = parseField(input, options);
 ```
 
 ## Changelog
