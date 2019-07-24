@@ -1,12 +1,16 @@
 # @jalik/form-parser
+![GitHub package.json version](https://img.shields.io/github/package-json/v/jalik/js-form-parser.svg)
+[![Build Status](https://travis-ci.com/jalik/js-form-parser.svg?branch=master)](https://travis-ci.com/jalik/js-form-parser)
+![GitHub](https://img.shields.io/github/license/jalik/js-form-parser.svg)
+![GitHub last commit](https://img.shields.io/github/last-commit/jalik/js-form-parser.svg)
+[![GitHub issues](https://img.shields.io/github/issues/jalik/js-form-parser.svg)](https://github.com/jalik/js-form-parser/issues)
+![npm](https://img.shields.io/npm/dt/@jalik/form-parser.svg)
 
 Parse complex forms with minimum effort.
 
 ## Introduction
 
 Parsing forms can be painful, but with this great library you can get all fields from a form, automatically parse values (boolean, number, string, array, object), remove unnecessary spaces from strings and replace empty strings with null, plus you can decide which fields are collected or ignored and even use your own cleaning function.
-
-**This library is well tested with more than 100+ unit tests.**
 
 ## Defining fields types
 
