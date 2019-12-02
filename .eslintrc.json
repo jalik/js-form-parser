@@ -6,9 +6,9 @@
     "node": true
   },
   "extends": "airbnb",
+  "parser": "babel-eslint",
   "plugins": [
     "import",
-    "jest",
-    "jsx-a11y"
+    "jest"
   ]
 }

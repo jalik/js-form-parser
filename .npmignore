@@ -7,6 +7,8 @@
 .eslintignore
 .eslintrc.json
 .gitignore
+.travis.yml
+babel.config.js
 gulpfile.js
 
 # npm packages
