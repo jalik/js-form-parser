@@ -5,7 +5,7 @@
     "jest": true,
     "node": true
   },
-  "extends": "airbnb",
+  "extends": "airbnb-base",
   "parser": "babel-eslint",
   "plugins": [
     "import",
