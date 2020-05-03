@@ -34,13 +34,13 @@
     "watch": "npx gulp watch"
   },
   "dependencies": {
-    "@jalik/deep-extend": "^1.1.5"
+    "@jalik/deep-extend": "^1.1.6"
   },
   "devDependencies": {
-    "@babel/core": "^7.8.4",
-    "@babel/preset-env": "^7.8.4",
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
     "acorn": "^7.1.0",
-    "ajv": "^6.11.0",
+    "ajv": "^6.12.2",
     "babel-eslint": "^10.0.3",
     "del": "^5.1.0",
     "eslint": "^6.8.0",
@@ -50,7 +50,7 @@
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
     "gulp-eslint": "^6.0.0",
-    "jest": "^25.1.0",
+    "jest": "^25.5.4",
     "typescript": "^3.7.5"
   }
 }
