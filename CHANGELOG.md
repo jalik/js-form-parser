@@ -1,35 +1,38 @@
 # Changelog
 
+## v2.0.5
+- Upgrades dependencies
+
 ## v2.0.4
-- Updates dependencies
+- Upgrades dependencies
 
 ## v2.0.3
-- Updates dependencies
+- Upgrades dependencies
 
 ## v2.0.2
-- Updates dependencies
+- Upgrades dependencies
 
 ## v2.0.1
-- Updates dependencies
+- Upgrades dependencies
 
 ## v2.0.0
-- Updates dependencies
+- Upgrades dependencies
 
 **BREAKING CHANGES:**
 - Exports functions using named export instead of default export syntax
 
 ## v1.3.0
 - Lib available in ES6+ syntax (see `src` folder) to enable auto-completion in IDEs
-- Updates dependencies
+- Upgrades dependencies
 
 ## v1.2.2
-- Updates dependencies
+- Upgrades dependencies
 
 ## v1.2.1
-- Updates dependencies
+- Upgrades dependencies
 
 ## v1.2.0
-- Updates dependencies
+- Upgrades dependencies
 - Removes unused devDependencies
 - Adds support for more patterns in method `buildObject()`:
   - `buildObject('customField', value, context)`
@@ -42,7 +45,7 @@
     - (ex: calling `buildObject('obj[a]', undefined, {obj:{a:1,b:2}})` returns `{obj:{b:2}}`)
 
 ## v1.1.1
-- Updates dependencies
+- Upgrades dependencies
 
 ## v1.1.0
 - Adds method `nullify(value)`
@@ -69,7 +72,7 @@
 - Adds option `filterFunction: Function(field)` to filter returned fields with `parseForm()`
 
 ## v1.0.2
-- Updates documentation
+- Upgrades documentation
 - Removes dependency to `underscore`
 
 ## v1.0.0
