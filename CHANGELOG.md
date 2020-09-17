@@ -72,7 +72,7 @@
 - Adds option `filterFunction: Function(field)` to filter returned fields with `parseForm()`
 
 ## v1.0.2
-- Upgrades documentation
+- Updates README.md
 - Removes dependency to `underscore`
 
 ## v1.0.0
