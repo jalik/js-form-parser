@@ -18,13 +18,13 @@ Let start with a very simple form which produces a flat object :
 
 ```html
 <form id="my-form">
-    <input name="username" value="jalik">
-    <input name="email" type="email" value="jalik@mail.com">
-    <input name="age" type="number" value="30">
-    <input name="subscribeToNewsletter" type="checkbox" data-type="boolean" value="true" checked>
-    <input name="phone" type="tel" data-type="string" value="067123456">
-    <input name="token" type="hidden" value="aZ7hYkl12mPx">
-    <button type="submit">Submit</button>
+  <input name="username" value="jalik">
+  <input name="email" type="email" value="jalik@mail.com">
+  <input name="age" type="number" value="30">
+  <input name="subscribeToNewsletter" type="checkbox" data-type="boolean" value="true" checked>
+  <input name="phone" type="tel" data-type="string" value="067123456">
+  <input name="token" type="hidden" value="aZ7hYkl12mPx">
+  <button type="submit">Submit</button>
 </form>
 ```
 
@@ -59,59 +59,59 @@ Below is a more complete form example (pay attention to comments, values and att
 
 ```html
 <form id="my-form">
-    <!-- Fields with no name will be ignored -->
-    <input type="text" value="aaa">
-    
-    <!-- These fields will be parsed to booleans -->
-    <input name="boolean" type="radio" value="true" data-type="boolean">
-    <input name="boolean" type="radio" value="false" data-type="boolean" checked>
-    <input name="hidden_boolean" type="hidden" value="true" data-type="auto">
-    
-    <!-- These fields will be parsed to numbers -->
-    <input name="float" type="number" value="09.99">
-    <input name="hidden_float" type="hidden" value="09.99" data-type="number">
-    <input name="text_integer" type="text" value="01" data-type="number">
-    <input name="integer" type="number" value="01">
-    <input name="range" type="range" value="0118">
-    <select name="select_number" data-type="auto">
-        <option value="10"></option>
-        <option value="20"></option>
-        <option value="30" selected></option>
-    </select>
-    
-    <!-- These fields will be parsed to strings -->
-    <input name="date" type="date" value="2017-11-14">
-    <input name="file" type="file" value="file://path/to/file.txt">
-    <input name="hidden_text" type="hidden" value="shadowed">
-    <input name="month" type="month" value="2017-11">
-    <input name="number_text" type="number" value="0123" data-type="string">
-    <input name="text" type="text" value="Hello">
-    <input name="url" type="url" value="http://www.github.com/">
-    <input name="week" type="week" value="2017-W16">
-    <textarea name="textarea">Hello</textarea>
-    
-    <!-- Password fields are never altered, even by cleanFunction -->
-    <input name="password" type="password" value=" s3crEt ">
-    
-    <!-- These fields will be parsed as array -->
-    <input name="array[]" type="checkbox" value="A" checked>
-    <input name="array[]" type="checkbox" value="B" checked>
-    <select name="select_multiple" data-type="number" multiple>
-        <option value="10"></option>
-        <option value="20" selected></option>
-        <option value="30" selected></option>
-    </select>
-    
-    <!-- Disabled fields are ignored by default -->
-    <input name="disabled_field" value="" disabled>
-    
-    <!-- Buttons are ignored by default -->
-    <input name="input_button" type="button" value="Click me">
-    <input name="input_reset" type="reset" value="Reset">
-    <input name="input_submit" type="submit" value="Submit">
-    <button name="button" type="button" value="Click me"></button>
-    <button name="reset" type="reset" value="Reset"></button>
-    <button name="submit" type="submit" value="Submit"></button>
+  <!-- Fields with no name will be ignored -->
+  <input type="text" value="aaa">
+  
+  <!-- These fields will be parsed to booleans -->
+  <input name="boolean" type="radio" value="true" data-type="boolean">
+  <input name="boolean" type="radio" value="false" data-type="boolean" checked>
+  <input name="hidden_boolean" type="hidden" value="true" data-type="auto">
+  
+  <!-- These fields will be parsed to numbers -->
+  <input name="float" type="number" value="09.99">
+  <input name="hidden_float" type="hidden" value="09.99" data-type="number">
+  <input name="text_integer" type="text" value="01" data-type="number">
+  <input name="integer" type="number" value="01">
+  <input name="range" type="range" value="0118">
+  <select name="select_number" data-type="auto">
+    <option value="10"></option>
+    <option value="20"></option>
+    <option value="30" selected></option>
+  </select>
+  
+  <!-- These fields will be parsed to strings -->
+  <input name="date" type="date" value="2017-11-14">
+  <input name="file" type="file" value="file://path/to/file.txt">
+  <input name="hidden_text" type="hidden" value="shadowed">
+  <input name="month" type="month" value="2017-11">
+  <input name="number_text" type="number" value="0123" data-type="string">
+  <input name="text" type="text" value="Hello">
+  <input name="url" type="url" value="http://www.github.com/">
+  <input name="week" type="week" value="2017-W16">
+  <textarea name="textarea">Hello</textarea>
+  
+  <!-- Password fields are never altered, even by cleanFunction -->
+  <input name="password" type="password" value=" s3crEt ">
+  
+  <!-- These fields will be parsed as array -->
+  <input name="array[]" type="checkbox" value="A" checked>
+  <input name="array[]" type="checkbox" value="B" checked>
+  <select name="select_multiple" data-type="number" multiple>
+    <option value="10"></option>
+    <option value="20" selected></option>
+    <option value="30" selected></option>
+  </select>
+  
+  <!-- Disabled fields are ignored by default -->
+  <input name="disabled_field" value="" disabled>
+  
+  <!-- Buttons are ignored by default -->
+  <input name="input_button" type="button" value="Click me">
+  <input name="input_reset" type="reset" value="Reset">
+  <input name="input_submit" type="submit" value="Submit">
+  <button name="button" type="button" value="Click me"></button>
+  <button name="reset" type="reset" value="Reset"></button>
+  <button name="submit" type="submit" value="Submit"></button>
 </form>
 ```
 
@@ -159,15 +159,15 @@ To get an array of values from a form, use this syntax :
 
 ```html
 <form id="my-form">
-    <!-- This will create an array with checked values -->
-    <input name="array[]" type="checkbox" value="A">
-    <input name="array[]" type="checkbox" value="B" checked>
-    <input name="array[]" type="checkbox" value="C" checked>
-    
-    <!-- This will create an array with checked values, but it will keep indexes -->
-    <input name="colors[2]" type="checkbox" value="red" checked>
-    <input name="colors[1]" type="checkbox" value="blue">
-    <input name="colors[0]" type="checkbox" value="white" checked>
+  <!-- This will create an array with checked values -->
+  <input name="array[]" type="checkbox" value="A">
+  <input name="array[]" type="checkbox" value="B" checked>
+  <input name="array[]" type="checkbox" value="C" checked>
+  
+  <!-- This will create an array with checked values, but it will keep indexes -->
+  <input name="colors[2]" type="checkbox" value="red" checked>
+  <input name="colors[1]" type="checkbox" value="blue">
+  <input name="colors[0]" type="checkbox" value="white" checked>
 </form> 
 ```
 
@@ -198,9 +198,9 @@ To get an object from a form, use this syntax :
 
 ```html
 <form id="my-form">
-    <!-- This will create an object with those attributes -->
-    <input name="address[street]" value="Av. Pouvanaa a Oopa">
-    <input name="address[city]" value="Papeete">
+  <!-- This will create an object with those attributes -->
+  <input name="address[street]" value="Av. Pouvanaa a Oopa">
+  <input name="address[city]" value="Papeete">
 </form> 
 ```
 
@@ -262,13 +262,13 @@ You can construct complex and deep objects containing nested arrays and objects 
 
 ```html
 <form id="my-form">
-    <input name="phones[0][code]" type="number" value="689" data-type="string">
-    <input name="phones[0][number]" type="number" value="87218910" data-type="string">
-    <input name="phones[1][code]" type="number" value="689" data-type="string">
-    <input name="phones[1][number]" type="number" value="87218910" data-type="string">
-    
-    <!-- A very deep field value -->
-    <input name="deep_1[][deep_2][0][][deep_3]" value="DEEP">
+  <input name="phones[0][code]" type="number" value="689" data-type="string">
+  <input name="phones[0][number]" type="number" value="87218910" data-type="string">
+  <input name="phones[1][code]" type="number" value="689" data-type="string">
+  <input name="phones[1][number]" type="number" value="87218910" data-type="string">
+  
+  <!-- A very deep field value -->
+  <input name="deep_1[][deep_2][0][][deep_3]" value="DEEP">
 </form> 
 ```
 
@@ -339,17 +339,14 @@ const form = document.getElementById("my-form");
 
 // Parse form values using default options
 const fields = parseForm(form, {
-    cleanFunction: (value, field) => {
-        // Apply uppercase to lastName field
-        if (field.name === "lastName" || /name/gi.test(field.name)) {
-            value = value.toUpperCase();
-        }
-        
-        // Remove HTML code from all fields
-        value = value.replace(/<\/?[^>]+>/gm, "");
-        
-        return value;   
+  cleanFunction: (value, field) => {
+    // Apply uppercase to lastName field
+    if (field.name === "lastName" || /name/gi.test(field.name)) {
+      value = value.toUpperCase();
     }
+    // Remove HTML code from all fields
+    return value.replace(/<\/?[^>]+>/gm, "");
+  }
 });
 ```
 
@@ -386,26 +383,26 @@ const form = document.getElementById("my-form");
 
 // Parse form values with custom options
 const fields = parseForm(form, {
-    // Filters returned fields
-    cleanFunction(value, field) { return value; },
-    // Filters returned fields
-    filterFunction(field) { return true; },
-    // Don't get buttons
-    ignoreButtons: true,
-    // Don't get disabled fields
-    ignoreDisabled: true,
-    // Don't get fields with empty string
-    ignoreEmpty: false,
-    // Don't get radios or checkboxes that are not checked
-    ignoreUnchecked: false,
-    // Replace empty strings with null
-    nullify: true,
-    // Parse values to the best type (ex: "001" => 1)
-    dynamicTyping: true,
-    // Parse values based on field type (ex: type="number" will parse to number)
-    smartTyping: true,
-    // Remove extra spaces
-    trim: true 
+  // Filters returned fields
+  cleanFunction(value, field) { return value; },
+  // Filters returned fields
+  filterFunction(field) { return true; },
+  // Don't get buttons
+  ignoreButtons: true,
+  // Don't get disabled fields
+  ignoreDisabled: true,
+  // Don't get fields with empty string
+  ignoreEmpty: false,
+  // Don't get radios or checkboxes that are not checked
+  ignoreUnchecked: false,
+  // Replace empty strings with null
+  nullify: true,
+  // Parse values to the best type (ex: "001" => 1)
+  dynamicTyping: true,
+  // Parse values based on field type (ex: type="number" will parse to number)
+  smartTyping: true,
+  // Remove extra spaces
+  trim: true 
 });
 ```
 
