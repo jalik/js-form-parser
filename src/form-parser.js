@@ -69,12 +69,15 @@ export function buildObject(str, value, context) {
     // ex: [customField]
     const end = str.indexOf(']', index + 1);
     const subtree = str.substr(end + 1);
-    const key = str.substring(index + 1, end);
-    const keyLen = key.length;
+    let key = str.substring(index + 1, end);
 
     // Object attribute
-    // ex: [customField1]
-    if (keyLen > 0 && /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(key)) {
+    // ex: [customField1] or ["10"] or ['10']
+    if (key.length > 0 && (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(key) || /^(["'])[^"']+\1$/.test(key))) {
+      // Remove quotes in key
+      key = key.replace(/^["']/, '').replace(/["']$/, '');
+
+      // Create empty object if context is not defined
       if (typeof ctx === 'undefined' || ctx === null) {
         ctx = {};
       }
@@ -88,11 +91,12 @@ export function buildObject(str, value, context) {
         delete ctx[key];
       }
     } else {
+      // Create empty array if context is not defined
       if (typeof ctx === 'undefined' || ctx === null) {
         ctx = [];
       }
 
-      if (keyLen === 0) {
+      if (key.length === 0) {
         // Array with dynamic index
         // ex: []
         const result = buildObject(subtree, value, null);
@@ -155,7 +159,7 @@ export function isButton(field) {
  * @return {*|boolean}
  */
 export function isCheckableField(field) {
-  return field && (contains(['checkbox', 'radio'], field.type));
+  return typeof field.type === 'string' && contains(['checkbox', 'radio'], field.type);
 }
 
 /**

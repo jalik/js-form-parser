@@ -195,6 +195,20 @@ describe('buildObject()', () => {
     const r = buildObject('[b][text]', STRING, obj2);
     expect(r).toEqual({ a: [0, 1, 2], b: { text: STRING } });
   });
+
+  test('should interpret number as object attribute if surrounded by double quotes', () => {
+    const context = {};
+    const result = { root: { 10: { text: STRING } } };
+    const r = buildObject('root["10"][text]', STRING, context);
+    expect(r).toEqual(result);
+  });
+
+  test('should interpret number as object attribute if surrounded by single quotes', () => {
+    const context = {};
+    const result = { root: { 10: { text: STRING } } };
+    const r = buildObject('root[\'10\'][text]', STRING, context);
+    expect(r).toEqual(result);
+  });
 });
 
 describe('contains()', () => {
