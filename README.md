@@ -12,40 +12,18 @@ Parse complex forms with minimum effort.
 
 Parsing forms can be painful, but with this great library you can get all fields from a form, automatically parse values (boolean, number, string, array, object), remove unnecessary spaces from strings and replace empty strings with null, plus you can decide which fields are collected or ignored and even use your own cleaning function.
 
-## Defining fields types
+## Getting started
 
-First of all, you have to define fields types in the HTML code using the `data-type` attribute, so when the parser will get fields values, it will automatically convert them to the given type. The `data-type` attribute can have one of the following values : `auto`, `boolean`, `number` or `string`.
-
-**Note:** The `auto` value will analyze value and convert it to the best type automatically.
-
-```html
-<!-- This will convert "true" to boolean -->
-<input name="boolean" type="text" value="true" data-type="boolean">
-<!-- This will convert "01" to number -->
-<input name="integer" type="text" value="01" data-type="number">
-<!-- This will convert "09.99" to number -->
-<input name="float" type="text" value="09.99" data-type="number">
-<!-- This will keep "0963" as a string -->
-<input name="string" type="text" value="0963" data-type="string">
-<!-- This will convert "13.37" to a number using regular expression -->
-<input name="anything" type="text" value="13.37" data-type="auto">
-<!-- This will convert "false" to a boolean using regular expression -->
-<input name="anything_2" type="text" value="false" data-type="auto">
-```
-
-If no `data-type` attribute is set, the `type` attribute will be used (for `input` elements at least), this behavior is active by default with the combination of this options `{dynamicTyping: true, smartTyping: true}` in the `parseForm()` function.
-
-## Getting fields from a form
-
-Let start with a very simple form :
+Let start with a very simple form which produces a flat object :
 
 ```html
 <form id="my-form">
-    <input type="text" name="username" value="Jalik ">
-    <input type="email" name="email" value="jalik26@gmail.com">
-    <input type="number" name="age" value="30" data-type="number">
-    <input type="checkbox" name="subscribeToNewsletter" value="true" data-type="boolean" checked>
-    <input type="hidden" name="token" value="aZ7hYkl12mPx">
+    <input name="username" value="jalik">
+    <input name="email" type="email" value="jalik@mail.com">
+    <input name="age" type="number" value="30">
+    <input name="subscribeToNewsletter" type="checkbox" data-type="boolean" value="true" checked>
+    <input name="phone" type="tel" data-type="string" value="067123456">
+    <input name="token" type="hidden" value="aZ7hYkl12mPx">
     <button type="submit">Submit</button>
 </form>
 ```
@@ -60,39 +38,19 @@ import { parseForm } from "@jalik/form-parser";
 // Get an existing HTML form element
 const form = document.getElementById("my-form");
 
-// Parse form values with explicit options, which are optional
-const fields = parseForm(form, {
-    // Filters returned fields
-    cleanFunction(value, field) { return value; },
-    // Filters returned fields
-    filterFunction(field) { return true; },
-    // Don't get buttons
-    ignoreButtons: true,
-    // Don't get disabled fields
-    ignoreDisabled: true,
-    // Don't get fields with empty string
-    ignoreEmpty: false,
-    // Don't get radios or checkboxes that are not checked
-    ignoreUnchecked: false,
-    // Replace empty strings with null
-    nullify: true,
-    // Parse values to the best type (ex: "001" => 1)
-    dynamicTyping: true,
-    // Parse values based on field type (ex: type="number" will parse to number)
-    smartTyping: true,
-    // Remove extra spaces
-    trim: true 
-});
+// Parse form values with default options
+const fields = parseForm(form);
 ```
 
-You will then get the `fields` constant looking like this :
+The `fields` object will look like this :
 
 ```json
 {
-  "username": "Jalik",
-  "email": "jalik26@gmail.com",
+  "username": "jalik",
+  "email": "jalik@mail.com",
   "age": 30,
   "subscribeToNewsletter": true,
+  "phone": "067123456",
   "token": "aZ7hYkl12mPx"
 }
 ```
@@ -132,7 +90,7 @@ Below is a more complete form example (pay attention to comments, values and att
     <input name="week" type="week" value="2017-W16">
     <textarea name="textarea">Hello</textarea>
     
-    <!-- Password fields are never parsed and will remain unmodified -->
+    <!-- Password fields are never altered, even by cleanFunction -->
     <input name="password" type="password" value=" s3crEt ">
     
     <!-- These fields will be parsed as array -->
@@ -157,7 +115,7 @@ Below is a more complete form example (pay attention to comments, values and att
 </form>
 ```
 
-And to get form fields :
+To get form fields :
 
 ```js
 import { parseForm } from "@jalik/form-parser";
@@ -169,7 +127,7 @@ const form = document.getElementById("my-form");
 const fields = parseForm(form);
 ```
 
-The generated `fields` constant will look like this :
+The `fields` object will look like this :
 
 ```json
 {
@@ -195,7 +153,7 @@ The generated `fields` constant will look like this :
 }
 ```
 
-## Getting arrays from a form
+## Parsing arrays
 
 To get an array of values from a form, use this syntax :
 
@@ -213,7 +171,7 @@ To get an array of values from a form, use this syntax :
 </form> 
 ```
 
-To get form fields :
+Get fields values :
 
 ```js
 import { parseForm } from "@jalik/form-parser";
@@ -225,7 +183,7 @@ const form = document.getElementById("my-form");
 const fields = parseForm(form);
 ```
 
-The generated `fields` constant will look like this :
+The `fields` object will look like this :
 
 ```
 {
@@ -234,19 +192,19 @@ The generated `fields` constant will look like this :
 }
 ```
 
-## Getting objects from a form
+## Parsing objects
 
 To get an object from a form, use this syntax :
 
 ```html
 <form id="my-form">
     <!-- This will create an object with those attributes -->
-    <input name="phone[code]" type="number" value="689" data-type="string">
-    <input name="phone[number]" type="number" value="87218910" data-type="string">
+    <input name="address[street]" value="Av. Pouvanaa a Oopa">
+    <input name="address[city]" value="Papeete">
 </form> 
 ```
 
-To get fields :
+Get fields values :
 
 ```js
 import { parseForm } from "@jalik/form-parser";
@@ -258,53 +216,49 @@ const form = document.getElementById("my-form");
 const fields = parseForm(form);
 ```
 
-The generated `fields` constant will look like this :
+The `fields` object will look like this :
 
 ```json
 {
-  "phone": {
-    "code": "689",
-    "number": "87218910"
+  "address": {
+    "street": "Av. Pouvanaa a Oopa",
+    "city": "Papeete"
   }
 }
 ```
 
-## Parsing a single field
+If no `data-type` attribute is set, the `type` attribute will be used (for `input` elements at least), this behavior is active by default with the combination of this options `{dynamicTyping: true, smartTyping: true}` in the `parseForm()` function.
 
-You can even parse a single field using the same logic of dynamic typing and smart typing based on field type or field dataset... 
-This can be useful in a React application with controlled components for example.
 
-```js
-import { parseField } from "@jalik/form-parser";
+## Forcing fields types
 
-// Age field is an input of type number
-const ageField = document.getElementById("age-field");
+Sometimes you may want to force a number to be parsed as a string for example.
+In this case, use the `data-type` attribute on the input. When the parser will get fields values, it will automatically convert them to the given `data-type`.
 
-// Get the age as number (ex: age = 30)
-const age = parseField(ageField, {
-  dynamicTyping: true,
-  nullify: true,
-  smartTyping: true,
-  trim: true,
-});
+The `data-type` attribute can have one of the following values : `auto`, `boolean`, `number` or `string`.
 
-// Colors is a select allowing multiple values to be selected
-const colorsSelect = document.getElementById("colors-select");
+**Note:** The `auto` data-type will convert value to the best guess type (ex: `123` => `number`).
 
-// Get the colors as array (ex: colors = ['blue', 'green'])
-const colors = parseField(colorsSelect, {
-  dynamicTyping: true,
-  nullify: true,
-  smartTyping: true,
-  trim: true,
-});
+**Note:** The `boolean` data-type will convert `"1"` and `"true"` to `true`, all other values are `false`. 
 
+```html
+<!-- This will convert "true" to boolean -->
+<input name="boolean" type="text" value="true" data-type="boolean">
+<!-- This will convert "01" to number -->
+<input name="integer" type="text" value="01" data-type="number">
+<!-- This will convert "09.99" to number -->
+<input name="float" type="text" value="09.99" data-type="number">
+<!-- This will keep "0963" as a string -->
+<input name="string" type="text" value="0963" data-type="string">
+<!-- This will convert "13.37" to a number using regular expression -->
+<input name="anything" type="text" value="13.37" data-type="auto">
+<!-- This will convert "false" to a boolean using regular expression -->
+<input name="anything_2" type="text" value="false" data-type="auto">
 ```
 
-## Creating complex forms
+## Parsing complex forms
 
-You can construct complex and deep objects using a mix of arrays and object attributes.
-As far as I know there is no depth limit.
+You can construct complex and deep objects containing nested arrays and objects with no depth limit.
 
 ```html
 <form id="my-form">
@@ -330,7 +284,7 @@ const form = document.getElementById("my-form");
 const fields = parseForm(form);
 ```
 
-The generated `fields` constant will look like this :
+The `fields` object will look like this :
 
 ```json
 {
@@ -356,7 +310,7 @@ The generated `fields` constant will look like this :
 }
 ```
 
-## Filtering returned fields
+## Filtering fields
 
 You can get only the fields you want with `filterFunction(field)` option in the `parseForm()` method. The filter function will be called with all fields and must return `true` to return the field.
 
@@ -368,14 +322,12 @@ const form = document.getElementById("my-form");
 
 // Parse form values using default options
 const fields = parseForm(form, {
-    filterFunction(field) {
-        // returns only text fields
-        return field.type === "text";   
-    }
+  // returns only text fields
+  filterFunction: (field) => field.type === "text",
 });
 ```
 
-## Cleaning returned values
+## Cleaning parsed values
 
 All string values can be cleaned using the `cleanFunction(value, field)` option in the `parseForm()` method. The clean function will be called with any value that is a string of length > 0.
 
@@ -387,7 +339,7 @@ const form = document.getElementById("my-form");
 
 // Parse form values using default options
 const fields = parseForm(form, {
-    cleanFunction(value, field) {
+    cleanFunction: (value, field) => {
         // Apply uppercase to lastName field
         if (field.name === "lastName" || /name/gi.test(field.name)) {
             value = value.toUpperCase();
@@ -401,26 +353,60 @@ const fields = parseForm(form, {
 });
 ```
 
-## Parsing a single field
+## API
 
-The lib allows you to parse a single field with the same options you would pass to the `parseForm(form, options)`, using the `parseField(field, options)` method.
+### parseField(field, options)
+
+You can parse a single field with options, it works the same way as `parseForm(form, options)` but with a field.
 
 ```js
-import { parseField } from '@jalik/form-parser';
+import { parseField } from "@jalik/form-parser";
 
-// Define parsing options
-const parsingOptions = {
+// Colors is a select allowing multiple values to be selected
+const colorsSelect = document.getElementById("colors-field");
+
+// Get the colors array (ex: colors = ['blue', 'green'])
+const colors = parseField(colorsSelect, {
+  dynamicTyping: true,
+  nullify: true,
+  smartTyping: true,
+  trim: true,
+});
+```
+
+### parseForm(form, options)
+
+You can parse a form with options to customize the behavior.
+
+```js
+import { parseForm } from "@jalik/form-parser";
+
+// Get an existing HTML form element
+const form = document.getElementById("my-form");
+
+// Parse form values with custom options
+const fields = parseForm(form, {
+    // Filters returned fields
+    cleanFunction(value, field) { return value; },
+    // Filters returned fields
+    filterFunction(field) { return true; },
+    // Don't get buttons
+    ignoreButtons: true,
+    // Don't get disabled fields
+    ignoreDisabled: true,
+    // Don't get fields with empty string
+    ignoreEmpty: false,
+    // Don't get radios or checkboxes that are not checked
+    ignoreUnchecked: false,
+    // Replace empty strings with null
     nullify: true,
+    // Parse values to the best type (ex: "001" => 1)
     dynamicTyping: true,
+    // Parse values based on field type (ex: type="number" will parse to number)
     smartTyping: true,
+    // Remove extra spaces
     trim: true 
-};
-
-// Get input element
-const input = document.getElementById('#customField');
-
-// Parse input value
-const value = parseField(input, options);
+});
 ```
 
 ## Changelog
