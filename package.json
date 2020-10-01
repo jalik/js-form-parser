@@ -1,6 +1,6 @@
 {
   "name": "@jalik/form-parser",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "A utility to parse complex forms with minimum effort.",
   "license": "MIT",
   "keywords": [
