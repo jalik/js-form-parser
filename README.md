@@ -229,6 +229,36 @@ The `fields` object will look like this :
 
 If no `data-type` attribute is set, the `type` attribute will be used (for `input` elements at least), this behavior is active by default with the combination of this options `{dynamicTyping: true, smartTyping: true}` in the `parseForm()` function.
 
+### Using numbers as object attribute (since v2.0.6)
+
+If you need to create an object with numbers as attributes, use single or double quotes to force the parser to interpret it as a string and then creating an object instead of an array.
+
+```html
+<form id="my-form">
+  <!-- This will create an object with those attributes -->
+  <input name="elements['0']" value="Zero">
+  <input name="elements['1']" value="One">
+  <input name="elements['2']" value="Two">
+</form> 
+```
+
+Will give this :
+
+```json
+{
+  "elements": {
+    "0": "Zero",
+    "1": "One",
+    "2": "Two"
+  }
+}
+```
+
+Instead of :
+
+```json
+{"elements": ["Zero", "One", "Two"]}
+```
 
 ## Forcing fields types
 
