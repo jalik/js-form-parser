@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.0.6
+- Fixes `cleanFunction` calling on password fields, which must never happen
+- Adds support to define number as object attribute if surrounded by double quotes or single quotes
+- Upgrades dependencies
+
 ## v2.0.5
 - Upgrades dependencies
 
