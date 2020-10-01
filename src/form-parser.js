@@ -518,8 +518,8 @@ export function parseForm(form, options) {
     // Parse field value
     let value = parseField(field, opt);
 
-    // Execute custom clean function
-    if (typeof opt.cleanFunction === 'function') {
+    // Execute custom clean function on fields with type different of password
+    if (typeof opt.cleanFunction === 'function' && field.type !== 'password') {
       if (value instanceof Array) {
         for (let k = 0; k < value.length; k += 1) {
           if (typeof value[k] === 'string' && value[k].length) {

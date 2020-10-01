@@ -43,6 +43,7 @@ const FLOAT_STRING = '09.99';
 const FLOAT_STRING_COMMA = '09,99';
 const INTEGER = 100;
 const INTEGER_STRING = '0100';
+const PASSWORD = ' sEcr3t ';
 const STRING = 'hello';
 
 describe('FormParser', () => {
@@ -513,11 +514,11 @@ describe('parseForm()', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createPasswordInput({
         name: 'password',
-        value: STRING,
+        value: PASSWORD,
       }));
 
       const r = parseForm(form, { dynamicTyping: true, smartTyping: true });
-      expect(r).toEqual({ password: STRING });
+      expect(r).toEqual({ password: PASSWORD });
     });
 
     test('parseForm(form, options) should return values of single select lists', () => {
@@ -574,8 +575,8 @@ describe('parseForm()', () => {
   });
 
   describe('Parsing options', () => {
-    describe('cleanFunction option', () => {
-      test('parseForm(form, {cleanFunction: Function}) should execute clean function on string values', () => {
+    describe('cleanFunction', () => {
+      test('should clean string values', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({
           name: 'text',
@@ -583,41 +584,38 @@ describe('parseForm()', () => {
         }));
 
         const r = parseForm(form, {
-          cleanFunction(value) {
-            return value.replace(/<\/?[^>]+>/gm, '');
-          },
+          cleanFunction: (value) => value.replace(/<\/?[^>]+>/gm, ''),
         });
         expect(r).toEqual({ text: '' });
       });
+      test('should not clean value from password field', () => {
+        const form = TestUtils.createForm();
+        form.appendChild(TestUtils.createPasswordInput({
+          name: 'pass',
+          value: PASSWORD,
+        }));
 
-      test('parseForm(form, {filterFunction: Function}) should return allowed fields only', () => {
+        const r = parseForm(form, {
+          cleanFunction: (value) => value.trim(),
+        });
+        expect(r).toEqual({ pass: PASSWORD });
+      });
+    });
+
+    describe('filterFunction', () => {
+      test('should return filtered fields only', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({ name: 'text', value: 'test' }));
         form.appendChild(TestUtils.createNumberInput({ name: 'num', value: 2 }));
 
         const r = parseForm(form, {
-          filterFunction(field) {
-            return field.type === 'text';
-          },
+          filterFunction: (field) => field.type === 'text',
         });
         expect(r).toEqual({ text: 'test' });
       });
-
-      test('parseForm(form, {cleanFunction: null}) should not execute clean function on string values', () => {
-        const form = TestUtils.createForm();
-        form.appendChild(TestUtils.createTextInput({
-          name: 'text',
-          value: '<script src="http://hacked.net"></script>',
-        }));
-
-        const r = parseForm(form, {
-          cleanFunction: null,
-        });
-        expect(r).toEqual({ text: '<script src="http://hacked.net"></script>' });
-      });
     });
 
-    describe('ignoreButtons option', () => {
+    describe('ignoreButtons', () => {
       test('parseForm(form, {ignoreButtons: true}) should not return values of buttons', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createButton({
@@ -667,7 +665,7 @@ describe('parseForm()', () => {
       });
     });
 
-    describe('ignoreDisabled option', () => {
+    describe('ignoreDisabled', () => {
       test('parseForm(form, {ignoreDisabled: true}) should not return disabled fields', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({
@@ -693,7 +691,7 @@ describe('parseForm()', () => {
       });
     });
 
-    describe('ignoreEmpty option', () => {
+    describe('ignoreEmpty', () => {
       test('parseForm(form, {ignoreEmpty: true}) should not return empty fields', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({
@@ -717,7 +715,7 @@ describe('parseForm()', () => {
       });
     });
 
-    describe('ignoreUnchecked option', () => {
+    describe('ignoreUnchecked', () => {
       test('parseForm(form, {ignoreUnchecked: true}) should not return unchecked fields', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createCheckbox({
@@ -741,7 +739,7 @@ describe('parseForm()', () => {
       });
     });
 
-    describe('nullify option', () => {
+    describe('nullify', () => {
       test('parseForm(form, {nullify: true}) should replace empty string with null', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({
@@ -765,7 +763,7 @@ describe('parseForm()', () => {
       });
     });
 
-    describe('dynamicTyping option', () => {
+    describe('dynamicTyping', () => {
       test('parseForm(form, {dynamicTyping: true, smartTyping: false}) should parse all values', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({
@@ -827,7 +825,7 @@ describe('parseForm()', () => {
       });
     });
 
-    describe('smartTyping option', () => {
+    describe('smartTyping', () => {
       test('parseForm(form, {smartTyping: true}) should parse values using type attribute', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({
@@ -907,7 +905,7 @@ describe('parseForm()', () => {
       });
     });
 
-    describe('trim option', () => {
+    describe('trim', () => {
       test('parseForm(form, {trim: true}) should trim text values', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({
@@ -934,11 +932,11 @@ describe('parseForm()', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createPasswordInput({
           name: 'password',
-          value: ` ${STRING} `,
+          value: PASSWORD,
         }));
 
         const r = parseForm(form, { trim: true });
-        expect(r).toEqual({ password: ` ${STRING} ` });
+        expect(r).toEqual({ password: PASSWORD });
       });
     });
   });
