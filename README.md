@@ -55,7 +55,7 @@ The `fields` object will look like this :
 }
 ```
 
-Below is a more complete form example (pay attention to comments, values and attributes).
+Below is a more complete form example, with a lot of different cases to help you understand the behavior of the parsing function (pay attention to comments, values and attributes).
 
 ```html
 <form id="my-form">
@@ -63,14 +63,14 @@ Below is a more complete form example (pay attention to comments, values and att
   <input type="text" value="aaa">
   
   <!-- These fields will be parsed to booleans -->
-  <input name="boolean" type="radio" value="true" data-type="boolean">
-  <input name="boolean" type="radio" value="false" data-type="boolean" checked>
-  <input name="hidden_boolean" type="hidden" value="true" data-type="auto">
+  <input name="boolean" type="radio" data-type="boolean" value="true">
+  <input name="boolean" type="radio" data-type="boolean" value="false" checked>
+  <input name="hidden_boolean" type="hidden" data-type="auto" value="true">
   
   <!-- These fields will be parsed to numbers -->
   <input name="float" type="number" value="09.99">
-  <input name="hidden_float" type="hidden" value="09.99" data-type="number">
-  <input name="text_integer" type="text" value="01" data-type="number">
+  <input name="hidden_float" type="hidden" data-type="number" value="09.99">
+  <input name="text_integer" type="text" data-type="number" value="01">
   <input name="integer" type="number" value="01">
   <input name="range" type="range" value="0118">
   <select name="select_number" data-type="auto">
@@ -84,13 +84,13 @@ Below is a more complete form example (pay attention to comments, values and att
   <input name="file" type="file" value="file://path/to/file.txt">
   <input name="hidden_text" type="hidden" value="shadowed">
   <input name="month" type="month" value="2017-11">
-  <input name="number_text" type="number" value="0123" data-type="string">
+  <input name="number_text" type="number" data-type="string" value="0123">
   <input name="text" type="text" value="Hello">
   <input name="url" type="url" value="http://www.github.com/">
   <input name="week" type="week" value="2017-W16">
   <textarea name="textarea">Hello</textarea>
   
-  <!-- Password fields are never altered, even by cleanFunction -->
+  <!-- Password fields are never altered (trimmed), even by cleanFunction -->
   <input name="password" type="password" value=" s3crEt ">
   
   <!-- These fields will be parsed as array -->
@@ -227,8 +227,6 @@ The `fields` object will look like this :
 }
 ```
 
-If no `data-type` attribute is set, the `type` attribute will be used (for `input` elements at least), this behavior is active by default with the combination of this options `{dynamicTyping: true, smartTyping: true}` in the `parseForm()` function.
-
 ### Using numbers as object attribute (since v2.0.6)
 
 If you need to create an object with numbers as attributes, use single or double quotes to force the parser to interpret it as a string and then creating an object instead of an array.
@@ -272,30 +270,35 @@ The `data-type` attribute can have one of the following values : `auto`, `boolea
 **Note:** The `boolean` data-type will convert `"1"` and `"true"` to `true`, all other values are `false`. 
 
 ```html
-<!-- This will convert "true" to boolean -->
-<input name="boolean" type="text" value="true" data-type="boolean">
-<!-- This will convert "01" to number -->
-<input name="integer" type="text" value="01" data-type="number">
-<!-- This will convert "09.99" to number -->
-<input name="float" type="text" value="09.99" data-type="number">
-<!-- This will keep "0963" as a string -->
-<input name="string" type="text" value="0963" data-type="string">
-<!-- This will convert "13.37" to a number using regular expression -->
-<input name="anything" type="text" value="13.37" data-type="auto">
-<!-- This will convert "false" to a boolean using regular expression -->
-<input name="anything_2" type="text" value="false" data-type="auto">
+<!-- This will parse "true" as a boolean -->
+<input name="boolean" type="text" data-type="boolean" value="true">
+
+<!-- This will parse "01" as a number -->
+<input name="integer" type="text" data-type="number" value="01">
+<!-- This will parse "09.99" as a number -->
+<input name="float" type="text" data-type="number" value="09.99">
+
+<!-- This will parse "0963" as a string -->
+<input name="string" type="text" data-type="string" value="0963">
+
+<!-- This will parse "13.37" as a number -->
+<input name="anything" type="text" data-type="auto" value="13.37">
+<!-- This will parse "false" as a boolean -->
+<input name="anything_2" type="text" data-type="auto" value="false">
 ```
 
-## Parsing complex forms
+If no `data-type` attribute is set, the `type` attribute will be used (for `input` elements at least), this behavior is active by default with the combination of this options `{dynamicTyping: true, smartTyping: true}` in the `parseForm()` function.
 
-You can construct complex and deep objects containing nested arrays and objects with no depth limit.
+## Parsing complex forms with nested fields
+
+This purpose of this lib is to reconstruct an object corresponding to the form structure, so it can parse complex forms containing "unlimited" nested arrays and objects.
 
 ```html
 <form id="my-form">
-  <input name="phones[0][code]" type="number" value="689" data-type="string">
-  <input name="phones[0][number]" type="number" value="87218910" data-type="string">
-  <input name="phones[1][code]" type="number" value="689" data-type="string">
-  <input name="phones[1][number]" type="number" value="87218910" data-type="string">
+  <input name="phones[0][code]" type="number" data-type="string" value="689">
+  <input name="phones[0][number]" type="number" data-type="string" value="87218910">
+  <input name="phones[1][code]" type="number" data-type="string" value="689">
+  <input name="phones[1][number]" type="number" data-type="string" value="87218910">
   
   <!-- A very deep field value -->
   <input name="deep_1[][deep_2][0][][deep_3]" value="DEEP">
@@ -413,10 +416,14 @@ const form = document.getElementById("my-form");
 
 // Parse form values with custom options
 const fields = parseForm(form, {
-  // Filters returned fields
-  cleanFunction(value, field) { return value; },
-  // Filters returned fields
-  filterFunction(field) { return true; },
+  // Cleans parsed values
+  cleanFunction(value, field) {
+    return typeof value === 'string' ? stripTags(value) : value;
+  },
+  // Only returns fields that matches the condition
+  filterFunction(field) {
+    return field.type === 'text';
+  },
   // Don't get buttons
   ignoreButtons: true,
   // Don't get disabled fields
@@ -424,15 +431,16 @@ const fields = parseForm(form, {
   // Don't get fields with empty string
   ignoreEmpty: false,
   // Don't get radios or checkboxes that are not checked
+  // useful to get a false value instead of undefined
   ignoreUnchecked: false,
   // Replace empty strings with null
   nullify: true,
-  // Parse values to the best type (ex: "001" => 1)
+  // Parse values to the best guess type (ex: "001" => 1)
   dynamicTyping: true,
   // Parse values based on field type (ex: type="number" will parse to number)
   smartTyping: true,
   // Remove extra spaces
-  trim: true 
+  trim: true
 });
 ```
 
