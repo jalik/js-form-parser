@@ -13,7 +13,7 @@ import {
   parseNumber,
   parseValue,
   trim,
-} from '../src/form-parser';
+} from '../src';
 import TestUtils from './lib';
 
 // Define constants
