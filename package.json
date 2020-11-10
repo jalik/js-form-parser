@@ -25,32 +25,30 @@
   },
   "main": "dist/form-parser.js",
   "scripts": {
-    "build": "npx gulp build",
-    "lint": "npx eslint .",
-    "lint-fix": "npx eslint --fix .",
-    "prepare": "npx gulp prepare",
+    "build": "babel src -d dist",
+    "clean": "rimraf dist",
+    "dev": "babel --watch src -d dist",
+    "lint": "eslint .",
+    "lint-fix": "eslint --fix .",
+    "prepare": "npm run clean && npm run build && npm run lint",
     "prepublishOnly": "npm test",
-    "test": "npx jest",
-    "watch": "npx gulp watch"
+    "test": "jest --passWithNoTests"
   },
   "dependencies": {
     "@babel/runtime": "^7.12.5",
     "@jalik/deep-extend": "^1.1.8"
   },
   "devDependencies": {
-    "@babel/core": "^7.11.6",
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.3",
     "@babel/plugin-transform-runtime": "^7.12.1",
     "@babel/preset-env": "^7.11.5",
     "acorn": "^7.4.0",
     "ajv": "^6.12.5",
-    "del": "^6.0.0",
     "eslint": "^7.10.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jest": "^24.0.2",
-    "gulp": "^4.0.2",
-    "gulp-babel": "^8.0.0",
-    "gulp-eslint": "^6.0.0",
     "jest": "^26.4.2",
     "typescript": "^4.0.3"
   }

@@ -8,7 +8,6 @@
 .gitignore
 .travis.yml
 babel.config.json
-gulpfile.js
 
 # npm packages
 node_modules/
