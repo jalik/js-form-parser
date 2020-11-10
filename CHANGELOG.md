@@ -1,45 +1,49 @@
 # Changelog
 
+## v2.0.7
+- Renamed form-parser.js to index.js
+- Upgraded dependencies
+
 ## v2.0.6
-- Fixes `cleanFunction` calling on password fields, which must never happen
-- Adds support to define number as object attribute if surrounded by double quotes or single quotes
-- Upgrades dependencies
+- Fixed `cleanFunction` calling on password fields, which must never happen
+- Added support to define number as object attribute if surrounded by double quotes or single quotes
+- Upgraded dependencies
 
 ## v2.0.5
-- Upgrades dependencies
+- Upgraded dependencies
 
 ## v2.0.4
-- Upgrades dependencies
+- Upgraded dependencies
 
 ## v2.0.3
-- Upgrades dependencies
+- Upgraded dependencies
 
 ## v2.0.2
-- Upgrades dependencies
+- Upgraded dependencies
 
 ## v2.0.1
-- Upgrades dependencies
+- Upgraded dependencies
 
 ## v2.0.0
-- Upgrades dependencies
+- Upgraded dependencies
 
 **BREAKING CHANGES:**
-- Exports functions using named export instead of default export syntax
+- Export functions using named export instead of default export syntax
 
 ## v1.3.0
 - Lib available in ES6+ syntax (see `src` folder) to enable auto-completion in IDEs
-- Upgrades dependencies
+- Upgraded dependencies
 
 ## v1.2.2
-- Upgrades dependencies
+- Upgraded dependencies
 
 ## v1.2.1
-- Upgrades dependencies
+- Upgraded dependencies
 
 ## v1.2.0
-- Upgrades dependencies
-- Removes unused devDependencies
-- Adds support for more patterns in method `buildObject()`:
+- Upgraded dependencies
+- Removed unused devDependencies
+- Added support for more patterns in method `buildObject()`:
   - `buildObject('customField', value, context)`
   - `buildObject('customField[attr]', value, context)`
   - `buildObject('customFields[0]', value, context)`
@@ -50,21 +54,21 @@
     - (ex: calling `buildObject('obj[a]', undefined, {obj:{a:1,b:2}})` returns `{obj:{b:2}}`)
 
 ## v1.1.1
-- Upgrades dependencies
+- Upgraded dependencies
 
 ## v1.1.0
-- Adds method `nullify(value)`
-- Adds method `parseField(field, options)`
-- Adds method `trim(value)`
+- Added method `nullify(value)`
+- Added method `parseField(field, options)`
+- Added method `trim(value)`
 
 ## v1.0.8
 - Does not filter field names anymore
 
 ## v1.0.6
-- Fixes method `parseForm()` not returning fields with a name that contains dashes (ex: `x-custom-field`)
+- Fixed method `parseForm()` not returning fields with a name that contains dashes (ex: `x-custom-field`)
 
 ## v1.0.5
-- Fixes method `parseForm()` not returning fields with a name that is one character long
+- Fixed method `parseForm()` not returning fields with a name that is one character long
 
 ## v1.0.4
 - Renames option `parseValues` to `dynamicTyping` in `parseForm()` method
@@ -72,13 +76,13 @@
 - Renames option `trimValues` to `trim` in `parseForm()` method
 
 ## v1.0.3
-- Fixes error with unchecked fields being parsed
+- Fixed error with unchecked fields being parsed
 - Changes signature of method `cleanFunction(value, field)` called by `parseForm()`
-- Adds option `filterFunction: Function(field)` to filter returned fields with `parseForm()`
+- Added option `filterFunction: Function(field)` to filter returned fields with `parseForm()`
 
 ## v1.0.2
 - Updates README.md
-- Removes dependency to `underscore`
+- Removed dependency to `underscore`
 
 ## v1.0.0
 - First public release
