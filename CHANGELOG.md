@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.0.8
+- Fixed parsing of input names containing dashes (and probably other previously special characters)
+
 ## v2.0.7
 - Renamed form-parser.js to index.js
 - Upgraded dependencies

@@ -155,6 +155,11 @@ describe('buildObject()', () => {
     expect(r).toEqual({ a: [{ b: [{ text: STRING }] }] });
   });
 
+  test('buildObject with special characters should parse', () => {
+    const r = buildObject('input[temperature1][-max-threshold-value]', 30, null);
+    expect(r).toEqual({ input: { temperature1: { '-max-threshold-value': 30 } } });
+  });
+
   test(`buildObject("[a][][b][0][c][2][text]", "${STRING}", null) should return {a:[{b:[{c:[undefined,undefined,{text:"${STRING}"}]}]}]}`, () => {
     const r = buildObject('[a][][b][0][c][2][text]', STRING, null);
     expect(r).toEqual({ a: [{ b: [{ c: [undefined, undefined, { text: STRING }] }] }] });

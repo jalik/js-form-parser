@@ -54,7 +54,7 @@ export function buildObject(str, value, context) {
 
     // Object attribute
     // ex: [customField1] or ["10"] or ['10']
-    if (key.length > 0 && (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(key) || /^(["'])[^"']+\1$/.test(key))) {
+    if (key.length > 0 && (!/^\d+$/.test(key) || /^(["'])[^"']+\1$/.test(key))) {
       // Remove quotes in key
       key = key.replace(/^["']/, '').replace(/["']$/, '');
 
