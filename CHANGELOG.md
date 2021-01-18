@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.0.9
+- Upgraded dependencies
+
 ## v2.0.8
 - Fixed parsing of input names containing dashes (and probably other previously special characters)
 
