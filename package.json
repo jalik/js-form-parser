@@ -36,6 +36,10 @@
     "prepublishOnly": "npm test",
     "test": "jest --passWithNoTests"
   },
+  "files": [
+    "/dist",
+    "/src"
+  ],
   "dependencies": {
     "@babel/runtime": "^7.14.0",
     "@jalik/deep-extend": "^1.1.12"
