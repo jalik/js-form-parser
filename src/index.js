@@ -1,9 +1,7 @@
 /*
  * The MIT License (MIT)
- * Copyright (c) 2020 Karl STEIN
+ * Copyright (c) 2021 Karl STEIN
  */
-
-import deepExtend from '@jalik/deep-extend';
 
 /**
  * Builds an object from a string (ex: [colors][0][code])
@@ -298,12 +296,13 @@ export function parseField(field, options) {
   }
 
   // Set default options
-  const opt = deepExtend({
+  const opts = {
     dynamicTyping: true,
     nullify: true,
     smartTyping: true,
     trim: true,
-  }, options);
+    ...options,
+  };
 
   const isCheckable = isCheckableField(field);
   let { value } = field;
@@ -333,7 +332,7 @@ export function parseField(field, options) {
     default:
   }
 
-  if (opt.dynamicTyping) {
+  if (opts.dynamicTyping) {
     // Parse value excepted for special fields
     if ((!isCheckable || field.checked)
       && !contains(['email', 'file', 'password', 'search', 'url'], field.type)
@@ -379,7 +378,7 @@ export function parseField(field, options) {
             // eslint-disable-next-line no-console
             console.warn(`unknown data-type "${field.dataset.type}" for field "${field.name}"`);
         }
-      } else if (opt.smartTyping) {
+      } else if (opts.smartTyping) {
         // Parse value using the "type" attribute
         switch (field.type) {
           case 'number':
@@ -406,11 +405,11 @@ export function parseField(field, options) {
   }
 
   // Removes extra spaces
-  if (opt.trim && field.type !== 'password') {
+  if (opts.trim && field.type !== 'password') {
     value = trim(value);
   }
   // Replaces empty strings with null
-  if (opt.nullify) {
+  if (opts.nullify) {
     value = nullify(value);
   }
   return value;
@@ -428,7 +427,7 @@ export function parseForm(form, options) {
   }
 
   // Default options
-  const opt = deepExtend({
+  const opts = {
     cleanFunction: null,
     dynamicTyping: true,
     filterFunction: null,
@@ -439,23 +438,24 @@ export function parseForm(form, options) {
     nullify: true,
     smartTyping: true,
     trim: true,
-  }, options);
+    ...options,
+  };
 
   // Check deprecated options
-  if (typeof opt.parseValues !== 'undefined') {
+  if (typeof opts.parseValues !== 'undefined') {
     // eslint-disable-next-line no-console
     console.warn('option "parseValues" is deprecated, rename it to "dynamicTyping" instead');
-    opt.dynamicTyping = opt.parseValues;
+    opts.dynamicTyping = opts.parseValues;
   }
-  if (typeof opt.smartParsing !== 'undefined') {
+  if (typeof opts.smartParsing !== 'undefined') {
     // eslint-disable-next-line no-console
     console.warn('option "smartParsing" is deprecated, rename it to "smartTyping" instead');
-    opt.smartTyping = opt.smartParsing;
+    opts.smartTyping = opts.smartParsing;
   }
-  if (typeof opt.trimValues !== 'undefined') {
+  if (typeof opts.trimValues !== 'undefined') {
     // eslint-disable-next-line no-console
     console.warn('option "trimValues" is deprecated, rename it to "trim" instead');
-    opt.trim = opt.trimValues;
+    opts.trim = opts.trimValues;
   }
 
   const fields = {};
@@ -476,44 +476,44 @@ export function parseForm(form, options) {
       continue;
     }
     // Ignore buttons
-    if (opt.ignoreButtons && isButton(field)) {
+    if (opts.ignoreButtons && isButton(field)) {
       // eslint-disable-next-line
       continue;
     }
     // Ignore disabled element
-    if (opt.ignoreDisabled && field.disabled) {
+    if (opts.ignoreDisabled && field.disabled) {
       // eslint-disable-next-line
       continue;
     }
     // Ignore unchecked element
-    if (opt.ignoreUnchecked && (isCheckable && !field.checked)) {
+    if (opts.ignoreUnchecked && (isCheckable && !field.checked)) {
       // eslint-disable-next-line
       continue;
     }
     // Ignore element based on filter
-    if (typeof opt.filterFunction === 'function' && opt.filterFunction(field) !== true) {
+    if (typeof opts.filterFunction === 'function' && opts.filterFunction(field) !== true) {
       // eslint-disable-next-line
       continue;
     }
 
     // Parse field value
-    let value = parseField(field, opt);
+    let value = parseField(field, opts);
 
     // Execute custom clean function on fields with type different of password
-    if (typeof opt.cleanFunction === 'function' && field.type !== 'password') {
+    if (typeof opts.cleanFunction === 'function' && field.type !== 'password') {
       if (value instanceof Array) {
         for (let k = 0; k < value.length; k += 1) {
           if (typeof value[k] === 'string' && value[k].length) {
-            value[k] = opt.cleanFunction(value[k], field);
+            value[k] = opts.cleanFunction(value[k], field);
           }
         }
       } else if (typeof value === 'string' && value.length) {
-        value = opt.cleanFunction(value, field);
+        value = opts.cleanFunction(value, field);
       }
     }
 
     // Ignore empty value
-    if (opt.ignoreEmpty && (value === '' || value === null || typeof value === 'undefined')) {
+    if (opts.ignoreEmpty && (value === '' || value === null || typeof value === 'undefined')) {
       // eslint-disable-next-line
       continue;
     }
