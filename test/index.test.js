@@ -1,8 +1,13 @@
 /*
  * The MIT License (MIT)
- * Copyright (c) 2020 Karl STEIN
+ * Copyright (c) 2022 Karl STEIN
  */
 
+import {
+  describe,
+  expect,
+  it,
+} from '@jest/globals';
 import {
   buildObject,
   contains,
@@ -35,162 +40,162 @@ describe('FormParser', () => {
 
 describe('buildObject()', () => {
   // Testing with arrays
-  test(`buildObject("[]", "${STRING}", null) should return ["${STRING}"]`, () => {
+  it(`buildObject("[]", "${STRING}", null) should return ["${STRING}"]`, () => {
     const r = buildObject('[]', STRING, null);
     expect(r).toEqual([STRING]);
   });
 
-  test(`buildObject("[0]", "${STRING}", null) should return ["${STRING}"]`, () => {
+  it(`buildObject("[0]", "${STRING}", null) should return ["${STRING}"]`, () => {
     const r = buildObject('[0]', STRING, null);
     expect(r).toEqual([STRING]);
   });
 
-  test(`buildObject("[2]", "${STRING}", null) should return [undefined, undefined, "${STRING}"]`, () => {
+  it(`buildObject("[2]", "${STRING}", null) should return [undefined, undefined, "${STRING}"]`, () => {
     const r = buildObject('[2]', STRING, null);
     expect(r).toEqual([undefined, undefined, STRING]);
   });
 
-  test(`buildObject("[][]", "${STRING}", null) should return [["${STRING}"]]`, () => {
+  it(`buildObject("[][]", "${STRING}", null) should return [["${STRING}"]]`, () => {
     const r = buildObject('[][]', STRING, null);
     expect(r).toEqual([[STRING]]);
   });
 
-  test(`buildObject("[][0]", "${STRING}", null) should return [["${STRING}"]]`, () => {
+  it(`buildObject("[][0]", "${STRING}", null) should return [["${STRING}"]]`, () => {
     const r = buildObject('[][0]', STRING, null);
     expect(r).toEqual([[STRING]]);
   });
 
-  test(`buildObject("[][2]", "${STRING}", null) should return [[undefined,undefined,${STRING}]]`, () => {
+  it(`buildObject("[][2]", "${STRING}", null) should return [[undefined,undefined,${STRING}]]`, () => {
     const r = buildObject('[][2]', STRING, null);
     expect(r).toEqual([[undefined, undefined, STRING]]);
   });
 
-  test(`buildObject("[2][]", "${STRING}", null) should return [undefined,undefined,[${STRING}]]`, () => {
+  it(`buildObject("[2][]", "${STRING}", null) should return [undefined,undefined,[${STRING}]]`, () => {
     const r = buildObject('[2][]', STRING, null);
     expect(r).toEqual([undefined, undefined, [STRING]]);
   });
 
-  test(`buildObject("[2][2]", "${STRING}", null) should return [undefined,undefined,[undefined,undefined, ${STRING}]]`, () => {
+  it(`buildObject("[2][2]", "${STRING}", null) should return [undefined,undefined,[undefined,undefined, ${STRING}]]`, () => {
     const r = buildObject('[2][2]', STRING, null);
     expect(r).toEqual([undefined, undefined, [undefined, undefined, STRING]]);
   });
 
   // Removing index
 
-  test('buildObject("a[0]", undefined, {a:[1,2]}) should return {a:[2]}}', () => {
+  it('buildObject("a[0]", undefined, {a:[1,2]}) should return {a:[2]}}', () => {
     const r = buildObject('a[0]', undefined, { a: [1, 2] });
     expect(r).toEqual({ a: [2] });
   });
 
-  test('buildObject("a[b]", undefined, {a:{b:1,c:2}}) should return {a:{c:2}}', () => {
+  it('buildObject("a[b]", undefined, {a:{b:1,c:2}}) should return {a:{c:2}}', () => {
     const r = buildObject('a[b]', undefined, { a: { b: 1, c: 2 } });
     expect(r).toEqual({ a: { c: 2 } });
   });
 
   // Testing with object
 
-  test(`buildObject("[a]", ${INTEGER}, null) should return {a: ${INTEGER}}`, () => {
+  it(`buildObject("[a]", ${INTEGER}, null) should return {a: ${INTEGER}}`, () => {
     const r = buildObject('[a]', INTEGER, null);
     expect(r).toEqual({ a: INTEGER });
   });
 
-  test(`buildObject("[a]", "${STRING}", null) should return {a: "${STRING}"}`, () => {
+  it(`buildObject("[a]", "${STRING}", null) should return {a: "${STRING}"}`, () => {
     const r = buildObject('[a]', STRING, null);
     expect(r).toEqual({ a: STRING });
   });
 
   // Root field
 
-  test(`buildObject("a[b]", "${STRING}", null) should return {a:{b:"${STRING}"}}`, () => {
+  it(`buildObject("a[b]", "${STRING}", null) should return {a:{b:"${STRING}"}}`, () => {
     const r = buildObject('a[b]', STRING, null);
     expect(r).toEqual({ a: { b: STRING } });
   });
 
-  test(`buildObject("a[b]", "${STRING}", {}) should return {a:{b:"${STRING}"}}`, () => {
+  it(`buildObject("a[b]", "${STRING}", {}) should return {a:{b:"${STRING}"}}`, () => {
     const r = buildObject('a[b]', STRING, {});
     expect(r).toEqual({ a: { b: STRING } });
   });
 
-  test(`buildObject("a[b]", "${STRING}", {a:{}}) should return {a:{b:"${STRING}"}}`, () => {
+  it(`buildObject("a[b]", "${STRING}", {a:{}}) should return {a:{b:"${STRING}"}}`, () => {
     const r = buildObject('a[b]', STRING, { a: {} });
     expect(r).toEqual({ a: { b: STRING } });
   });
 
   // Single field
 
-  test(`buildObject("a", "${STRING}", null) should return {a:"${STRING}"}`, () => {
+  it(`buildObject("a", "${STRING}", null) should return {a:"${STRING}"}`, () => {
     const r = buildObject('a', STRING, null);
     expect(r).toEqual({ a: STRING });
   });
 
-  test(`buildObject("a", "${STRING}", {}) should return {a:"${STRING}"}`, () => {
+  it(`buildObject("a", "${STRING}", {}) should return {a:"${STRING}"}`, () => {
     const r = buildObject('a', STRING, {});
     expect(r).toEqual({ a: STRING });
   });
 
-  test(`buildObject("a", "${STRING}", {a:null}) should return {a:"${STRING}"}`, () => {
+  it(`buildObject("a", "${STRING}", {a:null}) should return {a:"${STRING}"}`, () => {
     const r = buildObject('a', STRING, { a: null });
     expect(r).toEqual({ a: STRING });
   });
 
   // Testing with array and object
 
-  test(`buildObject("[a][]", "${STRING}", null) should return {a:["${STRING}"]}`, () => {
+  it(`buildObject("[a][]", "${STRING}", null) should return {a:["${STRING}"]}`, () => {
     const r = buildObject('[a][]', STRING, null);
     expect(r).toEqual({ a: [STRING] });
   });
 
-  test(`buildObject("[a][0]", "${STRING}", null) should return {a:["${STRING}"]}`, () => {
+  it(`buildObject("[a][0]", "${STRING}", null) should return {a:["${STRING}"]}`, () => {
     const r = buildObject('[a][0]', STRING, null);
     expect(r).toEqual({ a: [STRING] });
   });
 
-  test(`buildObject("[a][2]", "${STRING}", null) should return {a:[undefined,undefined,"${STRING}"]}`, () => {
+  it(`buildObject("[a][2]", "${STRING}", null) should return {a:[undefined,undefined,"${STRING}"]}`, () => {
     const r = buildObject('[a][2]', STRING, null);
     expect(r).toEqual({ a: [undefined, undefined, STRING] });
   });
 
-  test(`buildObject("[a][][b][][text]", "${STRING}", null) should return {a:[{b:[{text:"${STRING}"]}]}`, () => {
+  it(`buildObject("[a][][b][][text]", "${STRING}", null) should return {a:[{b:[{text:"${STRING}"]}]}`, () => {
     const r = buildObject('[a][][b][][text]', STRING, null);
     expect(r).toEqual({ a: [{ b: [{ text: STRING }] }] });
   });
 
-  test('buildObject with special characters should parse', () => {
+  it('buildObject with special characters should parse', () => {
     const r = buildObject('input[temperature1][-max-threshold-value]', 30, null);
     expect(r).toEqual({ input: { temperature1: { '-max-threshold-value': 30 } } });
   });
 
-  test(`buildObject("[a][][b][0][c][2][text]", "${STRING}", null) should return {a:[{b:[{c:[undefined,undefined,{text:"${STRING}"}]}]}]}`, () => {
+  it(`buildObject("[a][][b][0][c][2][text]", "${STRING}", null) should return {a:[{b:[{c:[undefined,undefined,{text:"${STRING}"}]}]}]}`, () => {
     const r = buildObject('[a][][b][0][c][2][text]', STRING, null);
     expect(r).toEqual({ a: [{ b: [{ c: [undefined, undefined, { text: STRING }] }] }] });
   });
 
   const obj = { a: [0, 1, 2] };
-  test(`buildObject("[a][]", "${STRING}", ${JSON.stringify(obj)}) should return {a:[0,1,2,"${STRING}"]}`, () => {
+  it(`buildObject("[a][]", "${STRING}", ${JSON.stringify(obj)}) should return {a:[0,1,2,"${STRING}"]}`, () => {
     const r = buildObject('[a][]', STRING, obj);
     expect(r).toEqual({ a: [0, 1, 2, STRING] });
   });
 
   const obj1 = { a: [0, 1, 2] };
-  test(`buildObject("[a][1]", "${STRING}", ${JSON.stringify(obj1)}) should return {a:[0,"${STRING}",2]}`, () => {
+  it(`buildObject("[a][1]", "${STRING}", ${JSON.stringify(obj1)}) should return {a:[0,"${STRING}",2]}`, () => {
     const r = buildObject('[a][1]', STRING, obj1);
     expect(r).toEqual({ a: [0, STRING, 2] });
   });
 
   const obj2 = { a: [0, 1, 2] };
-  test(`buildObject("[b][text]", "${STRING}", ${JSON.stringify(obj2)}) should return {a:[0,1,2],b:{text:"${STRING}"}}`, () => {
+  it(`buildObject("[b][text]", "${STRING}", ${JSON.stringify(obj2)}) should return {a:[0,1,2],b:{text:"${STRING}"}}`, () => {
     const r = buildObject('[b][text]', STRING, obj2);
     expect(r).toEqual({ a: [0, 1, 2], b: { text: STRING } });
   });
 
-  test('should interpret number as object attribute if surrounded by double quotes', () => {
+  it('should interpret number as object attribute if surrounded by double quotes', () => {
     const context = {};
     const result = { root: { 10: { text: STRING } } };
     const r = buildObject('root["10"][text]', STRING, context);
     expect(r).toEqual(result);
   });
 
-  test('should interpret number as object attribute if surrounded by single quotes', () => {
+  it('should interpret number as object attribute if surrounded by single quotes', () => {
     const context = {};
     const result = { root: { 10: { text: STRING } } };
     const r = buildObject('root[\'10\'][text]', STRING, context);
@@ -250,27 +255,27 @@ describe('nullify()', () => {
 });
 
 describe('parseBoolean()', () => {
-  test('parseBoolean(null) should return null', () => {
+  it('parseBoolean(null) should return null', () => {
     expect(parseBoolean(null)).toEqual(null);
   });
 
-  test('parseBoolean(undefined) should return null', () => {
+  it('parseBoolean(undefined) should return null', () => {
     expect(parseBoolean(undefined)).toEqual(null);
   });
 
-  test('parseBoolean(true) should return true', () => {
+  it('parseBoolean(true) should return true', () => {
     expect(parseBoolean(true)).toEqual(true);
   });
 
-  test(`parseBoolean("${TRUE}") should return true`, () => {
+  it(`parseBoolean("${TRUE}") should return true`, () => {
     expect(parseBoolean(TRUE)).toEqual(true);
   });
 
-  test('parseBoolean(false) should return false', () => {
+  it('parseBoolean(false) should return false', () => {
     expect(parseBoolean(false)).toEqual(false);
   });
 
-  test(`parseBoolean("${FALSE}") should return false`, () => {
+  it(`parseBoolean("${FALSE}") should return false`, () => {
     expect(parseBoolean(FALSE)).toEqual(false);
   });
 });
@@ -309,7 +314,7 @@ describe('parseField()', () => {
 });
 
 describe('parseForm()', () => {
-  test('should return fields with a name containing dashes', () => {
+  it('should return fields with a name containing dashes', () => {
     const form = TestUtils.createForm();
     form.appendChild(TestUtils.createTextarea({
       name: 'x-custom-field',
@@ -320,7 +325,7 @@ describe('parseForm()', () => {
     expect(r).toEqual({ 'x-custom-field': STRING });
   });
 
-  test('should return fields with a name of one character long', () => {
+  it('should return fields with a name of one character long', () => {
     const form = TestUtils.createForm();
     form.appendChild(TestUtils.createHiddenInput({
       dataset: { type: 'number' },
@@ -334,7 +339,7 @@ describe('parseForm()', () => {
     expect(r).toEqual({ x: -149.345564 });
   });
 
-  test('should return empty array if no checkbox is checked', () => {
+  it('should return empty array if no checkbox is checked', () => {
     const form = TestUtils.createForm();
     form.appendChild(TestUtils.createCheckbox({
       name: 'items[]',
@@ -350,7 +355,7 @@ describe('parseForm()', () => {
   });
 
   describe('Parsing fields with options {dynamicTyping: true, smartTyping: true}', () => {
-    test('parseForm(form, options) should not return values of unknown fields', () => {
+    it('parseForm(form, options) should not return values of unknown fields', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createTextInput({
         value: STRING,
@@ -360,7 +365,7 @@ describe('parseForm()', () => {
       expect(r).toEqual({});
     });
 
-    test('parseForm(form, options) should parse values based on data-type attribute if present', () => {
+    it('parseForm(form, options) should parse values based on data-type attribute if present', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createNumberInput({
         dataset: { type: 'string' },
@@ -372,7 +377,7 @@ describe('parseForm()', () => {
       expect(r).toEqual({ number: INTEGER_STRING });
     });
 
-    test('parseForm(form, options) should return values of checked checkboxes', () => {
+    it('parseForm(form, options) should return values of checked checkboxes', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createCheckbox({
         checked: true,
@@ -398,7 +403,7 @@ describe('parseForm()', () => {
       });
     });
 
-    test('parseForm(form, options) should return values of checked radios', () => {
+    it('parseForm(form, options) should return values of checked radios', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createRadio({
         name: 'radio',
@@ -414,7 +419,7 @@ describe('parseForm()', () => {
       expect(r).toEqual({ radio: form.elements['1'].value });
     });
 
-    test('parseForm(form, options) should not return values of unchecked fields', () => {
+    it('parseForm(form, options) should not return values of unchecked fields', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createRadio({
         dataset: { type: 'boolean' },
@@ -448,7 +453,7 @@ describe('parseForm()', () => {
       });
     });
 
-    test('parseForm(form, options) should return values of file inputs', () => {
+    it('parseForm(form, options) should return values of file inputs', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createFileInput({
         name: 'file',
@@ -462,7 +467,7 @@ describe('parseForm()', () => {
       expect(r).toEqual({ file: null });
     });
 
-    test('parseForm(form, options) should return values of hidden inputs', () => {
+    it('parseForm(form, options) should return values of hidden inputs', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createHiddenInput({
         name: 'hidden',
@@ -473,7 +478,7 @@ describe('parseForm()', () => {
       expect(r).toEqual({ hidden: STRING });
     });
 
-    test('parseForm(form, options) should return values of number inputs', () => {
+    it('parseForm(form, options) should return values of number inputs', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createNumberInput({
         name: 'number',
@@ -484,7 +489,7 @@ describe('parseForm()', () => {
       expect(r).toEqual({ number: INTEGER });
     });
 
-    test('parseForm(form, options) should return values of email inputs', () => {
+    it('parseForm(form, options) should return values of email inputs', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createTextInput({
         name: 'email',
@@ -496,7 +501,7 @@ describe('parseForm()', () => {
       expect(r).toEqual({ email: STRING });
     });
 
-    test('parseForm(form, options) should return values of password inputs', () => {
+    it('parseForm(form, options) should return values of password inputs', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createPasswordInput({
         name: 'password',
@@ -507,7 +512,7 @@ describe('parseForm()', () => {
       expect(r).toEqual({ password: PASSWORD });
     });
 
-    test('parseForm(form, options) should return values of single select lists', () => {
+    it('parseForm(form, options) should return values of single select lists', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createSelect({
         name: 'select',
@@ -521,7 +526,7 @@ describe('parseForm()', () => {
       expect(r).toEqual({ select: 'B' });
     });
 
-    test('parseForm(form, options) should return values of multiple select lists', () => {
+    it('parseForm(form, options) should return values of multiple select lists', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createSelect({
         multiple: true,
@@ -537,7 +542,7 @@ describe('parseForm()', () => {
       expect(r).toEqual({ select: ['B', 'C'] });
     });
 
-    test('parseForm(form, options) should return values of text inputs', () => {
+    it('parseForm(form, options) should return values of text inputs', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createTextInput({
         name: 'text',
@@ -548,7 +553,7 @@ describe('parseForm()', () => {
       expect(r).toEqual({ text: STRING });
     });
 
-    test('parseForm(form, options) should return values of textarea fields', () => {
+    it('parseForm(form, options) should return values of textarea fields', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createTextarea({
         name: 'textarea',
@@ -562,7 +567,7 @@ describe('parseForm()', () => {
 
   describe('Parsing options', () => {
     describe('cleanFunction', () => {
-      test('should clean string values', () => {
+      it('should clean string values', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({
           name: 'text',
@@ -574,7 +579,7 @@ describe('parseForm()', () => {
         });
         expect(r).toEqual({ text: '' });
       });
-      test('should not clean value from password field', () => {
+      it('should not clean value from password field', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createPasswordInput({
           name: 'pass',
@@ -589,7 +594,7 @@ describe('parseForm()', () => {
     });
 
     describe('filterFunction', () => {
-      test('should return filtered fields only', () => {
+      it('should return filtered fields only', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({ name: 'text', value: 'test' }));
         form.appendChild(TestUtils.createNumberInput({ name: 'num', value: 2 }));
@@ -602,7 +607,7 @@ describe('parseForm()', () => {
     });
 
     describe('ignoreButtons', () => {
-      test('parseForm(form, {ignoreButtons: true}) should not return values of buttons', () => {
+      it('parseForm(form, {ignoreButtons: true}) should not return values of buttons', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createButton({
           name: 'button',
@@ -624,7 +629,7 @@ describe('parseForm()', () => {
         expect(r).toEqual({});
       });
 
-      test('parseForm(form, {ignoreButtons: false}) should return values of buttons', () => {
+      it('parseForm(form, {ignoreButtons: false}) should return values of buttons', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createButton({
           name: 'button',
@@ -652,7 +657,7 @@ describe('parseForm()', () => {
     });
 
     describe('ignoreDisabled', () => {
-      test('parseForm(form, {ignoreDisabled: true}) should not return disabled fields', () => {
+      it('parseForm(form, {ignoreDisabled: true}) should not return disabled fields', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({
           disabled: true,
@@ -664,7 +669,7 @@ describe('parseForm()', () => {
         expect(r).toEqual({});
       });
 
-      test('parseForm(form, {ignoreDisabled: false}) should return disabled fields', () => {
+      it('parseForm(form, {ignoreDisabled: false}) should return disabled fields', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({
           disabled: true,
@@ -678,7 +683,7 @@ describe('parseForm()', () => {
     });
 
     describe('ignoreEmpty', () => {
-      test('parseForm(form, {ignoreEmpty: true}) should not return empty fields', () => {
+      it('parseForm(form, {ignoreEmpty: true}) should not return empty fields', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({
           name: 'empty',
@@ -689,7 +694,7 @@ describe('parseForm()', () => {
         expect(r).toEqual({});
       });
 
-      test('parseForm(form, {ignoreEmpty: false}) should return empty fields', () => {
+      it('parseForm(form, {ignoreEmpty: false}) should return empty fields', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({
           name: 'empty',
@@ -702,7 +707,7 @@ describe('parseForm()', () => {
     });
 
     describe('ignoreUnchecked', () => {
-      test('parseForm(form, {ignoreUnchecked: true}) should not return unchecked fields', () => {
+      it('parseForm(form, {ignoreUnchecked: true}) should not return unchecked fields', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createCheckbox({
           name: 'checkbox',
@@ -713,7 +718,7 @@ describe('parseForm()', () => {
         expect(r).toEqual({});
       });
 
-      test('parseForm(form, {ignoreUnchecked: false}) should return unchecked fields', () => {
+      it('parseForm(form, {ignoreUnchecked: false}) should return unchecked fields', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createCheckbox({
           name: 'checkbox',
@@ -726,7 +731,7 @@ describe('parseForm()', () => {
     });
 
     describe('nullify', () => {
-      test('parseForm(form, {nullify: true}) should replace empty string with null', () => {
+      it('parseForm(form, {nullify: true}) should replace empty string with null', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({
           name: 'text',
@@ -737,7 +742,7 @@ describe('parseForm()', () => {
         expect(r).toEqual({ text: null });
       });
 
-      test('parseForm(form, {nullify: false}) should not replace empty string with null', () => {
+      it('parseForm(form, {nullify: false}) should not replace empty string with null', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({
           name: 'text',
@@ -750,7 +755,7 @@ describe('parseForm()', () => {
     });
 
     describe('dynamicTyping', () => {
-      test('parseForm(form, {dynamicTyping: true, smartTyping: false}) should parse all values', () => {
+      it('parseForm(form, {dynamicTyping: true, smartTyping: false}) should parse all values', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({
           dataset: { type: 'boolean' },
@@ -780,7 +785,7 @@ describe('parseForm()', () => {
         });
       });
 
-      test('parseForm(form, {dynamicTyping: false}) should not parse any value', () => {
+      it('parseForm(form, {dynamicTyping: false}) should not parse any value', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({
           dataset: { type: 'boolean' },
@@ -812,7 +817,7 @@ describe('parseForm()', () => {
     });
 
     describe('smartTyping', () => {
-      test('parseForm(form, {smartTyping: true}) should parse values using type attribute', () => {
+      it('parseForm(form, {smartTyping: true}) should parse values using type attribute', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({
           name: 'bool_true',
@@ -851,7 +856,7 @@ describe('parseForm()', () => {
         });
       });
 
-      test('parseForm(form, {smartTyping: false}) should not parse values using type attribute', () => {
+      it('parseForm(form, {smartTyping: false}) should not parse values using type attribute', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({
           name: 'bool_true',
@@ -892,7 +897,7 @@ describe('parseForm()', () => {
     });
 
     describe('trim', () => {
-      test('parseForm(form, {trim: true}) should trim text values', () => {
+      it('parseForm(form, {trim: true}) should trim text values', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({
           name: 'text',
@@ -903,7 +908,7 @@ describe('parseForm()', () => {
         expect(r).toEqual({ text: STRING });
       });
 
-      test('parseForm(form, {trim: false}) should not trim text values', () => {
+      it('parseForm(form, {trim: false}) should not trim text values', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createTextInput({
           name: 'text',
@@ -914,7 +919,7 @@ describe('parseForm()', () => {
         expect(r).toEqual({ text: ` ${STRING} ` });
       });
 
-      test('parseForm(form, {trim: true}) should not trim password values', () => {
+      it('parseForm(form, {trim: true}) should not trim password values', () => {
         const form = TestUtils.createForm();
         form.appendChild(TestUtils.createPasswordInput({
           name: 'password',
@@ -928,7 +933,7 @@ describe('parseForm()', () => {
   });
 
   describe('Fields excluded from parsing', () => {
-    test('parseForm(form) should not parse email fields', () => {
+    it('parseForm(form) should not parse email fields', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createTextInput({
         name: 'email',
@@ -940,7 +945,7 @@ describe('parseForm()', () => {
       expect(r).toEqual({ email: INTEGER_STRING });
     });
 
-    test('parseForm(form) should not parse file fields', () => {
+    it('parseForm(form) should not parse file fields', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createFileInput({
         name: 'file',
@@ -953,7 +958,7 @@ describe('parseForm()', () => {
       expect(r).toEqual({ file: null });
     });
 
-    test('parseForm(form) should not parse password fields', () => {
+    it('parseForm(form) should not parse password fields', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createPasswordInput({
         name: 'password',
@@ -964,7 +969,7 @@ describe('parseForm()', () => {
       expect(r).toEqual({ password: INTEGER_STRING });
     });
 
-    test('parseForm(form) should not parse search fields', () => {
+    it('parseForm(form) should not parse search fields', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createTextInput({
         name: 'search',
@@ -976,7 +981,7 @@ describe('parseForm()', () => {
       expect(r).toEqual({ search: INTEGER_STRING });
     });
 
-    test('parseForm(form) should not parse URL fields', () => {
+    it('parseForm(form) should not parse URL fields', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createTextInput({
         name: 'url',
@@ -988,7 +993,7 @@ describe('parseForm()', () => {
       expect(r).toEqual({ url: INTEGER_STRING });
     });
 
-    test('parseForm(form) should not parse textarea fields', () => {
+    it('parseForm(form) should not parse textarea fields', () => {
       const form = TestUtils.createForm();
       form.appendChild(TestUtils.createTextarea({
         name: 'textarea',
@@ -1002,186 +1007,186 @@ describe('parseForm()', () => {
 });
 
 describe('parseNumber()', () => {
-  test('parseNumber(null) should return null', () => {
+  it('parseNumber(null) should return null', () => {
     expect(parseNumber(null)).toEqual(null);
   });
 
-  test('parseNumber(undefined) should return null', () => {
+  it('parseNumber(undefined) should return null', () => {
     expect(parseNumber(undefined)).toEqual(null);
   });
 
-  test(`parseNumber(${FLOAT}) should return a float`, () => {
+  it(`parseNumber(${FLOAT}) should return a float`, () => {
     expect(parseNumber(FLOAT)).toEqual(FLOAT);
   });
 
-  test(`parseNumber("${FLOAT_STRING}") should return a float`, () => {
+  it(`parseNumber("${FLOAT_STRING}") should return a float`, () => {
     expect(parseNumber(FLOAT_STRING)).toEqual(FLOAT);
   });
 
-  test(`parseNumber("-${FLOAT_STRING}") should return a negative float`, () => {
+  it(`parseNumber("-${FLOAT_STRING}") should return a negative float`, () => {
     expect(parseNumber(`-${FLOAT_STRING}`)).toEqual(-FLOAT);
   });
 
-  test(`parseNumber("+${FLOAT_STRING}") should return a positive float`, () => {
+  it(`parseNumber("+${FLOAT_STRING}") should return a positive float`, () => {
     expect(parseNumber(`+${FLOAT_STRING}`)).toEqual(FLOAT);
   });
 
-  test(`parseNumber("${FLOAT_STRING_COMMA}") should return a float`, () => {
+  it(`parseNumber("${FLOAT_STRING_COMMA}") should return a float`, () => {
     expect(parseNumber(FLOAT_STRING_COMMA)).toEqual(FLOAT);
   });
 
-  test(`parseNumber(${INTEGER}) should return an integer`, () => {
+  it(`parseNumber(${INTEGER}) should return an integer`, () => {
     expect(parseNumber(INTEGER)).toEqual(INTEGER);
   });
 
-  test(`parseNumber("${INTEGER_STRING}") should return an integer`, () => {
+  it(`parseNumber("${INTEGER_STRING}") should return an integer`, () => {
     expect(parseNumber(INTEGER_STRING)).toEqual(INTEGER);
   });
 
-  test(`parseNumber("-${INTEGER_STRING}") should return a negative integer`, () => {
+  it(`parseNumber("-${INTEGER_STRING}") should return a negative integer`, () => {
     expect(parseNumber(`-${INTEGER_STRING}`)).toEqual(-INTEGER);
   });
 
-  test(`parseNumber("+${INTEGER_STRING}") should return a positive integer`, () => {
+  it(`parseNumber("+${INTEGER_STRING}") should return a positive integer`, () => {
     expect(parseNumber(`+${INTEGER_STRING}`)).toEqual(INTEGER);
   });
 });
 
 describe('parseValue()', () => {
-  test('parseValue() should return undefined', () => {
+  it('parseValue() should return undefined', () => {
     expect(parseValue()).toEqual(undefined);
   });
 
-  test('parseValue(null) should return null', () => {
+  it('parseValue(null) should return null', () => {
     expect(parseValue(null)).toEqual(null);
   });
 
-  test('parseValue("") should return an empty string', () => {
+  it('parseValue("") should return an empty string', () => {
     expect(parseValue('')).toEqual('');
   });
 
-  test(`parseValue("${TRUE}") should return true`, () => {
+  it(`parseValue("${TRUE}") should return true`, () => {
     expect(parseValue(TRUE)).toEqual(true);
   });
 
-  test(`parseValue("${TRUE}", "auto") should return true`, () => {
+  it(`parseValue("${TRUE}", "auto") should return true`, () => {
     expect(parseValue(TRUE, 'auto')).toEqual(true);
   });
 
-  test(`parseValue("${TRUE}", "boolean") should return true`, () => {
+  it(`parseValue("${TRUE}", "boolean") should return true`, () => {
     expect(parseValue(TRUE, 'boolean')).toEqual(true);
   });
 
-  test(`parseValue("${TRUE}", "number") should return null`, () => {
+  it(`parseValue("${TRUE}", "number") should return null`, () => {
     expect(parseValue(TRUE, 'number')).toEqual(null);
   });
 
-  test(`parseValue("${TRUE}", "string") should return "true"`, () => {
+  it(`parseValue("${TRUE}", "string") should return "true"`, () => {
     expect(parseValue(TRUE, 'string')).toEqual(TRUE);
   });
 
-  test(`parseValue("${FALSE}") should return false`, () => {
+  it(`parseValue("${FALSE}") should return false`, () => {
     expect(parseValue(FALSE)).toEqual(false);
   });
 
-  test(`parseValue("${FALSE}", "auto") should return false`, () => {
+  it(`parseValue("${FALSE}", "auto") should return false`, () => {
     expect(parseValue(FALSE, 'auto')).toEqual(false);
   });
 
-  test(`parseValue("${FALSE}", "boolean") should return false`, () => {
+  it(`parseValue("${FALSE}", "boolean") should return false`, () => {
     expect(parseValue(FALSE, 'boolean')).toEqual(false);
   });
 
-  test(`parseValue("${FALSE}", "number") should return null`, () => {
+  it(`parseValue("${FALSE}", "number") should return null`, () => {
     expect(parseValue(FALSE, 'number')).toEqual(null);
   });
 
-  test(`parseValue("${FALSE}", "string") should return "false"`, () => {
+  it(`parseValue("${FALSE}", "string") should return "false"`, () => {
     expect(parseValue(FALSE, 'string')).toEqual(FALSE);
   });
 
-  test(`parseValue("${FLOAT_STRING}") should return ${FLOAT}`, () => {
+  it(`parseValue("${FLOAT_STRING}") should return ${FLOAT}`, () => {
     expect(parseValue(FLOAT_STRING)).toEqual(FLOAT);
   });
 
-  test(`parseValue("${FLOAT_STRING}", "auto") should return ${FLOAT}`, () => {
+  it(`parseValue("${FLOAT_STRING}", "auto") should return ${FLOAT}`, () => {
     expect(parseValue(FLOAT_STRING, 'auto')).toEqual(FLOAT);
   });
 
-  test(`parseValue("${FLOAT_STRING}", "boolean") should return null`, () => {
+  it(`parseValue("${FLOAT_STRING}", "boolean") should return null`, () => {
     expect(parseValue(FLOAT_STRING, 'boolean')).toEqual(null);
   });
 
-  test(`parseValue("${FLOAT_STRING}", "number") should return ${FLOAT}`, () => {
+  it(`parseValue("${FLOAT_STRING}", "number") should return ${FLOAT}`, () => {
     expect(parseValue(FLOAT_STRING, 'number')).toEqual(FLOAT);
   });
 
-  test(`parseValue("${FLOAT_STRING}", "string") should return "${FLOAT}"`, () => {
+  it(`parseValue("${FLOAT_STRING}", "string") should return "${FLOAT}"`, () => {
     expect(parseValue(FLOAT_STRING, 'string')).toEqual(FLOAT_STRING);
   });
 
-  test(`parseValue("${INTEGER_STRING}") should return ${INTEGER}`, () => {
+  it(`parseValue("${INTEGER_STRING}") should return ${INTEGER}`, () => {
     expect(parseValue(INTEGER_STRING)).toEqual(INTEGER);
   });
 
-  test(`parseValue("${INTEGER_STRING}", "auto") should return ${INTEGER}`, () => {
+  it(`parseValue("${INTEGER_STRING}", "auto") should return ${INTEGER}`, () => {
     expect(parseValue(INTEGER_STRING, 'auto')).toEqual(INTEGER);
   });
 
-  test(`parseValue("${INTEGER_STRING}", "boolean") should return null`, () => {
+  it(`parseValue("${INTEGER_STRING}", "boolean") should return null`, () => {
     expect(parseValue(INTEGER_STRING, 'boolean')).toEqual(null);
   });
 
-  test(`parseValue("${INTEGER_STRING}", "number") should return ${INTEGER}`, () => {
+  it(`parseValue("${INTEGER_STRING}", "number") should return ${INTEGER}`, () => {
     expect(parseValue(INTEGER_STRING, 'number')).toEqual(INTEGER);
   });
 
-  test(`parseValue("${INTEGER_STRING}", "string") should return "${INTEGER}"`, () => {
+  it(`parseValue("${INTEGER_STRING}", "string") should return "${INTEGER}"`, () => {
     expect(parseValue(INTEGER_STRING, 'string')).toEqual(INTEGER_STRING);
   });
 
-  test(`parseValue("${STRING}") should return "${STRING}"`, () => {
+  it(`parseValue("${STRING}") should return "${STRING}"`, () => {
     expect(parseValue(STRING)).toEqual(STRING);
   });
 
-  test(`parseValue("${STRING}", "auto") should return "${STRING}"`, () => {
+  it(`parseValue("${STRING}", "auto") should return "${STRING}"`, () => {
     expect(parseValue(STRING, 'auto')).toEqual(STRING);
   });
 
-  test(`parseValue("${STRING}", "boolean") should return null`, () => {
+  it(`parseValue("${STRING}", "boolean") should return null`, () => {
     expect(parseValue(STRING, 'boolean')).toEqual(null);
   });
 
-  test(`parseValue("${STRING}", "number") should return null`, () => {
+  it(`parseValue("${STRING}", "number") should return null`, () => {
     expect(parseValue(STRING, 'number')).toEqual(null);
   });
 
-  test(`parseValue("${STRING}", "string") should return "${STRING}"`, () => {
+  it(`parseValue("${STRING}", "string") should return "${STRING}"`, () => {
     expect(parseValue(STRING, 'string')).toEqual(STRING);
   });
 
   describe('Parsing value with extra spaces', () => {
-    test(`parseValue(" ${FALSE} ", "boolean") should return false`, () => {
+    it(`parseValue(" ${FALSE} ", "boolean") should return false`, () => {
       expect(parseValue(` ${FALSE} `, 'boolean')).toEqual(false);
     });
 
-    test(`parseValue(" ${TRUE} ", "boolean") should return true`, () => {
+    it(`parseValue(" ${TRUE} ", "boolean") should return true`, () => {
       expect(parseValue(` ${TRUE} `, 'boolean')).toEqual(true);
     });
 
-    test(`parseValue(" ${FLOAT_STRING} ", "number") should return "${FLOAT}"`, () => {
+    it(`parseValue(" ${FLOAT_STRING} ", "number") should return "${FLOAT}"`, () => {
       expect(parseValue(` ${FLOAT_STRING} `, 'number')).toEqual(FLOAT);
     });
 
-    test(`parseValue(" ${FLOAT_STRING_COMMA} ", "number") should return "${FLOAT}"`, () => {
+    it(`parseValue(" ${FLOAT_STRING_COMMA} ", "number") should return "${FLOAT}"`, () => {
       expect(parseValue(` ${FLOAT_STRING_COMMA} `, 'number')).toEqual(FLOAT);
     });
 
-    test(`parseValue(" ${INTEGER_STRING} ", "number") should return "${INTEGER}"`, () => {
+    it(`parseValue(" ${INTEGER_STRING} ", "number") should return "${INTEGER}"`, () => {
       expect(parseValue(` ${INTEGER_STRING} `, 'number')).toEqual(INTEGER);
     });
 
-    test(`parseValue(" ${STRING} ", "string") should return " ${STRING} "`, () => {
+    it(`parseValue(" ${STRING} ", "string") should return " ${STRING} "`, () => {
       expect(parseValue(` ${STRING} `, 'string')).toEqual(` ${STRING} `);
     });
   });
