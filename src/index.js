@@ -441,23 +441,6 @@ export function parseForm(form, options) {
     ...options,
   };
 
-  // Check deprecated options
-  if (typeof opts.parseValues !== 'undefined') {
-    // eslint-disable-next-line no-console
-    console.warn('option "parseValues" is deprecated, rename it to "dynamicTyping" instead');
-    opts.dynamicTyping = opts.parseValues;
-  }
-  if (typeof opts.smartParsing !== 'undefined') {
-    // eslint-disable-next-line no-console
-    console.warn('option "smartParsing" is deprecated, rename it to "smartTyping" instead');
-    opts.smartTyping = opts.smartParsing;
-  }
-  if (typeof opts.trimValues !== 'undefined') {
-    // eslint-disable-next-line no-console
-    console.warn('option "trimValues" is deprecated, rename it to "trim" instead');
-    opts.trim = opts.trimValues;
-  }
-
   const fields = {};
   const { elements } = form;
 
