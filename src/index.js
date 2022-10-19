@@ -352,8 +352,7 @@ export function parseField(field, options) {
           value = getFormFields(form, (el) => el.name === field.name && el.checked === true)
             .map((el) => el.value);
         } else {
-          // Keep value only if element is checked
-          value = field.checked ? value : undefined;
+          value = field.checked ? value : null;
         }
       }
       break;

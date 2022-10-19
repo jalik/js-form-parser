@@ -282,6 +282,17 @@ describe('parseBoolean()', () => {
 
 describe('parseField()', () => {
   describe('using checkbox input', () => {
+    describe('with attribute checked="false"', () => {
+      it('should return a null', () => {
+        const field = TestUtils.createCheckbox({
+          dataset: { type: 'boolean' },
+          name: 'boolean_field',
+          value: 'true',
+        });
+        expect(parseField(field)).toEqual(null);
+      });
+    });
+
     describe('with attribute data-type="boolean"', () => {
       it('should return a boolean', () => {
         const field = TestUtils.createCheckbox({
