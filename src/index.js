@@ -4,8 +4,8 @@
  */
 
 /**
- * Builds an object from a string (ex: [colors][0][code])
- * @param str
+ * Builds an object from a string (ex: [colors][0][code]).
+ * @param {string} str
  * @param value
  * @param context
  * @return {*}
@@ -104,9 +104,9 @@ export function buildObject(str, value, context) {
 }
 
 /**
- * Checks if value is in list
- * @param list
- * @param value
+ * Checks if value is in list.
+ * @param {*[]} list
+ * @param {*} value
  * @return {boolean}
  */
 export function contains(list, value) {
@@ -144,8 +144,8 @@ export function getFormFields(form, filter = undefined) {
 }
 
 /**
- * Checks if the field is a button
- * @param field
+ * Checks if the field is a button.
+ * @param {HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement} field
  * @return {*|boolean}
  */
 export function isButton(field) {
@@ -153,8 +153,8 @@ export function isButton(field) {
 }
 
 /**
- * Checks if the field is checkable
- * @param field
+ * Checks if the field is checkable.
+ * @param {HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement} field
  * @return {*|boolean}
  */
 export function isCheckableField(field) {
@@ -163,7 +163,7 @@ export function isCheckableField(field) {
 
 /**
  * Checks if field has multiple values.
- * @param {HTMLFormElement} field
+ * @param {HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement|HTMLElement} field
  * @return {boolean}
  */
 export function isMultipleField(field) {
@@ -176,9 +176,9 @@ export function isMultipleField(field) {
 }
 
 /**
- * Replaces empty string by null value
+ * Replaces empty string by null value.
  * @param value
- * @return {Object|string|Array|*}
+ * @return {null|*|*[]}
  */
 export function nullify(value) {
   let newValue = value;
@@ -201,8 +201,8 @@ export function nullify(value) {
 }
 
 /**
- * Removes extra spaces
- * @param value
+ * Removes extra spaces.
+ * @param {string|*[]} value
  * @return {Object|string|Array|*}
  */
 export function trim(value) {
@@ -226,12 +226,12 @@ export function trim(value) {
 }
 
 /**
- * Returns a boolean
- * @param value
+ * Returns a boolean.
+ * @param {string} value
  * @return {boolean|null}
  */
 export function parseBoolean(value) {
-  let bool = value;
+  const bool = String(value).trim();
 
   if (typeof bool === 'string') {
     bool = bool.trim();
@@ -246,8 +246,8 @@ export function parseBoolean(value) {
 }
 
 /**
- * Returns a number
- * @param value
+ * Returns a number.
+ * @param {string} value
  * @return {number|null}
  */
 export function parseNumber(value) {
@@ -273,8 +273,8 @@ export function parseNumber(value) {
 
 /**
  * Returns the typed value of a string value
- * @param value
- * @param type
+ * @param {string|null} value
+ * @param {'auto'|'boolean'|'number'} type
  * @returns {string|number|boolean|null}
  */
 export function parseValue(value, type = 'auto') {
@@ -315,7 +315,7 @@ export function parseValue(value, type = 'auto') {
 
 /**
  * Returns the parsed value of the field
- * @param field
+ * @param {HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement} field
  * @param options
  * @return {*}
  */
@@ -458,7 +458,7 @@ export function parseField(field, options) {
 
 /**
  * Returns form values as an object
- * @param form
+ * @param {HTMLFormElement} form
  * @param options
  * @return {object}
  */
