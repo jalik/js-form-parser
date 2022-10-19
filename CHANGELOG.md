@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.0.12
+
+- Fixed parsing of single input to return null if not checked
+- Fixed parsing of inputs sharing the same name
+- Removed deprecation warnings
+- Upgraded dependencies
+
 ## v2.0.11 (2021-09-20)
 
 - Upgraded dependencies
