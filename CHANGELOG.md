@@ -1,6 +1,6 @@
 # Changelog
 
-## v2.0.12
+## v2.0.12 (2022-10-19)
 
 - Fixed parsing of single input to return null if not checked
 - Fixed parsing of inputs sharing the same name
