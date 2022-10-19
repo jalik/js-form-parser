@@ -233,9 +233,6 @@ export function trim(value) {
 export function parseBoolean(value) {
   const bool = String(value).trim();
 
-  if (typeof bool === 'string') {
-    bool = bool.trim();
-  }
   if (/^(true|1)$/i.test(bool)) {
     return true;
   }
@@ -251,24 +248,18 @@ export function parseBoolean(value) {
  * @return {number|null}
  */
 export function parseNumber(value) {
-  let number = value;
+  const number = String(value).trim()
+    // Remove spaces
+    .replace(/ /g, '');
 
-  if (typeof value !== 'number') {
-    if (typeof value === 'string') {
-      // Remove spaces
-      number = value.replace(/ /g, '');
-    }
-
-    if (/^[+-]?[0-9]*[.,][0-9]+$/.test(number)) {
-      // Replace comma with dot (for languages where number contain a comma instead of a dot)
-      number = parseFloat(String(number).replace(/,/g, '.'));
-    } else if (/^[+-]?[0-9]+$/.test(number)) {
-      number = parseInt(number, 10);
-    } else {
-      number = null;
-    }
+  if (/^[+-]?[0-9]*[.,][0-9]+$/.test(number)) {
+    // Replace comma with dot (for languages where number contain a comma instead of a dot)
+    return parseFloat(String(number).replace(/,/g, '.'));
   }
-  return number;
+  if (/^[+-]?[0-9]+$/.test(number)) {
+    return parseInt(number, 10);
+  }
+  return null;
 }
 
 /**
@@ -278,39 +269,38 @@ export function parseNumber(value) {
  * @returns {string|number|boolean|null}
  */
 export function parseValue(value, type = 'auto') {
-  let newVal = value;
+  if (value == null) {
+    return null;
+  }
+  let result = String(value);
 
-  if (typeof newVal === 'string') {
-    if (newVal.length > 0) {
-      switch (type) {
-        case 'auto': {
-          const bool = parseBoolean(newVal);
+  if (result.length > 0) {
+    switch (type) {
+      case 'auto': {
+        const bool = parseBoolean(result);
 
-          if (typeof bool === 'boolean') {
-            newVal = bool;
-            break;
-          }
-
-          const number = parseNumber(newVal);
-
-          if (typeof number === 'number') {
-            newVal = number;
-          }
+        if (typeof bool === 'boolean') {
+          result = bool;
           break;
         }
-        case 'boolean':
-          newVal = parseBoolean(newVal);
-          break;
-        case 'number':
-          newVal = parseNumber(newVal);
-          break;
-        case 'string':
-          break;
-        default:
+
+        const number = parseNumber(result);
+
+        if (typeof number === 'number') {
+          result = number;
+        }
+        break;
       }
+      case 'boolean':
+        result = parseBoolean(result);
+        break;
+      case 'number':
+        result = parseNumber(result);
+        break;
+      default:
     }
   }
-  return newVal;
+  return result;
 }
 
 /**

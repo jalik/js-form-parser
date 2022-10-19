@@ -1149,10 +1149,6 @@ describe('parseNumber()', () => {
 });
 
 describe('parseValue()', () => {
-  it('parseValue() should return undefined', () => {
-    expect(parseValue()).toEqual(undefined);
-  });
-
   it('parseValue(null) should return null', () => {
     expect(parseValue(null)).toEqual(null);
   });
@@ -1177,10 +1173,6 @@ describe('parseValue()', () => {
     expect(parseValue(TRUE, 'number')).toEqual(null);
   });
 
-  it(`parseValue("${TRUE}", "string") should return "true"`, () => {
-    expect(parseValue(TRUE, 'string')).toEqual(TRUE);
-  });
-
   it(`parseValue("${FALSE}") should return false`, () => {
     expect(parseValue(FALSE)).toEqual(false);
   });
@@ -1195,10 +1187,6 @@ describe('parseValue()', () => {
 
   it(`parseValue("${FALSE}", "number") should return null`, () => {
     expect(parseValue(FALSE, 'number')).toEqual(null);
-  });
-
-  it(`parseValue("${FALSE}", "string") should return "false"`, () => {
-    expect(parseValue(FALSE, 'string')).toEqual(FALSE);
   });
 
   it(`parseValue("${FLOAT_STRING}") should return ${FLOAT}`, () => {
@@ -1217,10 +1205,6 @@ describe('parseValue()', () => {
     expect(parseValue(FLOAT_STRING, 'number')).toEqual(FLOAT);
   });
 
-  it(`parseValue("${FLOAT_STRING}", "string") should return "${FLOAT}"`, () => {
-    expect(parseValue(FLOAT_STRING, 'string')).toEqual(FLOAT_STRING);
-  });
-
   it(`parseValue("${INTEGER_STRING}") should return ${INTEGER}`, () => {
     expect(parseValue(INTEGER_STRING)).toEqual(INTEGER);
   });
@@ -1237,10 +1221,6 @@ describe('parseValue()', () => {
     expect(parseValue(INTEGER_STRING, 'number')).toEqual(INTEGER);
   });
 
-  it(`parseValue("${INTEGER_STRING}", "string") should return "${INTEGER}"`, () => {
-    expect(parseValue(INTEGER_STRING, 'string')).toEqual(INTEGER_STRING);
-  });
-
   it(`parseValue("${STRING}") should return "${STRING}"`, () => {
     expect(parseValue(STRING)).toEqual(STRING);
   });
@@ -1255,10 +1235,6 @@ describe('parseValue()', () => {
 
   it(`parseValue("${STRING}", "number") should return null`, () => {
     expect(parseValue(STRING, 'number')).toEqual(null);
-  });
-
-  it(`parseValue("${STRING}", "string") should return "${STRING}"`, () => {
-    expect(parseValue(STRING, 'string')).toEqual(STRING);
   });
 
   describe('Parsing value with extra spaces', () => {
@@ -1280,10 +1256,6 @@ describe('parseValue()', () => {
 
     it(`parseValue(" ${INTEGER_STRING} ", "number") should return "${INTEGER}"`, () => {
       expect(parseValue(` ${INTEGER_STRING} `, 'number')).toEqual(INTEGER);
-    });
-
-    it(`parseValue(" ${STRING} ", "string") should return " ${STRING} "`, () => {
-      expect(parseValue(` ${STRING} `, 'string')).toEqual(` ${STRING} `);
     });
   });
 });
