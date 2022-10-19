@@ -1,6 +1,6 @@
 /*
  * The MIT License (MIT)
- * Copyright (c) 2021 Karl STEIN
+ * Copyright (c) 2022 Karl STEIN
  */
 
 /**
@@ -124,6 +124,26 @@ export function contains(list, value) {
 }
 
 /**
+ * Returns form fields.
+ * @param {HTMLFormElement} form
+ * @param {function|undefined} filter
+ * @returns {*[]}
+ */
+export function getFormFields(form, filter = undefined) {
+  const { elements } = form;
+  const fields = [];
+
+  for (let i = 0; i < elements.length; i += 1) {
+    const el = elements[i];
+
+    if (!filter || filter(el)) {
+      fields.push(el);
+    }
+  }
+  return fields;
+}
+
+/**
  * Checks if the field is a button
  * @param field
  * @return {*|boolean}
@@ -139,6 +159,20 @@ export function isButton(field) {
  */
 export function isCheckableField(field) {
   return typeof field.type === 'string' && contains(['checkbox', 'radio'], field.type);
+}
+
+/**
+ * Checks if field has multiple values.
+ * @param {HTMLFormElement} field
+ * @return {boolean}
+ */
+export function isMultipleField(field) {
+  // Field has attribute "multiple".
+  if (field.multiple) {
+    return true;
+  }
+  // Field name contains an empty array (example: "numbers[]").
+  return field.name != null && /\[]$/.test(field.name);
 }
 
 /**
@@ -305,14 +339,22 @@ export function parseField(field, options) {
   };
 
   const isCheckable = isCheckableField(field);
+  const isMultiple = isMultipleField(field);
+
+  const { form } = field;
   let { value } = field;
 
   // Fetch value from special fields
   switch (field.localName) {
     case 'input':
       if (isCheckable) {
-        // Keep value only if element is checked
-        value = field.checked ? value : undefined;
+        if (isMultiple) {
+          value = getFormFields(form, (el) => el.name === field.name && el.checked === true)
+            .map((el) => el.value);
+        } else {
+          // Keep value only if element is checked
+          value = field.checked ? value : undefined;
+        }
       }
       break;
     case 'select':
@@ -447,6 +489,7 @@ export function parseForm(form, options) {
   for (let i = 0; i < elements.length; i += 1) {
     const field = elements[i];
     const isCheckable = isCheckableField(field);
+    const isMultiple = isMultipleField(field);
 
     // Ignore element without a valid name
     if (typeof field.name !== 'string' || field.name.length < 1) {
@@ -504,7 +547,7 @@ export function parseForm(form, options) {
     let { name } = field;
 
     // Handle multiple select specific case
-    if (field.multiple) {
+    if (isMultiple) {
       name = name.replace(/\[]$/g, '');
     }
 
@@ -518,12 +561,8 @@ export function parseForm(form, options) {
     }
 
     // Add field to list
-    if (isCheckable) {
-      if (field.checked) {
-        fields[name] = value;
-      } else if (typeof fields[name] === 'undefined') {
-        fields[name] = null;
-      }
+    if (isCheckable && !isMultiple && !field.checked) {
+      fields[name] = null;
     } else {
       fields[name] = value;
     }

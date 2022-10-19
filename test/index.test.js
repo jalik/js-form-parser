@@ -281,35 +281,73 @@ describe('parseBoolean()', () => {
 });
 
 describe('parseField()', () => {
-  it('should return a number', () => {
-    const field = TestUtils.createNumberInput({ value: '010' });
-    expect(parseField(field))
-      .toEqual(10);
+  describe('using checkbox input', () => {
+    describe('with attribute data-type="boolean"', () => {
+      it('should return a boolean', () => {
+        const field = TestUtils.createCheckbox({
+          dataset: { type: 'boolean' },
+          name: 'boolean_field',
+          value: 'true',
+          checked: true,
+        });
+        expect(parseField(field)).toEqual(true);
+      });
+    });
   });
 
-  it('should return a boolean', () => {
-    const field = TestUtils.createCheckbox({
+  describe('using text input', () => {
+    describe('with attribute data-type="number"', () => {
+      const field = TestUtils.createTextInput({
+        dataset: { type: 'number' },
+        name: 'number_field',
+        value: '1',
+      });
+
+      it('should return a number', () => {
+        expect(parseField(field)).toEqual(Number(field.value));
+      });
+    });
+  });
+
+  describe('using select input', () => {
+    describe('with attributes multiple="true" and data-type="number"', () => {
+      it('should return an array of numbers', () => {
+        const options = [
+          { value: '123', selected: true },
+          { value: '456', selected: true },
+          { value: '789', selected: true },
+          { value: '000' },
+        ];
+        const field = TestUtils.createSelect({
+          dataset: { type: 'number' },
+          multiple: true,
+          options,
+        });
+        const expectation = options
+          .filter((el) => el.selected)
+          .map((el) => Number(el.value));
+        expect(parseField(field)).toEqual(expectation);
+      });
+    });
+  });
+
+  describe('with attribute multiple="true"', () => {
+    const form = TestUtils.createForm();
+    const field1 = TestUtils.createCheckbox({
+      name: 'numbers[]',
+      value: '1',
+    });
+    const field2 = TestUtils.createCheckbox({
+      name: 'numbers[]',
+      value: '2',
       checked: true,
-      dataset: { type: 'boolean' },
-      value: 'true',
     });
-    expect(parseField(field))
-      .toEqual(true);
-  });
+    form.appendChild(field1);
+    form.appendChild(field2);
 
-  it('should return an array of numbers', () => {
-    const field = TestUtils.createSelect({
-      dataset: { type: 'number' },
-      multiple: true,
-      options: [
-        { value: '123', selected: true },
-        { value: '456', selected: true },
-        { value: '789', selected: true },
-        { value: '000' },
-      ],
+    it('should return an array of values', () => {
+      expect(parseField(field1)).toEqual(['2']);
     });
-    expect(parseField(field))
-      .toEqual([123, 456, 789]);
   });
 });
 
@@ -421,35 +459,82 @@ describe('parseForm()', () => {
 
     it('parseForm(form, options) should not return values of unchecked fields', () => {
       const form = TestUtils.createForm();
-      form.appendChild(TestUtils.createRadio({
+      form.appendChild(TestUtils.createCheckbox({
         dataset: { type: 'boolean' },
-        name: 'options[checkbox]',
+        name: 'boolean_field',
         value: 'true',
       }));
-      form.appendChild(TestUtils.createRadio({
+      form.appendChild(TestUtils.createCheckbox({
         dataset: { type: 'number' },
-        name: 'options[choice]',
+        name: 'checkboxes_field[]',
         value: '1',
       }));
-      form.appendChild(TestUtils.createRadio({
+      form.appendChild(TestUtils.createCheckbox({
         dataset: { type: 'number' },
-        name: 'options[choice]',
+        name: 'checkboxes_field[]',
         value: '2',
       }));
       form.appendChild(TestUtils.createRadio({
         dataset: { type: 'number' },
-        name: 'options[radio]',
+        name: 'radio_field',
         value: '1',
       }));
       form.appendChild(TestUtils.createRadio({
         dataset: { type: 'number' },
-        name: 'options[radio]',
+        name: 'radio_field',
         value: '2',
       }));
 
-      const r = parseForm(form, { dynamicTyping: true, smartTyping: true });
+      const r = parseForm(form, {
+        dynamicTyping: true,
+        smartTyping: true,
+      });
       expect(r).toEqual({
-        options: {},
+        boolean_field: null,
+        checkboxes_field: [],
+        radio_field: null,
+      });
+    });
+
+    it('parseForm(form, options) should return values of checked fields', () => {
+      const form = TestUtils.createForm();
+      form.appendChild(TestUtils.createCheckbox({
+        dataset: { type: 'boolean' },
+        checked: true,
+        name: 'boolean_field',
+        value: 'true',
+      }));
+      form.appendChild(TestUtils.createCheckbox({
+        dataset: { type: 'number' },
+        name: 'checkboxes_field[]',
+        value: '1',
+      }));
+      form.appendChild(TestUtils.createCheckbox({
+        checked: true,
+        dataset: { type: 'number' },
+        name: 'checkboxes_field[]',
+        value: '2',
+      }));
+      form.appendChild(TestUtils.createRadio({
+        dataset: { type: 'number' },
+        name: 'radio_field',
+        value: '1',
+      }));
+      form.appendChild(TestUtils.createRadio({
+        checked: true,
+        dataset: { type: 'number' },
+        name: 'radio_field',
+        value: '2',
+      }));
+
+      const r = parseForm(form, {
+        dynamicTyping: true,
+        smartTyping: true,
+      });
+      expect(r).toEqual({
+        boolean_field: true,
+        checkboxes_field: [2],
+        radio_field: 2,
       });
     });
 
