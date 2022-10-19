@@ -34,7 +34,7 @@
     "lint-fix": "eslint --fix .",
     "prepare": "npm run clean && npm run build && npm run lint",
     "prepublishOnly": "npm test",
-    "test": "jest --passWithNoTests"
+    "test": "jest --passWithNoTests --coverage=true"
   },
   "files": [
     "/dist",
