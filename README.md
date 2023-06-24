@@ -345,7 +345,9 @@ The `fields` object will look like this :
 
 ## Filtering fields
 
-You can get only the fields you want with `filterFunction(field)` option in the `parseForm()` method. The filter function will be called with all fields and must return `true` to return the field.
+You can get only the fields you want with `filterFunction(field, parsedValue)` option in the `parseForm()`
+method. The filter function will be called with all fields and must return `true` to return the
+field.
 
 ```js
 import { parseForm } from "@jalik/form-parser";
@@ -356,7 +358,7 @@ const form = document.getElementById("my-form");
 // Parse form values using default options
 const fields = parseForm(form, {
   // returns only text fields
-  filterFunction: (field) => field.type === "text",
+  filterFunction: (field, parsedValue) => field.type === 'text'
 });
 ```
 

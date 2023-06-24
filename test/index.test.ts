@@ -684,13 +684,20 @@ describe('parseForm()', () => {
     })
 
     describe('filterFunction', () => {
-      it('should return filtered fields only', () => {
-        const form = createForm()
-        form.appendChild(createTextInput({ name: 'text', value: 'test' }))
-        form.appendChild(createNumberInput({ name: 'num', value: 2 }))
+      const form = createForm()
+      form.appendChild(createTextInput({ name: 'text', value: 'test' }))
+      form.appendChild(createNumberInput({ name: 'num', value: 2 }))
 
+      it('should return filtered fields only', () => {
         const r = parseForm(form, {
           filterFunction: (field) => field instanceof HTMLInputElement && field.type === 'text'
+        })
+        expect(r).toEqual({ text: 'test' })
+      })
+
+      it('should be called with value as the second argument', () => {
+        const r = parseForm(form, {
+          filterFunction: (field, value) => value === 'test'
         })
         expect(r).toEqual({ text: 'test' })
       })

@@ -420,8 +420,7 @@ export function parseField (element: Element, options?: ParseFieldOptions) {
 export type ParseFormOptions = {
   cleanFunction?: (value: string, field: Element) => void
   dynamicTyping?: boolean
-  filterFunction?: (element: Element) => boolean
-  ignoreButtons?: boolean
+  filterFunction?: (element: Element, parsedValue: any) => boolean
   ignoreDisabled?: boolean
   ignoreEmpty?: boolean
   ignoreUnchecked?: boolean
@@ -486,11 +485,6 @@ export function parseForm (form: HTMLFormElement, options?: ParseFormOptions): R
     if (opts.ignoreUnchecked && (field instanceof HTMLInputElement && !field.checked)) {
       continue
     }
-    // Ignore element not matching the filter.
-    // todo move filter after value is set to allow filtering based on value
-    if (opts.filterFunction && opts.filterFunction(field) !== true) {
-      continue
-    }
 
     // Parse field value.
     let value = parseField(field, opts)
@@ -508,7 +502,10 @@ export function parseForm (form: HTMLFormElement, options?: ParseFormOptions): R
       }
     }
 
-    // todo move filterFunction here
+    // Ignore element not matching the filter.
+    if (opts.filterFunction && opts.filterFunction(field, value) !== true) {
+      continue
+    }
 
     // Ignore empty value.
     if (opts.ignoreEmpty && (value === '' || value === null || typeof value === 'undefined')) {
