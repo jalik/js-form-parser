@@ -430,9 +430,6 @@ const fields = parseForm(form, {
   ignoreDisabled: true,
   // Don't get fields with empty string
   ignoreEmpty: false,
-  // Don't get radios or checkboxes that are not checked
-  // useful to get a false value instead of undefined
-  ignoreUnchecked: false,
   // Replace empty strings with null
   nullify: true,
   // Parse values to the best guess type (ex: "001" => 1)

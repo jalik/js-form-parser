@@ -413,7 +413,6 @@ export type ParseFormOptions = {
   filterFunction?: (element: Element, parsedValue: any) => boolean
   ignoreDisabled?: boolean
   ignoreEmpty?: boolean
-  ignoreUnchecked?: boolean
   nullify?: boolean
   smartTyping?: boolean
   trim?: boolean
@@ -436,7 +435,6 @@ export function parseForm (form: HTMLFormElement, options?: ParseFormOptions): R
     filterFunction: null,
     ignoreDisabled: true,
     ignoreEmpty: false,
-    ignoreUnchecked: false,
     nullify: true,
     smartTyping: true,
     trim: true,
@@ -463,10 +461,6 @@ export function parseForm (form: HTMLFormElement, options?: ParseFormOptions): R
     }
     // Ignore disabled element.
     if (opts.ignoreDisabled && field.disabled) {
-      continue
-    }
-    // Ignore unchecked element.
-    if (opts.ignoreUnchecked && (field instanceof HTMLInputElement && !field.checked)) {
       continue
     }
 

@@ -752,30 +752,6 @@ describe('parseForm()', () => {
       })
     })
 
-    describe('ignoreUnchecked', () => {
-      it('parseForm(form, {ignoreUnchecked: true}) should not return unchecked fields', () => {
-        const form = createForm()
-        form.appendChild(createCheckbox({
-          name: 'checkbox',
-          value: STRING
-        }))
-
-        const r = parseForm(form, { ignoreUnchecked: true })
-        expect(r).toEqual({})
-      })
-
-      it('parseForm(form, {ignoreUnchecked: false}) should return unchecked fields', () => {
-        const form = createForm()
-        form.appendChild(createCheckbox({
-          name: 'checkbox',
-          value: STRING
-        }))
-
-        const r = parseForm(form, { ignoreUnchecked: false })
-        expect(r).toEqual({ checkbox: null })
-      })
-    })
-
     describe('nullify', () => {
       it('parseForm(form, {nullify: true}) should replace empty string with null', () => {
         const form = createForm()
