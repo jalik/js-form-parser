@@ -1,16 +1,20 @@
 # @jalik/form-parser
+
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/jalik/js-form-parser.svg)
-[![Build Status](https://travis-ci.com/jalik/js-form-parser.svg?branch=master)](https://travis-ci.com/jalik/js-form-parser)
-![GitHub](https://img.shields.io/github/license/jalik/js-form-parser.svg)
-![GitHub last commit](https://img.shields.io/github/last-commit/jalik/js-form-parser.svg)
+![Build Status](https://github.com/jalik/js-form-parser/actions/workflows/node.js.yml/badge.svg)
+![Last commit](https://img.shields.io/github/last-commit/jalik/js-form-parser.svg)
 [![GitHub issues](https://img.shields.io/github/issues/jalik/js-form-parser.svg)](https://github.com/jalik/js-form-parser/issues)
+![GitHub](https://img.shields.io/github/license/jalik/js-form-parser.svg)
 ![npm](https://img.shields.io/npm/dt/@jalik/form-parser.svg)
 
 Parse complex forms with minimum effort.
 
 ## Introduction
 
-Parsing forms can be painful, but with this great library you can get all fields from a form, automatically parse values (boolean, number, string, array, object), remove unnecessary spaces from strings and replace empty strings with null, plus you can decide which fields are collected or ignored and even use your own cleaning function.
+Parsing forms can be painful, but with this great library you can get all fields from a form,
+automatically parse values (boolean, number, string, array, object), remove unnecessary spaces from
+strings and replace empty strings with null, plus you can decide which fields are collected or
+ignored and even use your own cleaning function.
 
 ## Getting started
 
@@ -505,7 +509,3 @@ History of releases is in the [changelog](./CHANGELOG.md).
 ## License
 
 The code is released under the [MIT License](http://www.opensource.org/licenses/MIT).
-
-If you find this lib useful and would like to support my work, donations are welcome :)
-
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6UA5YELH55WLC)
