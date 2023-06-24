@@ -1,5 +1,20 @@
 # Changelog
 
+## v3.0.0 (2023-06-23)
+
+- **[BREAKING]** Removed option `ignoreButtons` in `parseForm(options)`
+- **[BREAKING]** Removed option `ignoreUnchecked` in `parseForm(options)`
+- **[BREAKING]** Removed option `ignoreEmpty` in `parseForm(options)`
+- **[BREAKING]** Removed option `ignoreDisabled` in `parseForm(options)`
+- **[BREAKING]** Removed option `smartTyping` in `parseForm(options)`
+- **[BREAKING]** Removed option `dynamicTyping` in `parseForm(options)`
+- Changed parsing expression of "true" to `true|1|yes|on` for `data-type="boolean"`
+- Changed parsing expression of "false" to `false|0|no|off` for `data-type="boolean"`
+- Added field parsed `value` as second argument of `filterFunction` in `parseForm(options)`
+- Added option `parsing: 'none' | 'type' | 'data-type' | 'auto'` in `parseForm(options)` and `parseField(options)`
+- Fixed `data-type="boolean"` not returning `false` when checkbox is not checked
+- Migrated to TypeScript
+
 ## v2.0.12 (2022-10-19)
 
 - Fixed parsing of single input to return null if not checked
