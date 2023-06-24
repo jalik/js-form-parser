@@ -426,8 +426,6 @@ const fields = parseForm(form, {
   filterFunction(field) {
     return field.type === 'text';
   },
-  // Don't get buttons
-  ignoreButtons: true,
   // Don't get disabled fields
   ignoreDisabled: true,
   // Don't get fields with empty string

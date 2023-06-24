@@ -15,7 +15,6 @@ import {
   trim
 } from '../src'
 import {
-  createButton,
   createCheckbox,
   createFileInput,
   createForm,
@@ -700,56 +699,6 @@ describe('parseForm()', () => {
           filterFunction: (field, value) => value === 'test'
         })
         expect(r).toEqual({ text: 'test' })
-      })
-    })
-
-    describe('ignoreButtons', () => {
-      it('parseForm(form, {ignoreButtons: true}) should not return values of buttons', () => {
-        const form = createForm()
-        form.appendChild(createButton({
-          name: 'button',
-          type: 'button',
-          value: 'button'
-        }))
-        form.appendChild(createButton({
-          name: 'reset',
-          type: 'reset',
-          value: 'reset'
-        }))
-        form.appendChild(createButton({
-          name: 'submit',
-          type: 'submit',
-          value: 'submit'
-        }))
-
-        const r = parseForm(form, { ignoreButtons: true })
-        expect(r).toEqual({})
-      })
-
-      it('parseForm(form, {ignoreButtons: false}) should return values of buttons', () => {
-        const form = createForm()
-        form.appendChild(createButton({
-          name: 'button',
-          type: 'button',
-          value: 'button'
-        }))
-        form.appendChild(createButton({
-          name: 'reset',
-          type: 'reset',
-          value: 'reset'
-        }))
-        form.appendChild(createButton({
-          name: 'submit',
-          type: 'submit',
-          value: 'submit'
-        }))
-
-        const r = parseForm(form, { ignoreButtons: false })
-        expect(r).toEqual({
-          button: 'button',
-          reset: 'reset',
-          submit: 'submit'
-        })
       })
     })
 

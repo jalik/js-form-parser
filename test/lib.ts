@@ -4,14 +4,6 @@
  */
 
 /**
- * Creates a button
- * @param attrs
- */
-export function createButton (attrs): HTMLButtonElement {
-  return createElement('button', { ...attrs, type: 'button' }) as HTMLButtonElement
-}
-
-/**
  * Creates a checkbox input
  * @param attrs
  */

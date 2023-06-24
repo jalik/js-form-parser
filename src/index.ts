@@ -122,15 +122,6 @@ export function getFieldsByName (name: string, form: HTMLFormElement): Array<HTM
 }
 
 /**
- * Checks if the field is a button.
- * @param element
- */
-export function isButton (element: Element): boolean {
-  return element instanceof HTMLButtonElement ||
-    (element instanceof HTMLInputElement && ['button', 'reset', 'submit'].includes(element.type))
-}
-
-/**
  * Checks if the field is checkable.
  * @param element
  */
@@ -294,8 +285,7 @@ export function parseField (element: Element, options?: ParseFieldOptions) {
   // Check field.
   if (!(element instanceof HTMLInputElement) &&
     !(element instanceof HTMLSelectElement) &&
-    !(element instanceof HTMLTextAreaElement) &&
-    !(element instanceof HTMLButtonElement)) {
+    !(element instanceof HTMLTextAreaElement)) {
     throw new TypeError('field is not an instance of HTMLInputElement or HTMLSelectElement or HTMLTextAreaElement')
   }
 
@@ -444,7 +434,6 @@ export function parseForm (form: HTMLFormElement, options?: ParseFormOptions): R
     cleanFunction: null,
     dynamicTyping: true,
     filterFunction: null,
-    ignoreButtons: true,
     ignoreDisabled: true,
     ignoreEmpty: false,
     ignoreUnchecked: false,
@@ -465,16 +454,11 @@ export function parseForm (form: HTMLFormElement, options?: ParseFormOptions): R
     // Ignore non-form element.
     if (!(field instanceof HTMLInputElement) &&
       !(field instanceof HTMLSelectElement) &&
-      !(field instanceof HTMLTextAreaElement) &&
-      !(field instanceof HTMLButtonElement)) {
+      !(field instanceof HTMLTextAreaElement)) {
       continue
     }
     // Ignore element without a name.
     if (field.name == null || field.name.length === 0) {
-      continue
-    }
-    // Ignore buttons.
-    if (opts.ignoreButtons && isButton(field)) {
       continue
     }
     // Ignore disabled element.
