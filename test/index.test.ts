@@ -348,9 +348,42 @@ describe('parseField()', () => {
       expect(parseField(field1)).toEqual(['2'])
     })
   })
+
+  describe('with data-type="string"', () => {
+    it('should not parse value', () => {
+      const field = createNumberInput({
+        dataset: { type: 'string' },
+        name: 'number',
+        value: INTEGER_STRING
+      })
+      expect(parseField(field, { parsing: 'auto' })).toBe(INTEGER_STRING)
+    })
+  })
 })
 
 describe('parseForm()', () => {
+  it('should not return disabled fields', () => {
+    const form = createForm()
+    form.appendChild(createTextInput({
+      disabled: true,
+      name: 'disabled',
+      value: STRING
+    }))
+
+    const r = parseForm(form)
+    expect(r).toEqual({})
+  })
+
+  it('should not return values of fields without a name', () => {
+    const form = createForm()
+    form.appendChild(createTextInput({
+      value: STRING
+    }))
+
+    const r = parseForm(form)
+    expect(r).toEqual({})
+  })
+
   it('should return fields with a name containing dashes', () => {
     const form = createForm()
     form.appendChild(createTextarea({
@@ -358,22 +391,19 @@ describe('parseForm()', () => {
       value: STRING
     }))
 
-    const r = parseForm(form, { dynamicTyping: true, smartTyping: true })
+    const r = parseForm(form)
     expect(r).toEqual({ 'x-custom-field': STRING })
   })
 
   it('should return fields with a name of one character long', () => {
     const form = createForm()
     form.appendChild(createHiddenInput({
-      dataset: { type: 'number' },
       name: 'x',
-      value: '-149.345564',
-      readonly: true,
-      required: true
+      value: STRING
     }))
 
-    const r = parseForm(form, { dynamicTyping: true, smartTyping: true })
-    expect(r).toEqual({ x: -149.345564 })
+    const r = parseForm(form)
+    expect(r).toEqual({ x: STRING })
   })
 
   it('should return empty array if no checkbox is checked', () => {
@@ -387,132 +417,271 @@ describe('parseForm()', () => {
       value: 1
     }))
 
-    const r = parseForm(form, { dynamicTyping: true, smartTyping: true })
+    const r = parseForm(form)
     expect(r).toEqual({ items: [] })
   })
 
-  it('should not return disabled fields', () => {
+  it('should return values of file fields', () => {
     const form = createForm()
-    form.appendChild(createTextInput({
-      disabled: true,
-      name: 'disabled',
+    form.appendChild(createFileInput({
+      name: 'file'
+    }))
+
+    const r = parseForm(form)
+    expect(r).toEqual({ file: null })
+  })
+
+  it('should return values of hidden fields', () => {
+    const form = createForm()
+    form.appendChild(createHiddenInput({
+      name: 'hidden',
       value: STRING
     }))
 
     const r = parseForm(form)
-    expect(r).toEqual({})
+    expect(r).toEqual({ hidden: STRING })
   })
 
-  describe('Parsing fields with options {dynamicTyping: true, smartTyping: true}', () => {
-    it('parseForm(form, options) should not return values of unknown fields', () => {
+  it('should return values of checked checkboxes', () => {
+    const form = createForm()
+    const a = createCheckbox({
+      checked: true,
+      name: 'checkboxes[]',
+      value: 'A'
+    })
+    form.appendChild(a)
+    const b = createCheckbox({
+      name: 'checkboxes[]',
+      value: 'B'
+    })
+    form.appendChild(b)
+    const c = createCheckbox({
+      checked: true,
+      name: 'checkboxes[]',
+      value: 'C'
+    })
+    form.appendChild(c)
+
+    const r = parseForm(form)
+    expect(r).toEqual({
+      checkboxes: [
+        a.value,
+        c.value
+      ]
+    })
+  })
+
+  it('should return values of checked radios', () => {
+    const form = createForm()
+    const a = createRadio({
+      name: 'radio',
+      value: 'A'
+    })
+    form.appendChild(a)
+    const b = createRadio({
+      checked: true,
+      name: 'radio',
+      value: 'B'
+    })
+    form.appendChild(b)
+
+    const r = parseForm(form)
+    expect(r).toEqual({ radio: b.value })
+  })
+
+  it('should return values of number fields', () => {
+    const form = createForm()
+    form.appendChild(createNumberInput({
+      name: 'number',
+      value: INTEGER
+    }))
+
+    const r = parseForm(form)
+    expect(r).toEqual({ number: INTEGER })
+  })
+
+  it('should return values of email fields', () => {
+    const form = createForm()
+    form.appendChild(createTextInput({
+      name: 'email',
+      type: 'email',
+      value: STRING
+    }))
+
+    const r = parseForm(form)
+    expect(r).toEqual({ email: STRING })
+  })
+
+  it('should return values of password fields', () => {
+    const form = createForm()
+    form.appendChild(createPasswordInput({
+      name: 'password',
+      value: PASSWORD
+    }))
+
+    const r = parseForm(form)
+    expect(r).toEqual({ password: PASSWORD })
+  })
+
+  it('should return values of select fields', () => {
+    const form = createForm()
+    form.appendChild(createSelect({
+      name: 'select',
+      options: [
+        { value: 'A' },
+        { value: 'B', selected: true }
+      ]
+    }))
+
+    const r = parseForm(form)
+    expect(r).toEqual({ select: 'B' })
+  })
+
+  it('should return values of multiple select', () => {
+    const form = createForm()
+    form.appendChild(createSelect({
+      multiple: true,
+      name: 'select',
+      options: [
+        { value: 'A' },
+        { value: 'B', selected: true },
+        { value: 'C', selected: true }
+      ]
+    }))
+
+    const r = parseForm(form)
+    expect(r).toEqual({ select: ['B', 'C'] })
+  })
+
+  it('should return values of text fields', () => {
+    const form = createForm()
+    form.appendChild(createTextInput({
+      name: 'text',
+      value: STRING
+    }))
+
+    const r = parseForm(form)
+    expect(r).toEqual({ text: STRING })
+  })
+
+  it('should return values of textarea fields', () => {
+    const form = createForm()
+    form.appendChild(createTextarea({
+      name: 'textarea',
+      value: STRING
+    }))
+
+    const r = parseForm(form)
+    expect(r).toEqual({ textarea: STRING })
+  })
+
+  describe('with parsing = "none"', () => {
+    it('should not parse any value', () => {
       const form = createForm()
       form.appendChild(createTextInput({
-        value: STRING
+        dataset: { type: 'boolean' },
+        name: 'bool_true',
+        value: TRUE
       }))
-
-      const r = parseForm(form, { dynamicTyping: true, smartTyping: true })
-      expect(r).toEqual({})
-    })
-
-    it('parseForm(form, options) should parse values based on data-type attribute if present', () => {
-      const form = createForm()
+      form.appendChild(createTextInput({
+        dataset: { type: 'boolean' },
+        name: 'bool_false',
+        value: FALSE
+      }))
       form.appendChild(createNumberInput({
-        dataset: { type: 'string' },
-        name: 'number',
+        dataset: { type: 'number' },
+        name: 'float',
+        value: FLOAT_STRING
+      }))
+      form.appendChild(createNumberInput({
+        dataset: { type: 'number' },
+        name: 'integer',
         value: INTEGER_STRING
       }))
 
-      const r = parseForm(form, { dynamicTyping: true, smartTyping: true })
-      expect(r).toEqual({ number: INTEGER_STRING })
-    })
-
-    it('parseForm(form, options) should return values of checked checkboxes', () => {
-      const form = createForm()
-      const a = createCheckbox({
-        checked: true,
-        name: 'checkboxes[]',
-        value: 'A'
-      })
-      form.appendChild(a)
-      const b = createCheckbox({
-        name: 'checkboxes[]',
-        value: 'B'
-      })
-      form.appendChild(b)
-      const c = createCheckbox({
-        checked: true,
-        name: 'checkboxes[]',
-        value: 'C'
-      })
-      form.appendChild(c)
-
-      const r = parseForm(form, { dynamicTyping: true, smartTyping: true })
+      const r = parseForm(form, { parsing: 'none' })
       expect(r).toEqual({
-        checkboxes: [
-          a.value,
-          c.value
-        ]
+        bool_true: TRUE,
+        bool_false: FALSE,
+        float: FLOAT_STRING,
+        integer: INTEGER_STRING
       })
     })
+  })
 
-    it('parseForm(form, options) should return values of checked radios', () => {
+  describe('with parsing = "type"', () => {
+    it('should parse values using "type" attribute', () => {
       const form = createForm()
-      const a = createRadio({
-        name: 'radio',
-        value: 'A'
-      })
-      form.appendChild(a)
-      const b = createRadio({
-        checked: true,
-        name: 'radio',
-        value: 'B'
-      })
-      form.appendChild(b)
+      form.appendChild(createTextInput({
+        name: 'string_true',
+        value: TRUE
+      }))
+      form.appendChild(createTextInput({
+        name: 'string_false',
+        value: FALSE
+      }))
+      form.appendChild(createNumberInput({
+        name: 'float',
+        value: FLOAT_STRING
+      }))
+      form.appendChild(createTextInput({
+        name: 'float_text',
+        value: FLOAT_STRING
+      }))
+      form.appendChild(createNumberInput({
+        name: 'integer',
+        value: INTEGER_STRING
+      }))
+      form.appendChild(createTextInput({
+        name: 'integer_text',
+        value: INTEGER_STRING
+      }))
 
-      const r = parseForm(form, { dynamicTyping: true, smartTyping: true })
-      expect(r).toEqual({ radio: b.value })
+      const r = parseForm(form, { parsing: 'type' })
+      expect(r).toEqual({
+        string_true: 'true',
+        string_false: 'false',
+        float: FLOAT,
+        float_text: FLOAT_STRING,
+        integer: INTEGER,
+        integer_text: INTEGER_STRING
+      })
     })
+  })
 
-    it('parseForm(form, options) should not return values of unchecked fields', () => {
+  describe('with parsing = "data-type"', () => {
+    it('should parse values using "data-type" attribute', () => {
       const form = createForm()
-      form.appendChild(createCheckbox({
+      form.appendChild(createTextInput({
         dataset: { type: 'boolean' },
-        name: 'boolean_field',
-        value: 'true'
+        name: 'bool_true',
+        value: TRUE
       }))
-      form.appendChild(createCheckbox({
+      form.appendChild(createTextInput({
+        dataset: { type: 'boolean' },
+        name: 'bool_false',
+        value: FALSE
+      }))
+      form.appendChild(createNumberInput({
         dataset: { type: 'number' },
-        name: 'checkboxes_field[]',
-        value: '1'
+        name: 'float',
+        value: FLOAT_STRING
       }))
-      form.appendChild(createCheckbox({
+      form.appendChild(createNumberInput({
         dataset: { type: 'number' },
-        name: 'checkboxes_field[]',
-        value: '2'
+        name: 'integer',
+        value: INTEGER_STRING
       }))
-      form.appendChild(createRadio({
-        dataset: { type: 'number' },
-        name: 'radio_field',
-        value: '1'
-      }))
-      form.appendChild(createRadio({
-        dataset: { type: 'number' },
-        name: 'radio_field',
-        value: '2'
-      }))
-
-      const r = parseForm(form, {
-        dynamicTyping: true,
-        smartTyping: true
-      })
+      const r = parseForm(form, { parsing: 'data-type' })
       expect(r).toEqual({
-        boolean_field: null,
-        checkboxes_field: [],
-        radio_field: null
+        bool_true: true,
+        bool_false: false,
+        float: FLOAT,
+        integer: INTEGER
       })
     })
 
-    it('parseForm(form, options) should return values of checked fields', () => {
+    it('should parse values of checked fields', () => {
       const form = createForm()
       form.appendChild(createCheckbox({
         dataset: { type: 'boolean' },
@@ -543,10 +712,7 @@ describe('parseForm()', () => {
         value: '2'
       }))
 
-      const r = parseForm(form, {
-        dynamicTyping: true,
-        smartTyping: true
-      })
+      const r = parseForm(form, { parsing: 'data-type' })
       expect(r).toEqual({
         boolean_field: true,
         checkboxes_field: [2],
@@ -554,370 +720,43 @@ describe('parseForm()', () => {
       })
     })
 
-    it('parseForm(form, options) should return values of file inputs', () => {
+    it('should not return unchecked values', () => {
       const form = createForm()
-      form.appendChild(createFileInput({
-        name: 'file'
+      form.appendChild(createCheckbox({
+        dataset: { type: 'boolean' },
+        name: 'boolean_field',
+        value: 'true'
+      }))
+      form.appendChild(createCheckbox({
+        dataset: { type: 'number' },
+        name: 'checkboxes_field[]',
+        value: '1'
+      }))
+      form.appendChild(createCheckbox({
+        dataset: { type: 'number' },
+        name: 'checkboxes_field[]',
+        value: '2'
+      }))
+      form.appendChild(createRadio({
+        dataset: { type: 'number' },
+        name: 'radio_field',
+        value: '1'
+      }))
+      form.appendChild(createRadio({
+        dataset: { type: 'number' },
+        name: 'radio_field',
+        value: '2'
       }))
 
-      const r = parseForm(form, {
-        dynamicTyping: true,
-        nullify: true,
-        smartTyping: true
-      })
-      expect(r).toEqual({ file: null })
-    })
-
-    it('parseForm(form, options) should return values of hidden inputs', () => {
-      const form = createForm()
-      form.appendChild(createHiddenInput({
-        name: 'hidden',
-        value: STRING
-      }))
-
-      const r = parseForm(form, { dynamicTyping: true, smartTyping: true })
-      expect(r).toEqual({ hidden: STRING })
-    })
-
-    it('parseForm(form, options) should return values of number inputs', () => {
-      const form = createForm()
-      form.appendChild(createNumberInput({
-        name: 'number',
-        value: INTEGER
-      }))
-
-      const r = parseForm(form, { dynamicTyping: true, smartTyping: true })
-      expect(r).toEqual({ number: INTEGER })
-    })
-
-    it('parseForm(form, options) should return values of email inputs', () => {
-      const form = createForm()
-      form.appendChild(createTextInput({
-        name: 'email',
-        type: 'email',
-        value: STRING
-      }))
-
-      const r = parseForm(form, { dynamicTyping: true, smartTyping: true })
-      expect(r).toEqual({ email: STRING })
-    })
-
-    it('parseForm(form, options) should return values of password inputs', () => {
-      const form = createForm()
-      form.appendChild(createPasswordInput({
-        name: 'password',
-        value: PASSWORD
-      }))
-
-      const r = parseForm(form, { dynamicTyping: true, smartTyping: true })
-      expect(r).toEqual({ password: PASSWORD })
-    })
-
-    it('parseForm(form, options) should return values of single select lists', () => {
-      const form = createForm()
-      form.appendChild(createSelect({
-        name: 'select',
-        options: [
-          { value: 'A' },
-          { value: 'B', selected: true }
-        ]
-      }))
-
-      const r = parseForm(form, { dynamicTyping: true, smartTyping: true })
-      expect(r).toEqual({ select: 'B' })
-    })
-
-    it('parseForm(form, options) should return values of multiple select lists', () => {
-      const form = createForm()
-      form.appendChild(createSelect({
-        multiple: true,
-        name: 'select',
-        options: [
-          { value: 'A' },
-          { value: 'B', selected: true },
-          { value: 'C', selected: true }
-        ]
-      }))
-
-      const r = parseForm(form, { dynamicTyping: true, smartTyping: true })
-      expect(r).toEqual({ select: ['B', 'C'] })
-    })
-
-    it('parseForm(form, options) should return values of text inputs', () => {
-      const form = createForm()
-      form.appendChild(createTextInput({
-        name: 'text',
-        value: STRING
-      }))
-
-      const r = parseForm(form, { dynamicTyping: true, smartTyping: true })
-      expect(r).toEqual({ text: STRING })
-    })
-
-    it('parseForm(form, options) should return values of textarea fields', () => {
-      const form = createForm()
-      form.appendChild(createTextarea({
-        name: 'textarea',
-        value: STRING
-      }))
-
-      const r = parseForm(form, { dynamicTyping: true, smartTyping: true })
-      expect(r).toEqual({ textarea: STRING })
-    })
-  })
-
-  describe('Parsing options', () => {
-    describe('cleanFunction', () => {
-      it('should clean string values', () => {
-        const form = createForm()
-        form.appendChild(createTextInput({
-          name: 'text',
-          value: '<script src="http://hacked.net"></script>'
-        }))
-
-        const r = parseForm(form, {
-          cleanFunction: (value) => value.replace(/<\/?[^>]+>/gm, '')
-        })
-        expect(r).toEqual({ text: '' })
-      })
-      it('should not clean value from password field', () => {
-        const form = createForm()
-        form.appendChild(createPasswordInput({
-          name: 'pass',
-          value: PASSWORD
-        }))
-
-        const r = parseForm(form, {
-          cleanFunction: (value) => value.trim()
-        })
-        expect(r).toEqual({ pass: PASSWORD })
+      const r = parseForm(form, { parsing: 'data-type' })
+      expect(r).toEqual({
+        boolean_field: null,
+        checkboxes_field: [],
+        radio_field: null
       })
     })
 
-    describe('filterFunction', () => {
-      const form = createForm()
-      form.appendChild(createTextInput({ name: 'text', value: 'test' }))
-      form.appendChild(createNumberInput({ name: 'num', value: 2 }))
-
-      it('should return filtered fields only', () => {
-        const r = parseForm(form, {
-          filterFunction: (field) => field instanceof HTMLInputElement && field.type === 'text'
-        })
-        expect(r).toEqual({ text: 'test' })
-      })
-
-      it('should be called with value as the second argument', () => {
-        const r = parseForm(form, {
-          filterFunction: (field, value) => value === 'test'
-        })
-        expect(r).toEqual({ text: 'test' })
-      })
-    })
-
-    describe('nullify', () => {
-      it('parseForm(form, {nullify: true}) should replace empty string with null', () => {
-        const form = createForm()
-        form.appendChild(createTextInput({
-          name: 'text',
-          value: ' '
-        }))
-
-        const r = parseForm(form, { nullify: true, trim: true })
-        expect(r).toEqual({ text: null })
-      })
-
-      it('parseForm(form, {nullify: false}) should not replace empty string with null', () => {
-        const form = createForm()
-        form.appendChild(createTextInput({
-          name: 'text',
-          value: ' '
-        }))
-
-        const r = parseForm(form, { nullify: false, trim: true })
-        expect(r).toEqual({ text: '' })
-      })
-    })
-
-    describe('dynamicTyping', () => {
-      it('parseForm(form, {dynamicTyping: true, smartTyping: false}) should parse all values', () => {
-        const form = createForm()
-        form.appendChild(createTextInput({
-          dataset: { type: 'boolean' },
-          name: 'bool_true',
-          value: TRUE
-        }))
-        form.appendChild(createTextInput({
-          dataset: { type: 'boolean' },
-          name: 'bool_false',
-          value: FALSE
-        }))
-        form.appendChild(createNumberInput({
-          name: 'float',
-          value: FLOAT_STRING
-        }))
-        form.appendChild(createNumberInput({
-          name: 'integer',
-          value: INTEGER_STRING
-        }))
-
-        const r = parseForm(form, { dynamicTyping: true, smartTyping: false })
-        expect(r).toEqual({
-          bool_true: true,
-          bool_false: false,
-          float: FLOAT,
-          integer: INTEGER
-        })
-      })
-
-      it('parseForm(form, {dynamicTyping: false}) should not parse any value', () => {
-        const form = createForm()
-        form.appendChild(createTextInput({
-          dataset: { type: 'boolean' },
-          name: 'bool_true',
-          value: TRUE
-        }))
-        form.appendChild(createTextInput({
-          name: 'bool_false',
-          value: FALSE
-        }))
-        form.appendChild(createNumberInput({
-          name: 'float',
-          value: FLOAT_STRING
-        }))
-        form.appendChild(createNumberInput({
-          dataset: { type: 'number' },
-          name: 'integer',
-          value: INTEGER_STRING
-        }))
-
-        const r = parseForm(form, { dynamicTyping: false })
-        expect(r).toEqual({
-          bool_true: TRUE,
-          bool_false: FALSE,
-          float: FLOAT_STRING,
-          integer: INTEGER_STRING
-        })
-      })
-    })
-
-    describe('smartTyping', () => {
-      it('parseForm(form, {smartTyping: true}) should parse values using type attribute', () => {
-        const form = createForm()
-        form.appendChild(createTextInput({
-          name: 'bool_true',
-          value: TRUE
-        }))
-        form.appendChild(createTextInput({
-          dataset: { type: 'boolean' },
-          name: 'bool_false',
-          value: FALSE
-        }))
-        form.appendChild(createNumberInput({
-          name: 'float',
-          value: FLOAT_STRING
-        }))
-        form.appendChild(createTextInput({
-          name: 'float_text',
-          value: FLOAT_STRING
-        }))
-        form.appendChild(createNumberInput({
-          name: 'integer',
-          value: INTEGER_STRING
-        }))
-        form.appendChild(createTextInput({
-          name: 'integer_text',
-          value: INTEGER_STRING
-        }))
-
-        const r = parseForm(form, { dynamicTyping: true, smartTyping: true })
-        expect(r).toEqual({
-          bool_true: TRUE,
-          bool_false: false,
-          float: FLOAT,
-          float_text: FLOAT_STRING,
-          integer: INTEGER,
-          integer_text: INTEGER_STRING
-        })
-      })
-
-      it('parseForm(form, {smartTyping: false}) should not parse values using type attribute', () => {
-        const form = createForm()
-        form.appendChild(createTextInput({
-          name: 'bool_true',
-          value: TRUE
-        }))
-        form.appendChild(createTextInput({
-          dataset: { type: 'boolean' },
-          name: 'bool_false',
-          value: FALSE
-        }))
-        form.appendChild(createNumberInput({
-          name: 'float',
-          value: FLOAT_STRING
-        }))
-        form.appendChild(createTextInput({
-          name: 'float_text',
-          value: FLOAT_STRING
-        }))
-        form.appendChild(createNumberInput({
-          name: 'integer',
-          value: INTEGER_STRING
-        }))
-        form.appendChild(createTextInput({
-          name: 'integer_text',
-          value: INTEGER_STRING
-        }))
-
-        const r = parseForm(form, { dynamicTyping: true, smartTyping: false })
-        expect(r).toEqual({
-          bool_true: true,
-          bool_false: false,
-          float: FLOAT,
-          float_text: FLOAT,
-          integer: INTEGER,
-          integer_text: INTEGER
-        })
-      })
-    })
-
-    describe('trim', () => {
-      it('parseForm(form, {trim: true}) should trim text values', () => {
-        const form = createForm()
-        form.appendChild(createTextInput({
-          name: 'text',
-          value: ` ${STRING} `
-        }))
-
-        const r = parseForm(form, { trim: true })
-        expect(r).toEqual({ text: STRING })
-      })
-
-      it('parseForm(form, {trim: false}) should not trim text values', () => {
-        const form = createForm()
-        form.appendChild(createTextInput({
-          name: 'text',
-          value: ` ${STRING} `
-        }))
-
-        const r = parseForm(form, { trim: false })
-        expect(r).toEqual({ text: ` ${STRING} ` })
-      })
-
-      it('parseForm(form, {trim: true}) should not trim password values', () => {
-        const form = createForm()
-        form.appendChild(createPasswordInput({
-          name: 'password',
-          value: PASSWORD
-        }))
-
-        const r = parseForm(form, { trim: true })
-        expect(r).toEqual({ password: PASSWORD })
-      })
-    })
-  })
-
-  describe('Fields excluded from parsing', () => {
-    it('parseForm(form) should not parse email fields', () => {
+    it('should not parse email fields', () => {
       const form = createForm()
       form.appendChild(createTextInput({
         name: 'email',
@@ -925,35 +764,32 @@ describe('parseForm()', () => {
         value: INTEGER_STRING
       }))
 
-      const r = parseForm(form, { dynamicTyping: true })
+      const r = parseForm(form, { parsing: 'data-type' })
       expect(r).toEqual({ email: INTEGER_STRING })
     })
 
-    it('parseForm(form) should not parse file fields', () => {
+    it('should not parse file fields', () => {
       const form = createForm()
       form.appendChild(createFileInput({
         name: 'file'
       }))
 
-      const r = parseForm(form, {
-        dynamicTyping: true,
-        nullify: true
-      })
+      const r = parseForm(form, { parsing: 'data-type' })
       expect(r).toEqual({ file: null })
     })
 
-    it('parseForm(form) should not parse password fields', () => {
+    it('should not parse password fields', () => {
       const form = createForm()
       form.appendChild(createPasswordInput({
         name: 'password',
         value: INTEGER_STRING
       }))
 
-      const r = parseForm(form, { dynamicTyping: true })
+      const r = parseForm(form, { parsing: 'data-type' })
       expect(r).toEqual({ password: INTEGER_STRING })
     })
 
-    it('parseForm(form) should not parse search fields', () => {
+    it('should not parse search fields', () => {
       const form = createForm()
       form.appendChild(createTextInput({
         name: 'search',
@@ -961,11 +797,11 @@ describe('parseForm()', () => {
         value: INTEGER_STRING
       }))
 
-      const r = parseForm(form, { dynamicTyping: true })
+      const r = parseForm(form, { parsing: 'data-type' })
       expect(r).toEqual({ search: INTEGER_STRING })
     })
 
-    it('parseForm(form) should not parse URL fields', () => {
+    it('should not parse url fields', () => {
       const form = createForm()
       form.appendChild(createTextInput({
         name: 'url',
@@ -973,19 +809,156 @@ describe('parseForm()', () => {
         value: INTEGER_STRING
       }))
 
-      const r = parseForm(form, { dynamicTyping: true })
+      const r = parseForm(form, { parsing: 'data-type' })
       expect(r).toEqual({ url: INTEGER_STRING })
     })
 
-    it('parseForm(form) should not parse textarea fields', () => {
+    it('should not parse textarea fields', () => {
       const form = createForm()
       form.appendChild(createTextarea({
         name: 'textarea',
         value: INTEGER_STRING
       }))
 
-      const r = parseForm(form, { dynamicTyping: true })
+      const r = parseForm(form, { parsing: 'data-type' })
       expect(r).toEqual({ textarea: INTEGER_STRING })
+    })
+  })
+
+  describe('with parsing = "auto"', () => {
+    it('should parse values using "data-type" and "type" attributes', () => {
+      const form = createForm()
+      form.appendChild(createTextInput({
+        dataset: { type: 'boolean' },
+        name: 'bool_true',
+        value: TRUE
+      }))
+      form.appendChild(createTextInput({
+        dataset: { type: 'boolean' },
+        name: 'bool_false',
+        value: FALSE
+      }))
+      form.appendChild(createNumberInput({
+        name: 'float',
+        value: FLOAT_STRING
+      }))
+      form.appendChild(createNumberInput({
+        name: 'integer',
+        value: INTEGER_STRING
+      }))
+      const r = parseForm(form, { parsing: 'auto' })
+      expect(r).toEqual({
+        bool_true: true,
+        bool_false: false,
+        float: FLOAT,
+        integer: INTEGER
+      })
+    })
+  })
+
+  describe('with cleanFunction', () => {
+    it('should clean string values', () => {
+      const form = createForm()
+      form.appendChild(createTextInput({
+        name: 'text',
+        value: '<script src="http://hacked.net"></script>'
+      }))
+
+      const r = parseForm(form, {
+        cleanFunction: (value) => value.replace(/<\/?[^>]+>/gm, '')
+      })
+      expect(r).toEqual({ text: '' })
+    })
+    it('should not clean value from password field', () => {
+      const form = createForm()
+      form.appendChild(createPasswordInput({
+        name: 'pass',
+        value: PASSWORD
+      }))
+
+      const r = parseForm(form, {
+        cleanFunction: (value) => value.trim()
+      })
+      expect(r).toEqual({ pass: PASSWORD })
+    })
+  })
+
+  describe('with filterFunction', () => {
+    const form = createForm()
+    form.appendChild(createTextInput({ name: 'text', value: 'test' }))
+    form.appendChild(createNumberInput({ name: 'num', value: 2 }))
+
+    it('should return filtered fields only', () => {
+      const r = parseForm(form, {
+        filterFunction: (field) => field instanceof HTMLInputElement && field.type === 'text'
+      })
+      expect(r).toEqual({ text: 'test' })
+    })
+
+    it('should be called with value as the second argument', () => {
+      const r = parseForm(form, {
+        filterFunction: (field, value) => value === 'test'
+      })
+      expect(r).toEqual({ text: 'test' })
+    })
+  })
+
+  describe('with nullify', () => {
+    it('parseForm(form, {nullify: true}) should replace empty string with null', () => {
+      const form = createForm()
+      form.appendChild(createTextInput({
+        name: 'text',
+        value: ' '
+      }))
+
+      const r = parseForm(form, { nullify: true, trim: true })
+      expect(r).toEqual({ text: null })
+    })
+
+    it('parseForm(form, {nullify: false}) should not replace empty string with null', () => {
+      const form = createForm()
+      form.appendChild(createTextInput({
+        name: 'text',
+        value: ' '
+      }))
+
+      const r = parseForm(form, { nullify: false, trim: true })
+      expect(r).toEqual({ text: '' })
+    })
+  })
+
+  describe('with trim', () => {
+    it('parseForm(form, {trim: true}) should trim text values', () => {
+      const form = createForm()
+      form.appendChild(createTextInput({
+        name: 'text',
+        value: ` ${STRING} `
+      }))
+
+      const r = parseForm(form, { trim: true })
+      expect(r).toEqual({ text: STRING })
+    })
+
+    it('parseForm(form, {trim: false}) should not trim text values', () => {
+      const form = createForm()
+      form.appendChild(createTextInput({
+        name: 'text',
+        value: ` ${STRING} `
+      }))
+
+      const r = parseForm(form, { trim: false })
+      expect(r).toEqual({ text: ` ${STRING} ` })
+    })
+
+    it('parseForm(form, {trim: true}) should not trim password values', () => {
+      const form = createForm()
+      form.appendChild(createPasswordInput({
+        name: 'password',
+        value: PASSWORD
+      }))
+
+      const r = parseForm(form, { trim: true })
+      expect(r).toEqual({ password: PASSWORD })
     })
   })
 })

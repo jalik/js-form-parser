@@ -28,18 +28,16 @@ Let start with a very simple form which produces a flat object :
 </form>
 ```
 
-You can get fields from this form in a single object with minimum effort by using the `parseForm()` method.
-
-**Note:** The form object must be an `HTMLFormElement`.
+You can collect and parse all fields in a single object with `parseForm()`.
 
 ```js
-import { parseForm } from "@jalik/form-parser";
+import { parseForm } from '@jalik/form-parser'
 
 // Get an existing HTML form element
-const form = document.getElementById("my-form");
+const form = document.getElementById('my-form')
 
 // Parse form values with default options
-const fields = parseForm(form);
+const fields = parseForm(form)
 ```
 
 The `fields` object will look like this :
@@ -55,76 +53,103 @@ The `fields` object will look like this :
 }
 ```
 
-Below is a more complete form example, with a lot of different cases to help you understand the behavior of the parsing function (pay attention to comments, values and attributes).
+Below is a more complete form example, with a lot of different cases to help you understand the
+behavior of the parsing function (pay attention to comments, values and attributes).
 
 ```html
+
 <form id="my-form">
-  <!-- Fields with no name will be ignored -->
+  <!-- Fields without name are ignored -->
   <input type="text" value="aaa">
-  
-  <!-- These fields will be parsed to booleans -->
-  <input name="boolean" type="radio" data-type="boolean" value="true">
-  <input name="boolean" type="radio" data-type="boolean" value="false" checked>
-  <input name="hidden_boolean" type="hidden" data-type="auto" value="true">
-  
-  <!-- These fields will be parsed to numbers -->
-  <input name="float" type="number" value="09.99">
-  <input name="hidden_float" type="hidden" data-type="number" value="09.99">
-  <input name="text_integer" type="text" data-type="number" value="01">
-  <input name="integer" type="number" value="01">
-  <input name="range" type="range" value="0118">
-  <select name="select_number" data-type="auto">
-    <option value="10"></option>
-    <option value="20"></option>
-    <option value="30" selected></option>
-  </select>
-  
-  <!-- These fields will be parsed to strings -->
-  <input name="date" type="date" value="2017-11-14">
-  <input name="file" type="file" value="file://path/to/file.txt">
-  <input name="hidden_text" type="hidden" value="shadowed">
-  <input name="month" type="month" value="2017-11">
-  <input name="number_text" type="number" data-type="string" value="0123">
-  <input name="text" type="text" value="Hello">
-  <input name="url" type="url" value="http://www.github.com/">
-  <input name="week" type="week" value="2017-W16">
-  <textarea name="textarea">Hello</textarea>
-  
-  <!-- Password fields are never altered (trimmed), even by cleanFunction -->
-  <input name="password" type="password" value=" s3crEt ">
-  
-  <!-- These fields will be parsed as array -->
-  <input name="array[]" type="checkbox" value="A" checked>
-  <input name="array[]" type="checkbox" value="B" checked>
-  <select name="select_multiple" data-type="number" multiple>
-    <option value="10"></option>
-    <option value="20" selected></option>
-    <option value="30" selected></option>
-  </select>
-  
-  <!-- Disabled fields are ignored by default -->
-  <input name="disabled_field" value="" disabled>
-  
-  <!-- Buttons are ignored by default -->
+
+  <!-- Disabled fields are always ignored -->
+  <input name="disabled_field" value="hello" disabled>
+
+  <!-- Buttons are always ignored -->
   <input name="input_button" type="button" value="Click me">
   <input name="input_reset" type="reset" value="Reset">
   <input name="input_submit" type="submit" value="Submit">
   <button name="button" type="button" value="Click me"></button>
   <button name="reset" type="reset" value="Reset"></button>
   <button name="submit" type="submit" value="Submit"></button>
+
+  <!-- These fields will be parsed to booleans -->
+  
+  <!-- boolean = false -->
+  <input name="boolean" type="radio" data-type="boolean" value="true">
+  <input name="boolean" type="radio" data-type="boolean" value="false" checked>
+  <!-- hidden_boolean = true -->
+  <input name="hidden_boolean" type="hidden" data-type="auto" value="true">
+
+  <!-- These fields will be parsed to numbers -->
+  
+  <!-- hidden_float = 9.99 -->
+  <input name="hidden_float" type="hidden" data-type="number" value="09.99">
+  <!-- text_integer = 1 -->
+  <input name="text_integer" type="text" data-type="number" value="01">
+  <!-- select_number = 30 -->
+  <select name="select_number" data-type="number">
+    <option value="10"></option>
+    <option value="20"></option>
+    <option value="30" selected></option>
+  </select>
+  <!-- float = 9.99 -->
+  <input name="float" type="number" value="09.99">
+  <!-- integer = 1 -->
+  <input name="integer" type="number" value="01">
+  <!-- range = 0118 -->
+  <input name="range" type="range" value="0118">
+
+  <!-- These fields will be parsed to strings -->
+  
+  <!-- number_text = '0123' -->
+  <input name="number_text" type="number" data-type="string" value="0123">
+  <!-- date = '2017-11-14' -->
+  <input name="date" type="date" value="2017-11-14">
+  <!-- file = 'file://path/to/file.txt' -->
+  <input name="file" type="file" value="file://path/to/file.txt">
+  <!-- hidden_text = 'shadowed' -->
+  <input name="hidden_text" type="hidden" value="shadowed">
+  <!-- month = '2017-11' -->
+  <input name="month" type="month" value="2017-11">
+  <!-- text = 'Hello' -->
+  <input name="text" type="text" value="Hello">
+  <!-- url = 'http://www.github.com/' -->
+  <input name="url" type="url" value="http://www.github.com/">
+  <!-- week = '2017-W16' -->
+  <input name="week" type="week" value="2017-W16">
+  <!-- textarea = 'Hello' -->
+  <textarea name="textarea">Hello</textarea>
+
+  <!-- Passwords are never altered or parsed ("data-type" is ignored) -->
+  
+  <!-- password = ' 1337 ' -->
+  <input name="password" type="password" data-type="number" value=" 1337 ">
+
+  <!-- These fields will be parsed as array -->
+  
+  <!-- select_multiple = [20, 30] -->
+  <select name="select_multiple" data-type="number" multiple>
+    <option value="10"></option>
+    <option value="20" selected></option>
+    <option value="30" selected></option>
+  </select>
+  <!-- array = ['A', 'B'] -->
+  <input name="array[]" type="checkbox" value="A" checked>
+  <input name="array[]" type="checkbox" value="B" checked>
 </form>
 ```
 
 To get form fields :
 
 ```js
-import { parseForm } from "@jalik/form-parser";
+import { parseForm } from '@jalik/form-parser'
 
 // Get an existing HTML form element
-const form = document.getElementById("my-form");
+const form = document.getElementById('my-form')
 
 // Parse form values using default options
-const fields = parseForm(form);
+const fields = parseForm(form)
 ```
 
 The `fields` object will look like this :
@@ -147,15 +172,21 @@ The `fields` object will look like this :
   "text": "Hello",
   "url": "http://www.github.com/",
   "textarea": "Hello",
-  "password": " s3crEt ",
-  "array": ["A", "B"],
-  "select_multiple": [20, 30]
+  "password": " 1337 ",
+  "array": [
+    "A",
+    "B"
+  ],
+  "select_multiple": [
+    20,
+    30
+  ]
 }
 ```
 
 ## Parsing arrays
 
-To get an array of values from a form, use this syntax :
+To get an array of values, append `[]` to a field name:
 
 ```html
 <form id="my-form">
@@ -163,8 +194,8 @@ To get an array of values from a form, use this syntax :
   <input name="array[]" type="checkbox" value="A">
   <input name="array[]" type="checkbox" value="B" checked>
   <input name="array[]" type="checkbox" value="C" checked>
-  
-  <!-- This will create an array with checked values, but it will keep indexes -->
+
+  <!-- This will create an array with checked values (indexed) -->
   <input name="colors[2]" type="checkbox" value="red" checked>
   <input name="colors[1]" type="checkbox" value="blue">
   <input name="colors[0]" type="checkbox" value="white" checked>
@@ -174,27 +205,34 @@ To get an array of values from a form, use this syntax :
 Get fields values :
 
 ```js
-import { parseForm } from "@jalik/form-parser";
+import { parseForm } from '@jalik/form-parser'
 
 // Get an existing HTML form element
-const form = document.getElementById("my-form");
+const form = document.getElementById('my-form')
 
 // Parse form values using default options
-const fields = parseForm(form);
+const fields = parseForm(form)
 ```
 
 The `fields` object will look like this :
 
-```
+```json
 {
-  "array": ["B", "C"],
-  "colors": ["white", undefined, "red"]
+  "array": [
+    "B",
+    "C"
+  ],
+  "colors": [
+    "white",
+    undefined,
+    "red"
+  ]
 }
 ```
 
 ## Parsing objects
 
-To get an object from a form, use this syntax :
+To get an object, write attributes like `[attribute]`:
 
 ```html
 <form id="my-form">
@@ -207,13 +245,13 @@ To get an object from a form, use this syntax :
 Get fields values :
 
 ```js
-import { parseForm } from "@jalik/form-parser";
+import { parseForm } from '@jalik/form-parser'
 
 // Get an existing HTML form element
-const form = document.getElementById("my-form");
+const form = document.getElementById('my-form')
 
 // Parse form values using default options
-const fields = parseForm(form);
+const fields = parseForm(form)
 ```
 
 The `fields` object will look like this :
@@ -227,9 +265,10 @@ The `fields` object will look like this :
 }
 ```
 
-### Using numbers as object attribute (since v2.0.6)
+### Using numbers as keys in objects (since v2.0.6)
 
-If you need to create an object with numbers as attributes, use single or double quotes to force the parser to interpret it as a string and then creating an object instead of an array.
+If you need to create an object with numbers as attributes, use single or double quotes to force the
+parser to interpret it as a string and then creating an object instead of an array.
 
 ```html
 <form id="my-form">
@@ -255,19 +294,26 @@ Will give this :
 Instead of :
 
 ```json
-{"elements": ["Zero", "One", "Two"]}
+{
+  "elements": [
+    "Zero",
+    "One",
+    "Two"
+  ]
+}
 ```
 
-## Forcing fields types
+## Fields parsing
 
-Sometimes you may want to force a number to be parsed as a string for example.
-In this case, use the `data-type` attribute on the input. When the parser will get fields values, it will automatically convert them to the given `data-type`.
+To define the type of field, you can use the attribute `data-type` or `type`.  
+The attribute `data-type` takes precedence over `type` if both of are defined.
 
-The `data-type` attribute can have one of the following values : `auto`, `boolean`, `number` or `string`.
+When using `data-type` attribute, the value can be:
+* `auto` to convert the value to the best guess type (ex: `123` => `number`, `true` => `boolean`)
+* `boolean` to convert the value to a boolean (ex: `true`, `1`, `yes`, `on`, `false`, `0`, `no`, `off`)
+* `number` to convert the value to a number
 
-**Note:** The `auto` data-type will convert value to the best guess type (ex: `123` => `number`).
-
-**Note:** The `boolean` data-type will convert `"1"` and `"true"` to `true`, all other values are `false`. 
+When using `type` attribute on `<input>`, only `number` and `range` are parsed to numbers.
 
 ```html
 <!-- This will parse "true" as a boolean -->
@@ -287,11 +333,10 @@ The `data-type` attribute can have one of the following values : `auto`, `boolea
 <input name="anything_2" type="text" data-type="auto" value="false">
 ```
 
-If no `data-type` attribute is set, the `type` attribute will be used (for `input` elements at least), this behavior is active by default with the combination of this options `{dynamicTyping: true, smartTyping: true}` in the `parseForm()` function.
-
 ## Parsing complex forms with nested fields
 
-This purpose of this lib is to reconstruct an object corresponding to the form structure, so it can parse complex forms containing "unlimited" nested arrays and objects.
+It is possible to reconstruct an object corresponding to the form structure, so it can
+parse complex forms containing nested arrays and objects.
 
 ```html
 <form id="my-form">
@@ -300,7 +345,7 @@ This purpose of this lib is to reconstruct an object corresponding to the form s
   <input name="phones[1][code]" type="number" data-type="string" value="689">
   <input name="phones[1][number]" type="number" data-type="string" value="87218910">
   
-  <!-- A very deep field value -->
+  <!-- A useless deep nested field value -->
   <input name="deep_1[][deep_2][0][][deep_3]" value="DEEP">
 </form> 
 ```
@@ -308,13 +353,13 @@ This purpose of this lib is to reconstruct an object corresponding to the form s
 To get fields :
 
 ```js
-import { parseForm } from "@jalik/form-parser";
+import { parseForm } from '@jalik/form-parser'
 
 // Get an existing HTML form element
-const form = document.getElementById("my-form");
+const form = document.getElementById('my-form')
 
 // Parse form values using default options
-const fields = parseForm(form);
+const fields = parseForm(form)
 ```
 
 The `fields` object will look like this :
@@ -335,7 +380,9 @@ The `fields` object will look like this :
     {
       "deep_2": [
         [
-          {"deep_3": "DEEP"}
+          {
+            "deep_3": "DEEP"
+          }
         ]
       ]
     }
@@ -343,98 +390,112 @@ The `fields` object will look like this :
 }
 ```
 
-## Filtering fields
+## Filtering
 
-You can get only the fields you want with `filterFunction(field, parsedValue)` option in the `parseForm()`
-method. The filter function will be called with all fields and must return `true` to return the
-field.
+When parsing a form, you can filter values with `filterFunction(field, parsedValue)` option in the `parseForm(form, options)`.  
+The filter function must return `true` to return the field.
 
 ```js
-import { parseForm } from "@jalik/form-parser";
+import { parseForm } from '@jalik/form-parser'
 
 // Get an existing HTML form element
-const form = document.getElementById("my-form");
+const form = document.getElementById('my-form')
 
-// Parse form values using default options
 const fields = parseForm(form, {
   // returns only text fields
   filterFunction: (field, parsedValue) => field.type === 'text'
 });
 ```
 
-## Cleaning parsed values
+## Cleaning
 
-All string values can be cleaned using the `cleanFunction(value, field)` option in the `parseForm()` method. The clean function will be called with any value that is a string of length > 0.
+Values can be cleaned by passing `cleanFunction(value, field)` to `parseForm(form, options)`.  
+Note that only strings are passed to this function and that password fields are ignored.
 
 ```js
-import { parseForm } from "@jalik/form-parser";
+import { parseForm } from '@jalik/form-parser'
 
 // Get an existing HTML form element
-const form = document.getElementById("my-form");
+const form = document.getElementById('my-form')
 
 // Parse form values using default options
 const fields = parseForm(form, {
   cleanFunction: (value, field) => {
     // Apply uppercase to lastName field
-    if (field.name === "lastName" || /name/gi.test(field.name)) {
-      value = value.toUpperCase();
+    if (field.name === 'lastName' || /name/gi.test(field.name)) {
+      value = value.toUpperCase()
     }
     // Remove HTML code from all fields
-    return value.replace(/<\/?[^>]+>/gm, "");
+    return value.replace(/<\/?[^>]+>/gm, '')
   }
-});
+})
 ```
 
 ## API
 
 ### parseField(field, options)
 
-You can parse a single field with options, it works the same way as `parseForm(form, options)` but with a field.
+To parse a single field.
+
+```html
+<form>
+  <select data-type="number" name="values" multiple>
+    <option>1</option>
+    <option selected>2</option>
+    <option selected>3</option>
+  </select>
+</form>
+```
 
 ```js
-import { parseField } from "@jalik/form-parser";
+import { parseField } from '@jalik/form-parser'
 
-// Colors is a select allowing multiple values to be selected
-const colorsSelect = document.getElementById("colors-field");
-
-// Get the colors array (ex: colors = ['blue', 'green'])
-const colors = parseField(colorsSelect, {
-  dynamicTyping: true,
-  nullify: true,
-  smartTyping: true,
-  trim: true,
-});
+const field = document.getElementById('values')
+const values = parseField(field)
+// values = [2, 3]
 ```
 
 ### parseForm(form, options)
 
-You can parse a form with options to customize the behavior.
+To parse a form with all fields.
+
+```html
+<form id="my-form">
+  <input type="number" name="age" value="35" />
+  <select data-type="number" name="values" multiple>
+    <option>1</option>
+    <option selected>2</option>
+    <option selected>3</option>
+  </select>
+</form>
+```
 
 ```js
-import { parseForm } from "@jalik/form-parser";
+import { parseForm } from '@jalik/form-parser'
 
 // Get an existing HTML form element
-const form = document.getElementById("my-form");
+const form = document.getElementById('my-form')
 
-// Parse form values with custom options
 const fields = parseForm(form, {
   // Cleans parsed values
   cleanFunction(value, field) {
-    return typeof value === 'string' ? stripTags(value) : value;
+    return typeof value === 'string' ? stripTags(value) : value
   },
   // Only returns fields that matches the condition
   filterFunction(field) {
-    return field.type === 'text';
+    return field.type === 'text'
   },
   // Replace empty strings with null
   nullify: true,
-  // Parse values to the best guess type (ex: "001" => 1)
-  dynamicTyping: true,
-  // Parse values based on field type (ex: type="number" will parse to number)
-  smartTyping: true,
+  // Set parsing mode.
+  // - none: disable parsing
+  // - type: enable parsing based on "type" attribute (ex: type="number")
+  // - data-type: enable parsing based on "data-type" attribute (ex: data-type="number")
+  // - auto: enable parsing based on data-type and type (in this order)
+  parsing: 'none' | 'type' | 'data-type' | 'auto',
   // Remove extra spaces
   trim: true
-});
+})
 ```
 
 ## Changelog

@@ -269,10 +269,11 @@ export function parseValue (value?: string, type: ParsingType = 'auto'): string 
   return value
 }
 
+export type ParsingMode = 'none' | 'type' | 'data-type' | 'auto'
+
 export type ParseFieldOptions = {
-  dynamicTyping?: boolean
   nullify?: boolean
-  smartTyping?: boolean
+  parsing?: ParsingMode
   trim?: boolean
 }
 
@@ -291,9 +292,8 @@ export function parseField (element: Element, options?: ParseFieldOptions) {
 
   // Set default options.
   const opts: ParseFieldOptions = {
-    dynamicTyping: true,
     nullify: true,
-    smartTyping: true,
+    parsing: 'auto',
     trim: true,
     ...options
   }
@@ -335,15 +335,16 @@ export function parseField (element: Element, options?: ParseFieldOptions) {
     }
   }
 
-  if (opts.dynamicTyping) {
-    // Parse value excepted for special fields
+  const dataType = element.dataset.type
+
+  // Parse value only if parsing is enabled and data-type different of "string".
+  if (opts.parsing !== 'none' && dataType !== 'string') {
     if ((!isCheckable || (element instanceof HTMLInputElement && element.checked)) &&
+      // Ignore values that must remain string.
       !['email', 'file', 'password', 'search', 'url'].includes(element.type) &&
       !['textarea'].includes(element.localName)) {
-      const dataType = element.dataset.type
-
-      if (dataType) {
-        // Parse value based on "data-type" attribute.
+      // Parse value based on "data-type" attribute.
+      if (dataType && (opts.parsing === 'auto' || opts.parsing === 'data-type')) {
         if (dataType === 'auto') {
           if (value instanceof Array) {
             for (let k = 0; k < value.length; k += 1) {
@@ -372,7 +373,7 @@ export function parseField (element: Element, options?: ParseFieldOptions) {
           // eslint-disable-next-line no-console
           console.warn(`unknown data-type "${dataType}" for field "${element.name}"`)
         }
-      } else if (opts.smartTyping) {
+      } else if (opts.parsing === 'auto' || opts.parsing === 'type') {
         // Parse value based on "type" attribute.
         if (element instanceof HTMLInputElement) {
           if (['number', 'range'].includes(element.type)) {
@@ -385,13 +386,6 @@ export function parseField (element: Element, options?: ParseFieldOptions) {
             }
           }
         }
-      } else if (value instanceof Array) {
-        // Parse value using regular expression.
-        for (let k = 0; k < value.length; k += 1) {
-          value[k] = parseValue(value[k])
-        }
-      } else {
-        value = parseValue(value)
       }
     }
   }
@@ -408,11 +402,10 @@ export function parseField (element: Element, options?: ParseFieldOptions) {
 }
 
 export type ParseFormOptions = {
-  cleanFunction?: (value: string, field: Element) => void
-  dynamicTyping?: boolean
+  cleanFunction?: (value: string, field: Element) => any
   filterFunction?: (element: Element, parsedValue: any) => boolean
   nullify?: boolean
-  smartTyping?: boolean
+  parsing?: ParsingMode
   trim?: boolean
 }
 
@@ -427,12 +420,9 @@ export function parseForm (form: HTMLFormElement, options?: ParseFormOptions): R
   }
 
   // Set default options.
-  const opts = {
-    cleanFunction: null,
-    dynamicTyping: true,
-    filterFunction: null,
+  const opts: ParseFormOptions = {
     nullify: true,
-    smartTyping: true,
+    parsing: 'auto',
     trim: true,
     ...options
   }
@@ -461,7 +451,11 @@ export function parseForm (form: HTMLFormElement, options?: ParseFormOptions): R
     }
 
     // Parse field value.
-    let value = parseField(field, opts)
+    let value = parseField(field, {
+      parsing: opts.parsing,
+      nullify: opts.nullify,
+      trim: opts.trim
+    })
 
     // Execute custom clean function on fields with type different of password.
     if (opts.cleanFunction && field.type !== 'password') {
@@ -477,7 +471,7 @@ export function parseForm (form: HTMLFormElement, options?: ParseFormOptions): R
     }
 
     // Ignore element not matching the filter.
-    if (opts.filterFunction && opts.filterFunction(field, value) !== true) {
+    if (opts.filterFunction && !opts.filterFunction(field, value)) {
       continue
     }
 
