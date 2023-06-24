@@ -426,8 +426,6 @@ const fields = parseForm(form, {
   filterFunction(field) {
     return field.type === 'text';
   },
-  // Don't get disabled fields
-  ignoreDisabled: true,
   // Replace empty strings with null
   nullify: true,
   // Parse values to the best guess type (ex: "001" => 1)

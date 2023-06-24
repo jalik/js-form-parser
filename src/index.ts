@@ -411,7 +411,6 @@ export type ParseFormOptions = {
   cleanFunction?: (value: string, field: Element) => void
   dynamicTyping?: boolean
   filterFunction?: (element: Element, parsedValue: any) => boolean
-  ignoreDisabled?: boolean
   nullify?: boolean
   smartTyping?: boolean
   trim?: boolean
@@ -432,7 +431,6 @@ export function parseForm (form: HTMLFormElement, options?: ParseFormOptions): R
     cleanFunction: null,
     dynamicTyping: true,
     filterFunction: null,
-    ignoreDisabled: true,
     nullify: true,
     smartTyping: true,
     trim: true,
@@ -458,7 +456,7 @@ export function parseForm (form: HTMLFormElement, options?: ParseFormOptions): R
       continue
     }
     // Ignore disabled element.
-    if (opts.ignoreDisabled && field.disabled) {
+    if (field.disabled) {
       continue
     }
 

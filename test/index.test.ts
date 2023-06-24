@@ -391,6 +391,18 @@ describe('parseForm()', () => {
     expect(r).toEqual({ items: [] })
   })
 
+  it('should not return disabled fields', () => {
+    const form = createForm()
+    form.appendChild(createTextInput({
+      disabled: true,
+      name: 'disabled',
+      value: STRING
+    }))
+
+    const r = parseForm(form)
+    expect(r).toEqual({})
+  })
+
   describe('Parsing fields with options {dynamicTyping: true, smartTyping: true}', () => {
     it('parseForm(form, options) should not return values of unknown fields', () => {
       const form = createForm()
@@ -699,32 +711,6 @@ describe('parseForm()', () => {
           filterFunction: (field, value) => value === 'test'
         })
         expect(r).toEqual({ text: 'test' })
-      })
-    })
-
-    describe('ignoreDisabled', () => {
-      it('parseForm(form, {ignoreDisabled: true}) should not return disabled fields', () => {
-        const form = createForm()
-        form.appendChild(createTextInput({
-          disabled: true,
-          name: 'disabled',
-          value: STRING
-        }))
-
-        const r = parseForm(form, { ignoreDisabled: true })
-        expect(r).toEqual({})
-      })
-
-      it('parseForm(form, {ignoreDisabled: false}) should return disabled fields', () => {
-        const form = createForm()
-        form.appendChild(createTextInput({
-          disabled: true,
-          name: 'disabled',
-          value: STRING
-        }))
-
-        const r = parseForm(form, { ignoreDisabled: false })
-        expect(r).toEqual({ disabled: STRING })
       })
     })
 
