@@ -728,30 +728,6 @@ describe('parseForm()', () => {
       })
     })
 
-    describe('ignoreEmpty', () => {
-      it('parseForm(form, {ignoreEmpty: true}) should not return empty fields', () => {
-        const form = createForm()
-        form.appendChild(createTextInput({
-          name: 'empty',
-          value: ''
-        }))
-
-        const r = parseForm(form, { ignoreEmpty: true })
-        expect(r).toEqual({})
-      })
-
-      it('parseForm(form, {ignoreEmpty: false}) should return empty fields', () => {
-        const form = createForm()
-        form.appendChild(createTextInput({
-          name: 'empty',
-          value: ''
-        }))
-
-        const r = parseForm(form, { ignoreEmpty: false })
-        expect(r).toEqual({ empty: null })
-      })
-    })
-
     describe('nullify', () => {
       it('parseForm(form, {nullify: true}) should replace empty string with null', () => {
         const form = createForm()

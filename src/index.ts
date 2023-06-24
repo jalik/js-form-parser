@@ -412,7 +412,6 @@ export type ParseFormOptions = {
   dynamicTyping?: boolean
   filterFunction?: (element: Element, parsedValue: any) => boolean
   ignoreDisabled?: boolean
-  ignoreEmpty?: boolean
   nullify?: boolean
   smartTyping?: boolean
   trim?: boolean
@@ -434,7 +433,6 @@ export function parseForm (form: HTMLFormElement, options?: ParseFormOptions): R
     dynamicTyping: true,
     filterFunction: null,
     ignoreDisabled: true,
-    ignoreEmpty: false,
     nullify: true,
     smartTyping: true,
     trim: true,
@@ -482,11 +480,6 @@ export function parseForm (form: HTMLFormElement, options?: ParseFormOptions): R
 
     // Ignore element not matching the filter.
     if (opts.filterFunction && opts.filterFunction(field, value) !== true) {
-      continue
-    }
-
-    // Ignore empty value.
-    if (opts.ignoreEmpty && (value === '' || value === null || typeof value === 'undefined')) {
       continue
     }
 

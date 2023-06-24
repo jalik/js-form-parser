@@ -428,8 +428,6 @@ const fields = parseForm(form, {
   },
   // Don't get disabled fields
   ignoreDisabled: true,
-  // Don't get fields with empty string
-  ignoreEmpty: false,
   // Replace empty strings with null
   nullify: true,
   // Parse values to the best guess type (ex: "001" => 1)
