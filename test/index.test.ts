@@ -270,26 +270,28 @@ describe('parseBoolean()', () => {
 
 describe('parseField()', () => {
   describe('using checkbox input', () => {
-    describe('with attribute checked="false"', () => {
-      it('should return a null', () => {
-        const field = createCheckbox({
-          dataset: { type: 'boolean' },
-          name: 'boolean_field',
-          value: 'true'
-        })
-        expect(parseField(field)).toEqual(null)
-      })
-    })
-
     describe('with attribute data-type="boolean"', () => {
-      it('should return a boolean', () => {
-        const field = createCheckbox({
-          dataset: { type: 'boolean' },
-          name: 'boolean_field',
-          value: 'true',
-          checked: true
+      describe('with checked = true', () => {
+        it('should return true', () => {
+          const field = createCheckbox({
+            dataset: { type: 'boolean' },
+            name: 'boolean_field',
+            value: 'true',
+            checked: true
+          })
+          expect(parseField(field)).toEqual(true)
         })
-        expect(parseField(field)).toEqual(true)
+      })
+
+      describe('with checked = false', () => {
+        it('should return false', () => {
+          const field = createCheckbox({
+            dataset: { type: 'boolean' },
+            name: 'boolean_field',
+            value: 'true'
+          })
+          expect(parseField(field)).toEqual(false)
+        })
       })
     })
   })
@@ -655,12 +657,14 @@ describe('parseForm()', () => {
       form.appendChild(createTextInput({
         dataset: { type: 'boolean' },
         name: 'bool_true',
-        value: TRUE
+        value: TRUE,
+        checked: true
       }))
       form.appendChild(createTextInput({
         dataset: { type: 'boolean' },
         name: 'bool_false',
-        value: FALSE
+        value: FALSE,
+        checked: true
       }))
       form.appendChild(createNumberInput({
         dataset: { type: 'number' },
@@ -831,12 +835,14 @@ describe('parseForm()', () => {
       form.appendChild(createTextInput({
         dataset: { type: 'boolean' },
         name: 'bool_true',
-        value: TRUE
+        value: TRUE,
+        checked: true
       }))
       form.appendChild(createTextInput({
         dataset: { type: 'boolean' },
         name: 'bool_false',
-        value: FALSE
+        value: FALSE,
+        checked: true
       }))
       form.appendChild(createNumberInput({
         name: 'float',

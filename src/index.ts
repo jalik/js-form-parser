@@ -339,9 +339,8 @@ export function parseField (element: Element, options?: ParseFieldOptions) {
 
   // Parse value only if parsing is enabled and data-type different of "string".
   if (opts.parsing !== 'none' && dataType !== 'string') {
-    if ((!isCheckable || (element instanceof HTMLInputElement && element.checked)) &&
-      // Ignore values that must remain string.
-      !['email', 'file', 'password', 'search', 'url'].includes(element.type) &&
+    // Ignore values that must remain string.
+    if (!['email', 'file', 'password', 'search', 'url'].includes(element.type) &&
       !['textarea'].includes(element.localName)) {
       // Parse value based on "data-type" attribute.
       if (dataType && (opts.parsing === 'auto' || opts.parsing === 'data-type')) {
@@ -365,6 +364,12 @@ export function parseField (element: Element, options?: ParseFieldOptions) {
           if (value instanceof Array) {
             for (let k = 0; k < value.length; k += 1) {
               value[k] = parseBoolean(value[k])
+            }
+          } else if (element instanceof HTMLInputElement && !element.checked) {
+            const bool = parseBoolean(element.value)
+
+            if (typeof bool === 'boolean') {
+              value = !bool
             }
           } else {
             value = parseBoolean(value)
@@ -432,8 +437,6 @@ export function parseForm (form: HTMLFormElement, options?: ParseFormOptions): R
 
   for (let i = 0; i < elements.length; i += 1) {
     const field = elements[i]
-    const isCheckable = isCheckableField(field)
-    const isMultiple = isMultipleField(field)
 
     // Ignore non-form element.
     if (!(field instanceof HTMLInputElement) &&
@@ -491,7 +494,9 @@ export function parseForm (form: HTMLFormElement, options?: ParseFormOptions): R
     }
 
     // Add field to the list.
-    if (isCheckable && !isMultiple && (field instanceof HTMLInputElement && !field.checked)) {
+    if (isCheckableField(field) &&
+      !isMultipleField(field) &&
+      (field instanceof HTMLInputElement && !field.checked)) {
       fields[name] = null
     } else {
       fields[name] = value
