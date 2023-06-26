@@ -740,6 +740,48 @@ describe('parseForm()', () => {
       })
     })
 
+    describe('with data-type="boolean"', () => {
+      it('should return the parsed value when field is checked', () => {
+        const form = createForm()
+        form.appendChild(createCheckbox({
+          dataset: { type: 'boolean' },
+          name: 'a',
+          value: 'true',
+          checked: true
+        }))
+        form.appendChild(createCheckbox({
+          dataset: { type: 'boolean' },
+          name: 'b',
+          value: 'false',
+          checked: true
+        }))
+        const r = parseForm(form, { parsing: 'data-type' })
+        expect(r).toEqual({
+          a: true,
+          b: false
+        })
+      })
+
+      it('should return the inverse of parsed value when field is not checked', () => {
+        const form = createForm()
+        form.appendChild(createCheckbox({
+          dataset: { type: 'boolean' },
+          name: 'a',
+          value: 'true'
+        }))
+        form.appendChild(createCheckbox({
+          dataset: { type: 'boolean' },
+          name: 'b',
+          value: 'false'
+        }))
+        const r = parseForm(form, { parsing: 'data-type' })
+        expect(r).toEqual({
+          a: false,
+          b: true
+        })
+      })
+    })
+
     it('should not return unchecked values', () => {
       const form = createForm()
       form.appendChild(createCheckbox({
