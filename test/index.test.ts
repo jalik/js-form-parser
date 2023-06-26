@@ -350,6 +350,29 @@ describe('parseField()', () => {
           expect(parseField(field)).toEqual(false)
         })
       })
+
+      describe('without value', () => {
+        describe('and checked = true', () => {
+          it('should return checked state', () => {
+            const checkbox = createCheckbox({
+              dataset: { type: 'boolean' },
+              name: 'checkbox',
+              checked: true
+            })
+            expect(parseField(checkbox)).toBe(checkbox.checked)
+          })
+        })
+
+        describe('and checked = false', () => {
+          it('should return checked state', () => {
+            const checkbox = createCheckbox({
+              dataset: { type: 'boolean' },
+              name: 'checkbox'
+            })
+            expect(parseField(checkbox)).toBe(checkbox.checked)
+          })
+        })
+      })
     })
   })
 
