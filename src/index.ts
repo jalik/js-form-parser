@@ -111,13 +111,14 @@ export function getFieldsByName (name: string, form: HTMLFormElement): Array<HTM
   const fields: Array<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement> = []
   const { elements } = form
 
-  Object.values(elements).forEach((el) => {
+  for (let i = 0; i < elements.length; i += 1) {
+    const el = elements[i]
     if (el instanceof HTMLInputElement || el instanceof HTMLSelectElement || el instanceof HTMLTextAreaElement) {
       if (el.name === name) {
         fields.push(el)
       }
     }
-  })
+  }
   return fields
 }
 
