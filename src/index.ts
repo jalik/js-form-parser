@@ -111,15 +111,42 @@ export function getFieldsByName (name: string, form: HTMLFormElement): Array<HTM
   const fields: Array<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement> = []
   const { elements } = form
 
+  const regex = /\[\d*]$/
+  const realName = name.replace(regex, '')
+
   for (let i = 0; i < elements.length; i += 1) {
     const el = elements[i]
     if (el instanceof HTMLInputElement || el instanceof HTMLSelectElement || el instanceof HTMLTextAreaElement) {
-      if (el.name === name) {
+      if (el.name.replace(regex, '') === realName) {
         fields.push(el)
       }
     }
   }
   return fields
+}
+
+/**
+ * Returns values from fields by using index from name (ex: name="items[1]").
+ * @param elements
+ */
+function getValuesFromFields (elements: Array<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): string[] {
+  const values: string[] = []
+  elements.forEach((el, index) => {
+    const matches = /\[(\d+)?]$/.exec(el.name)
+
+    if (matches) {
+      const idx = matches[1]
+
+      if (idx != null && idx.length) {
+        values[parseInt(idx, 10)] = el.value
+      } else {
+        values[index] = el.value
+      }
+    } else {
+      values[index] = el.value
+    }
+  })
+  return values
 }
 
 /**
@@ -139,7 +166,7 @@ export function isMultipleField (element: Element): boolean {
     element instanceof HTMLSelectElement ||
     element instanceof HTMLTextAreaElement) && element.name != null) {
     // Check element's name (example: "numbers[]" or "number[0]").
-    if (/\[]$/.test(element.name)) {
+    if (/\[\d*]$/.test(element.name)) {
       return true
     }
     // Check if form contains other elements with the same name.
@@ -289,7 +316,7 @@ export type ParseFieldOptions = {
  * @param element
  * @param options
  */
-export function parseField (element: Element, options?: ParseFieldOptions) {
+export function parseField (element: Element, options?: ParseFieldOptions): any {
   // Check field.
   if (!(element instanceof HTMLInputElement) &&
     !(element instanceof HTMLSelectElement) &&
@@ -313,11 +340,11 @@ export function parseField (element: Element, options?: ParseFieldOptions) {
   if (element instanceof HTMLInputElement) {
     // Fetch value from checkbox/radio fields.
     if (isCheckable) {
-      const values = form
-        ? value = getFieldsByName(element.name, form)
+      const fields = form
+        ? getFieldsByName(element.name, form)
           .filter((el) => el instanceof HTMLInputElement && el.checked)
-          .map((el) => el.value)
-        : [value]
+        : [element]
+      const values = getValuesFromFields(fields)
 
       if (isMultipleField(element)) {
         value = values
@@ -504,10 +531,8 @@ export function parseForm (form: HTMLFormElement, options?: ParseFormOptions): R
       continue
     }
 
-    let { name } = field
-
-    // Remove array from name if present (ex: items[] => items).
-    name = name.replace(/\[]$/g, '')
+    // Remove array from name (ex: items[] => items, items[0] => items).
+    const name = field.name.replace(/\[\d*]$/g, '')
 
     // Reconstruct array or object.
     const arrayIndex = name.indexOf('[')

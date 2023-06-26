@@ -237,6 +237,13 @@ describe('isMultipleField()', () => {
     })
   })
 
+  describe('with element with name="items[1]"', () => {
+    it('should return true', () => {
+      const input = createTextInput({ name: 'items[1]' })
+      expect(isMultipleField(input)).toBe(true)
+    })
+  })
+
   describe('with several checkboxes with name="item"', () => {
     it('should return true', () => {
       const form = createForm()
@@ -544,6 +551,18 @@ describe('parseForm()', () => {
 
     const r = parseForm(form)
     expect(r).toEqual({ items: [] })
+  })
+
+  it('should return nested fields', () => {
+    const form = createForm()
+    const a = createTextInput({
+      name: 'a[b][][c]',
+      value: STRING
+    })
+    form.appendChild(a)
+    expect(parseForm(form)).toStrictEqual({
+      a: { b: [{ c: STRING }] }
+    })
   })
 
   it('should return values of file fields', () => {
