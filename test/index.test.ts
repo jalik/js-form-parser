@@ -441,6 +441,58 @@ describe('parseField()', () => {
       expect(parseField(field, { parsing: 'auto' })).toBe(INTEGER_STRING)
     })
   })
+
+  describe('with trim = true', () => {
+    const value = ' test '
+
+    it('should not modify hidden value', () => {
+      const hidden = createHiddenInput({
+        name: 'hidden',
+        value
+      })
+      expect(parseField(hidden)).toBe(value)
+    })
+
+    it('should not modify checkbox value', () => {
+      const checkbox = createCheckbox({
+        checked: true,
+        name: 'checkbox',
+        value
+      })
+      expect(parseField(checkbox)).toBe(value)
+    })
+
+    it('should not modify radio value', () => {
+      const radio = createRadio({
+        checked: true,
+        name: 'radio',
+        value
+      })
+      expect(parseField(radio)).toBe(value)
+    })
+
+    it('should not modify password value', () => {
+      const passwordInput = createPasswordInput({
+        name: 'password',
+        value
+      })
+      expect(parseField(passwordInput)).toBe(value)
+    })
+
+    it('should not modify select value', () => {
+      const select = createSelect({
+        checked: true,
+        name: 'select',
+        options: [
+          {
+            value,
+            selected: true
+          }
+        ]
+      })
+      expect(parseField(select)).toBe(value)
+    })
+  })
 })
 
 describe('parseForm()', () => {
@@ -1092,17 +1144,65 @@ describe('parseForm()', () => {
       })
       expect(r).toEqual({ text: '' })
     })
-    it('should not clean value from password field', () => {
+
+    const value = 'test'
+    const cleanFunction = () => 'CLEANED'
+
+    it('should not modify hidden value', () => {
+      const form = createForm()
+      form.appendChild(createHiddenInput({
+        name: 'hidden',
+        value
+      }))
+      const r = parseForm(form, { cleanFunction })
+      expect(r).toStrictEqual({ hidden: value })
+    })
+
+    it('should not modify checkbox value', () => {
+      const form = createForm()
+      form.appendChild(createCheckbox({
+        checked: true,
+        name: 'checkbox',
+        value
+      }))
+      const r = parseForm(form, { cleanFunction })
+      expect(r).toStrictEqual({ checkbox: value })
+    })
+
+    it('should not modify radio value', () => {
+      const form = createForm()
+      form.appendChild(createRadio({
+        checked: true,
+        name: 'radio',
+        value
+      }))
+      const r = parseForm(form, { cleanFunction })
+      expect(r).toStrictEqual({ radio: value })
+    })
+
+    it('should not modify password value', () => {
       const form = createForm()
       form.appendChild(createPasswordInput({
-        name: 'pass',
-        value: PASSWORD
+        name: 'password',
+        value
       }))
+      const r = parseForm(form, { cleanFunction })
+      expect(r).toStrictEqual({ password: value })
+    })
 
-      const r = parseForm(form, {
-        cleanFunction: (value) => value.trim()
-      })
-      expect(r).toEqual({ pass: PASSWORD })
+    it('should not modify select value', () => {
+      const form = createForm()
+      form.appendChild(createSelect({
+        name: 'select',
+        options: [
+          {
+            value,
+            selected: true
+          }
+        ]
+      }))
+      const r = parseForm(form, { cleanFunction })
+      expect(r).toStrictEqual({ select: value })
     })
   })
 

@@ -220,6 +220,21 @@ export function isCheckableField (element: Element): boolean {
 }
 
 /**
+ * Checks if the element value can be edited.
+ * @param element
+ */
+export function isFieldValueEditable (element: Element): boolean {
+  return element instanceof HTMLTextAreaElement || (
+    element instanceof HTMLInputElement && ![
+      'hidden',
+      'checkbox',
+      'password',
+      'radio'
+    ].includes(element.type)
+  )
+}
+
+/**
  * Checks if field value is an array.
  * @param element
  */
@@ -459,13 +474,15 @@ export function parseField (element: Element, options?: ParseFieldOptions): any 
     }
   }
 
-  // Removes extra spaces but ignore password.
-  if (opts.trim && (!(element instanceof HTMLInputElement) || element.type !== 'password')) {
-    value = trim(value)
-  }
-  // Replaces empty string by null.
-  if (opts.nullify) {
-    value = nullify(value)
+  if (isFieldValueEditable(element)) {
+    // Removes extra spaces.
+    if (opts.trim) {
+      value = trim(value)
+    }
+    // Replaces empty string by null.
+    if (opts.nullify) {
+      value = nullify(value)
+    }
   }
   return value
 }
@@ -525,7 +542,7 @@ export function parseForm (form: HTMLFormElement, options?: ParseFormOptions): R
     })
 
     // Execute custom clean function on fields with type different of password.
-    if (opts.cleanFunction && field.type !== 'password') {
+    if (opts.cleanFunction && isFieldValueEditable(field)) {
       if (value instanceof Array) {
         for (let k = 0; k < value.length; k += 1) {
           if (typeof value[k] === 'string' && value[k].length) {
