@@ -3,8 +3,17 @@
  * Copyright (c) 2023 Karl STEIN
  */
 
-import {describe, expect, it} from '@jest/globals'
-import {buildObject, nullify, parseBoolean, parseField, parseForm, parseNumber, parseValue, trim} from '../src'
+import { describe, expect, it } from '@jest/globals'
+import {
+  buildObject,
+  nullify,
+  parseBoolean,
+  parseField,
+  parseForm,
+  parseNumber,
+  parseValue,
+  trim
+} from '../src'
 import {
   createCheckbox,
   createFileInput,
@@ -28,18 +37,6 @@ const INTEGER = 100
 const INTEGER_STRING = '0100'
 const PASSWORD = ' sEcr3t '
 const STRING = 'hello'
-
-describe('parseField', () => {
-  it('should be importable from package', () => {
-    expect(typeof parseField).toEqual('function')
-  })
-})
-
-describe('parseForm', () => {
-  it('should be importable from package', () => {
-    expect(typeof parseForm).toEqual('function')
-  })
-})
 
 describe('buildObject()', () => {
   // Testing with arrays
@@ -266,6 +263,10 @@ describe('parseBoolean()', () => {
 })
 
 describe('parseField()', () => {
+  it('should be importable from package', () => {
+    expect(typeof parseField).toEqual('function')
+  })
+
   describe('using checkbox input', () => {
     describe('with attribute data-type="boolean"', () => {
       describe('with checked = true', () => {
@@ -361,6 +362,10 @@ describe('parseField()', () => {
 })
 
 describe('parseForm()', () => {
+  it('should be importable from package', () => {
+    expect(typeof parseForm).toEqual('function')
+  })
+
   it('should not return disabled fields', () => {
     const form = createForm()
     form.appendChild(createTextInput({
@@ -441,6 +446,25 @@ describe('parseForm()', () => {
       checkbox: [STRING],
       radio: [STRING],
       select: ['A']
+    })
+  })
+
+  it('should return indexed array fields', () => {
+    const form = createForm()
+    form.appendChild(createCheckbox({
+      name: 'items[1]',
+      value: 'A',
+      checked: true
+    }))
+    form.appendChild(createCheckbox({
+      name: 'items[0]',
+      value: 'B',
+      checked: true
+    }))
+
+    const r = parseForm(form)
+    expect(r).toEqual({
+      items: ['B', 'A']
     })
   })
 
