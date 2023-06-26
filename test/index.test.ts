@@ -6,6 +6,7 @@
 import { describe, expect, it } from '@jest/globals'
 import {
   buildObject,
+  isMultipleField,
   nullify,
   parseBoolean,
   parseField,
@@ -217,6 +218,57 @@ describe('nullify()', () => {
   it('should replace empty strings by null in object', () => {
     expect(nullify({ a: '', b: 'b', c: null }))
       .toEqual({ a: null, b: 'b', c: null })
+  })
+})
+
+describe('isMultipleField()', () => {
+  describe('with element with name="items[]"', () => {
+    it('should return true', () => {
+      const select = createSelect({ name: 'items[]' })
+      expect(isMultipleField(select)).toBe(true)
+      const textarea = createTextarea({ name: 'items[]' })
+      expect(isMultipleField(textarea)).toBe(true)
+      const input = createTextInput({ name: 'items[]' })
+      expect(isMultipleField(input)).toBe(true)
+      const checkbox = createCheckbox({ name: 'items[]' })
+      expect(isMultipleField(checkbox)).toBe(true)
+      const radio = createRadio({ name: 'items[]' })
+      expect(isMultipleField(radio)).toBe(true)
+    })
+  })
+
+  describe('with several checkboxes with name="item"', () => {
+    it('should return true', () => {
+      const form = createForm()
+      const a = createCheckbox({
+        name: 'item',
+        value: 'A'
+      })
+      form.appendChild(a)
+      const b = createCheckbox({
+        name: 'item',
+        value: 'B'
+      })
+      form.appendChild(b)
+      expect(isMultipleField(a)).toBe(true)
+    })
+  })
+
+  describe('with several radios with name="item"', () => {
+    it('should return false', () => {
+      const form = createForm()
+      const a = createRadio({
+        name: 'item',
+        value: 'A'
+      })
+      form.appendChild(a)
+      const b = createRadio({
+        name: 'item',
+        value: 'B'
+      })
+      form.appendChild(b)
+      expect(isMultipleField(a)).toBe(false)
+    })
   })
 })
 
@@ -438,6 +490,16 @@ describe('parseForm()', () => {
         { value: 'B' }
       ]
     }))
+    form.appendChild(createCheckbox({
+      name: 'items',
+      value: 'A',
+      checked: true
+    }))
+    form.appendChild(createCheckbox({
+      name: 'items',
+      value: 'B',
+      checked: true
+    }))
 
     const r = parseForm(form)
     expect(r).toEqual({
@@ -445,7 +507,8 @@ describe('parseForm()', () => {
       textarea: [STRING],
       checkbox: [STRING],
       radio: [STRING],
-      select: ['A']
+      select: ['A'],
+      items: ['A', 'B']
     })
   })
 

@@ -131,14 +131,25 @@ export function isCheckableField (element: Element): boolean {
 }
 
 /**
- * Checks if field value is an array (example: "numbers[]" or "number[0]").
+ * Checks if field value is an array.
  * @param element
  */
 export function isMultipleField (element: Element): boolean {
-  return (element instanceof HTMLInputElement ||
-      element instanceof HTMLSelectElement ||
-      element instanceof HTMLTextAreaElement) &&
-    element.name != null && /\[]$/.test(element.name)
+  if ((element instanceof HTMLInputElement ||
+    element instanceof HTMLSelectElement ||
+    element instanceof HTMLTextAreaElement) && element.name != null) {
+    // Check element's name (example: "numbers[]" or "number[0]").
+    if (/\[]$/.test(element.name)) {
+      return true
+    }
+    // Check if form contains other elements with the same name.
+    if (element.form &&
+      element.type === 'checkbox' &&
+      getFieldsByName(element.name, element.form).length > 1) {
+      return true
+    }
+  }
+  return false
 }
 
 /**
