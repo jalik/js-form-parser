@@ -126,6 +126,68 @@ export function getFieldsByName (name: string, form: HTMLFormElement): Array<HTM
 }
 
 /**
+ * Returns input value.
+ * @param element
+ */
+export function getInputValue (element: HTMLInputElement): string | string[] | undefined {
+  let value: string | string[] | undefined = element.value
+
+  if (isMultipleField(element)) {
+    const { form } = element
+    let fields = form ? getFieldsByName(element.name, form) : [element]
+
+    if (isCheckableField(element)) {
+      fields = fields.filter((el) => el instanceof HTMLInputElement && el.checked)
+    }
+    value = getValuesFromFields(fields)
+  } else if (isCheckableField(element)) {
+    const { form } = element
+    const fields = (form ? getFieldsByName(element.name, form) : [element])
+    value = fields.find((el) => el instanceof HTMLInputElement && el.checked)?.value
+  }
+  return value
+}
+
+/**
+ * Returns select value.
+ * @param element
+ */
+export function getSelectValue (element: HTMLSelectElement): string | string[] {
+  let value: string | string[] = element.value
+
+  if (isMultipleField(element)) {
+    const { form } = element
+    value = form ? getValuesFromFields(getFieldsByName(element.name, form)) : [value]
+  } else if (element.multiple) {
+    value = []
+
+    // Get selected values.
+    if (element.options instanceof HTMLCollection) {
+      for (let i = 0; i < element.options.length; i += 1) {
+        if (element.options[i].selected) {
+          value.push(element.options[i].value)
+        }
+      }
+    }
+  }
+  return value
+}
+
+/**
+ * Returns textarea value.
+ * @param element
+ */
+export function getTextareaValue (element: HTMLTextAreaElement): string | string[] {
+  let value: string | string[] = element.value
+
+  if (isMultipleField(element)) {
+    const { form } = element
+    value = form ? getValuesFromFields(getFieldsByName(element.name, form)) : [value]
+  }
+  return value
+}
+
+/**
  * Returns values from fields by using index from name (ex: name="items[1]").
  * @param elements
  */
@@ -317,13 +379,6 @@ export type ParseFieldOptions = {
  * @param options
  */
 export function parseField (element: Element, options?: ParseFieldOptions): any {
-  // Check field.
-  if (!(element instanceof HTMLInputElement) &&
-    !(element instanceof HTMLSelectElement) &&
-    !(element instanceof HTMLTextAreaElement)) {
-    throw new TypeError('field is not an instance of HTMLInputElement or HTMLSelectElement or HTMLTextAreaElement')
-  }
-
   // Set default options.
   const opts: ParseFieldOptions = {
     nullify: true,
@@ -332,60 +387,16 @@ export function parseField (element: Element, options?: ParseFieldOptions): any 
     ...options
   }
 
-  const isCheckable = isCheckableField(element)
-
-  const { form } = element
-  let value: any = element.value
+  let value: any
 
   if (element instanceof HTMLInputElement) {
-    // Fetch value from checkbox/radio fields.
-    if (isCheckable) {
-      const fields = form
-        ? getFieldsByName(element.name, form)
-          .filter((el) => el instanceof HTMLInputElement && el.checked)
-        : [element]
-      const values = getValuesFromFields(fields)
-
-      if (isMultipleField(element)) {
-        value = values
-      } else {
-        value = values.shift()
-      }
-    } else if (isMultipleField(element)) {
-      if (form) {
-        value = getFieldsByName(element.name, form).map((el) => el.value)
-      } else {
-        value = [value]
-      }
-    }
+    value = getInputValue(element)
   } else if (element instanceof HTMLSelectElement) {
-    if (isMultipleField(element)) {
-      if (form) {
-        value = getFieldsByName(element.name, form).map((el) => el.value)
-      } else {
-        value = [value]
-      }
-    } else if (element.multiple) {
-      // Fetch value from select (multiple) fields.
-      value = []
-
-      // Collect values of selected options
-      if (element.options instanceof HTMLCollection) {
-        for (let o = 0; o < element.options.length; o += 1) {
-          if (element.options[o].selected) {
-            value.push(element.options[o].value)
-          }
-        }
-      }
-    }
+    value = getSelectValue(element)
   } else if (element instanceof HTMLTextAreaElement) {
-    if (isMultipleField(element)) {
-      if (form) {
-        value = getFieldsByName(element.name, form).map((el) => el.value)
-      } else {
-        value = [value]
-      }
-    }
+    value = getTextareaValue(element)
+  } else {
+    throw new TypeError('field is not an instance of HTMLInputElement or HTMLSelectElement or HTMLTextAreaElement')
   }
 
   const dataType = element.dataset.type
@@ -508,8 +519,8 @@ export function parseForm (form: HTMLFormElement, options?: ParseFormOptions): R
 
     // Parse field value.
     let value = parseField(field, {
-      parsing: opts.parsing,
       nullify: opts.nullify,
+      parsing: opts.parsing,
       trim: opts.trim
     })
 
