@@ -38,7 +38,13 @@ const INTEGER_STRING = '0100'
 const PASSWORD = ' sEcr3t '
 const STRING = 'hello'
 
-describe('FormParser', () => {
+describe('parseField', () => {
+  it('should be importable from package', () => {
+    expect(typeof parseField).toEqual('function')
+  })
+})
+
+describe('parseForm', () => {
   it('should be importable from package', () => {
     expect(typeof parseForm).toEqual('function')
   })
