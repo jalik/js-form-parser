@@ -482,19 +482,30 @@ describe('parseForm()', () => {
   it('should return values of checked radios', () => {
     const form = createForm()
     const a = createRadio({
+      checked: true,
       name: 'radio',
       value: 'A'
     })
     form.appendChild(a)
     const b = createRadio({
-      checked: true,
       name: 'radio',
       value: 'B'
     })
     form.appendChild(b)
+    const c = createRadio({
+      name: 'radio2',
+      value: 'C'
+    })
+    form.appendChild(c)
+    const d = createRadio({
+      checked: true,
+      name: 'radio2',
+      value: 'D'
+    })
+    form.appendChild(d)
 
     const r = parseForm(form)
-    expect(r).toEqual({ radio: b.value })
+    expect(r).toEqual({ radio: a.value, radio2: d.value })
   })
 
   it('should return values of number fields', () => {
@@ -669,8 +680,7 @@ describe('parseForm()', () => {
       form.appendChild(createTextInput({
         dataset: { type: 'boolean' },
         name: 'bool_false',
-        value: FALSE,
-        checked: true
+        value: FALSE
       }))
       form.appendChild(createNumberInput({
         dataset: { type: 'number' },
@@ -685,7 +695,7 @@ describe('parseForm()', () => {
       const r = parseForm(form, { parsing: 'data-type' })
       expect(r).toEqual({
         bool_true: true,
-        bool_false: false,
+        bool_false: true,
         float: FLOAT,
         integer: INTEGER
       })
@@ -760,7 +770,7 @@ describe('parseForm()', () => {
 
       const r = parseForm(form, { parsing: 'data-type' })
       expect(r).toEqual({
-        boolean_field: null,
+        boolean_field: false,
         checkboxes_field: [],
         radio_field: null
       })

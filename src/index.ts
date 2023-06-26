@@ -303,24 +303,23 @@ export function parseField (element: Element, options?: ParseFieldOptions) {
   const { form } = element
   let value: any = element.value
 
-  // Fetch value from special fields.
   if (element instanceof HTMLInputElement) {
+    // Fetch value from checkbox/radio fields.
     if (isCheckable) {
+      const values = form
+        ? value = getFieldsByName(element.name, form)
+          .filter((el) => el instanceof HTMLInputElement && el.checked)
+          .map((el) => el.value)
+        : [value]
+
       if (isMultipleField(element)) {
-        if (form) {
-          value = getFieldsByName(element.name, form)
-            .filter((el) => el instanceof HTMLInputElement && el.checked)
-            .map((el) => el.value)
-        } else {
-          value = [value]
-        }
+        value = values
       } else {
-        value = element.checked ? value : null
+        value = values.shift()
       }
     }
-  }
-
-  if (element instanceof HTMLSelectElement) {
+  } else if (element instanceof HTMLSelectElement) {
+    // Fetch value from select (multiple) fields.
     if (element.multiple) {
       value = []
 
@@ -493,14 +492,8 @@ export function parseForm (form: HTMLFormElement, options?: ParseFormOptions): R
       continue
     }
 
-    // Add field to the list.
-    if (isCheckableField(field) &&
-      !isMultipleField(field) &&
-      (field instanceof HTMLInputElement && !field.checked)) {
-      fields[name] = null
-    } else {
-      fields[name] = value
-    }
+    // Add field value to result.
+    fields[name] = value
   }
   return fields
 }
