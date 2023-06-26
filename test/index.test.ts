@@ -3,17 +3,8 @@
  * Copyright (c) 2023 Karl STEIN
  */
 
-import { describe, expect, it } from '@jest/globals'
-import {
-  buildObject,
-  nullify,
-  parseBoolean,
-  parseField,
-  parseForm,
-  parseNumber,
-  parseValue,
-  trim
-} from '../src'
+import {describe, expect, it} from '@jest/globals'
+import {buildObject, nullify, parseBoolean, parseField, parseForm, parseNumber, parseValue, trim} from '../src'
 import {
   createCheckbox,
   createFileInput,
@@ -412,6 +403,45 @@ describe('parseForm()', () => {
 
     const r = parseForm(form)
     expect(r).toEqual({ x: STRING })
+  })
+
+  it('should return array fields', () => {
+    const form = createForm()
+    form.appendChild(createTextInput({
+      name: 'text[]',
+      value: STRING
+    }))
+    form.appendChild(createTextarea({
+      name: 'textarea[]',
+      value: STRING
+    }))
+    form.appendChild(createCheckbox({
+      name: 'checkbox[]',
+      value: STRING,
+      checked: true
+    }))
+    form.appendChild(createRadio({
+      name: 'radio[]',
+      value: STRING,
+      checked: true
+    }))
+    form.appendChild(createSelect({
+      name: 'select[]',
+      options: [
+        { value: '' },
+        { value: 'A', selected: true },
+        { value: 'B' }
+      ]
+    }))
+
+    const r = parseForm(form)
+    expect(r).toEqual({
+      text: [STRING],
+      textarea: [STRING],
+      checkbox: [STRING],
+      radio: [STRING],
+      select: ['A']
+    })
   })
 
   it('should return empty array if no checkbox is checked', () => {

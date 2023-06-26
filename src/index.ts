@@ -131,15 +131,10 @@ export function isCheckableField (element: Element): boolean {
 }
 
 /**
- * Checks if field has multiple values (based on the "multiple" attribute or when field's name contains []).
+ * Checks if field value is an array (example: "numbers[]" or "number[0]").
  * @param element
  */
 export function isMultipleField (element: Element): boolean {
-  // Field has attribute "multiple".
-  if (element instanceof HTMLSelectElement && element.multiple) {
-    return true
-  }
-  // Field name contains an empty array (example: "numbers[]").
   return (element instanceof HTMLInputElement ||
       element instanceof HTMLSelectElement ||
       element instanceof HTMLTextAreaElement) &&
@@ -318,10 +313,22 @@ export function parseField (element: Element, options?: ParseFieldOptions) {
       } else {
         value = values.shift()
       }
+    } else if (isMultipleField(element)) {
+      if (form) {
+        value = getFieldsByName(element.name, form).map((el) => el.value)
+      } else {
+        value = [value]
+      }
     }
   } else if (element instanceof HTMLSelectElement) {
-    // Fetch value from select (multiple) fields.
-    if (element.multiple) {
+    if (isMultipleField(element)) {
+      if (form) {
+        value = getFieldsByName(element.name, form).map((el) => el.value)
+      } else {
+        value = [value]
+      }
+    } else if (element.multiple) {
+      // Fetch value from select (multiple) fields.
       value = []
 
       // Collect values of selected options
@@ -331,6 +338,14 @@ export function parseField (element: Element, options?: ParseFieldOptions) {
             value.push(element.options[o].value)
           }
         }
+      }
+    }
+  } else if (element instanceof HTMLTextAreaElement) {
+    if (isMultipleField(element)) {
+      if (form) {
+        value = getFieldsByName(element.name, form).map((el) => el.value)
+      } else {
+        value = [value]
       }
     }
   }
