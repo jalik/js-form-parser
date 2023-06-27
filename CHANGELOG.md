@@ -1,5 +1,15 @@
 # Changelog
 
+## v3.1.0 (2023-06-26)
+
+- Added option `parser: (value, dataType, field)` to `parseForm()` and `parseField()` to handle custom `data-type`
+- Do not clean, trim or nullify value of `checkbox`, `radio`, `select`, `password` and `hidden` fields
+- Fixed checkbox with `data-type="boolean"` not being `false` when unchecked
+- Fixed collecting of checkboxes with the same name to an array value (without `[]` in the name)
+- Fixed collecting of array fields (ex: `name="items[]"`)
+- Fixed duplicate values in array fields
+- Fixed collecting and parsing of radios and checkboxes not working until the last value is checked
+
 ## v3.0.0 (2023-06-23)
 
 - **[BREAKING]** Removed option `ignoreButtons` in `parseForm(options)`
