@@ -805,6 +805,37 @@ describe('parseForm()', () => {
     expect(r).toEqual({ textarea: STRING })
   })
 
+  describe('with parser', () => {
+    it('should return the parsed values', () => {
+      const form = createForm()
+      const field = createTextInput({
+        dataset: { type: 'phone' },
+        name: 'phone',
+        value: '689.12345678'
+      })
+      form.appendChild(field)
+      const r = parseForm(form, {
+        parsing: 'auto',
+        parser: (value, type) => {
+          if (type === 'phone') {
+            const [code, number] = value.split(/\./)
+            return {
+              code,
+              number
+            }
+          }
+          return null
+        }
+      })
+      expect(r).toStrictEqual({
+        phone: {
+          code: '689',
+          number: '12345678'
+        }
+      })
+    })
+  })
+
   describe('with parsing = "none"', () => {
     it('should not parse any value', () => {
       const form = createForm()

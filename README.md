@@ -337,6 +337,43 @@ When using `type` attribute on `<input>`, only `number` and `range` are parsed t
 <input name="anything_2" type="text" data-type="auto" value="false">
 ```
 
+## Using a custom parser
+
+You may want to create your own `data-type`, it is possible since the `v3.1.0` by passing the `parser` option to `parseForm()` or `parseField()`.
+
+```html
+<form id="my-form">
+  <input name="phone" data-type="phone" value="689.12345678" />
+</form>
+```
+
+```js
+import { parseForm } from '@jalik/form-parser'
+
+const form = document.getElementById('my-form')
+const fields = parseForm(form, {
+  parser: (value, dataType, field) => {
+    if (dataType === 'phone') {
+      const [code, number] = value.split(/\./)
+      return {
+        code,
+        number,
+      }
+    }
+    return null
+  },
+})
+```
+
+```json
+{
+  "phone": {
+    "code": "689",
+    "number": "12345678"
+  }
+}
+```
+
 ## Parsing complex forms with nested fields
 
 It is possible to reconstruct an object corresponding to the form structure, so it can

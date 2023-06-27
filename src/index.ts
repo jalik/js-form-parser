@@ -384,6 +384,7 @@ export type ParsingMode = 'none' | 'type' | 'data-type' | 'auto'
 
 export type ParseFieldOptions = {
   nullify?: boolean
+  parser?: (value: any, type: string, element: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) => any
   parsing?: ParsingMode
   trim?: boolean
 }
@@ -420,6 +421,7 @@ export function parseField (element: Element, options?: ParseFieldOptions): any 
   if (opts.parsing !== 'none' && dataType !== 'string') {
     // Ignore values that must remain string.
     if (!['email', 'file', 'password', 'search', 'url'].includes(element.type) &&
+      // todo parse textarea
       !['textarea'].includes(element.localName)) {
       // Parse value based on "data-type" attribute.
       if (dataType && (opts.parsing === 'auto' || opts.parsing === 'data-type')) {
@@ -453,6 +455,9 @@ export function parseField (element: Element, options?: ParseFieldOptions): any 
           } else {
             value = parseBoolean(value)
           }
+        } else if (opts.parser != null) {
+          // Use custom parser.
+          value = opts.parser(value, dataType, element)
         } else {
           // eslint-disable-next-line no-console
           console.warn(`unknown data-type "${dataType}" for field "${element.name}"`)
@@ -491,6 +496,7 @@ export type ParseFormOptions = {
   cleanFunction?: (value: string, field: Element) => any
   filterFunction?: (element: Element, parsedValue: any) => boolean
   nullify?: boolean
+  parser?: (value: any, type: string, element: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) => any
   parsing?: ParsingMode
   trim?: boolean
 }
@@ -537,6 +543,7 @@ export function parseForm (form: HTMLFormElement, options?: ParseFormOptions): R
     // Parse field value.
     let value = parseField(field, {
       nullify: opts.nullify,
+      parser: opts.parser,
       parsing: opts.parsing,
       trim: opts.trim
     })
