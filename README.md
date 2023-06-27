@@ -7,32 +7,40 @@
 ![GitHub](https://img.shields.io/github/license/jalik/js-form-parser.svg)
 ![npm](https://img.shields.io/npm/dt/@jalik/form-parser.svg)
 
-Parse complex forms with minimum effort.
+## Features
 
-## Introduction
+- Collect and parse form values in one line
+- Parse values based on field type (ex: `type="number"`) or data-type (ex: `data-type="boolean"`)
+- Use custom parser with `data-type`
+- Build arrays and objects based on field name
+- Trim and nullify values
+- Filter values using a custom function
+- Clean values using a custom function
 
-Parsing forms can be painful, but with this great library you can get all fields from a form,
-automatically parse values (boolean, number, string, array, object), remove unnecessary spaces from
-strings and replace empty strings with null, plus you can decide which fields are collected or
-ignored and even use your own cleaning function.
+## Sandbox
+
+Play with the lib here: https://codesandbox.io/s/jalik-form-parser-demo-r29grh?file=/src/index.js
 
 ## Getting started
 
-Let start with a very simple form which produces a flat object :
+Let's start with the form below :
 
 ```html
 <form id="my-form">
   <input name="username" value="jalik">
+  <input name="password" value="secret">
+  <input name="age" type="number" value="35">
+  <input name="gender" type="radio" value="male" checked>
+  <input name="gender" type="radio" value="female">
   <input name="email" type="email" value="jalik@mail.com">
-  <input name="age" type="number" value="30">
-  <input name="subscribeToNewsletter" type="checkbox" data-type="boolean" value="true" checked>
   <input name="phone" type="tel" data-type="string" value="067123456">
+  <input name="subscribe" type="checkbox" data-type="boolean" value="true" checked>
   <input name="token" type="hidden" value="aZ7hYkl12mPx">
   <button type="submit">Submit</button>
 </form>
 ```
 
-You can collect and parse all fields in a single object with `parseForm()`.
+You can collect and parse fields with `parseForm(form, options)`.
 
 ```js
 import { parseForm } from '@jalik/form-parser'
@@ -49,10 +57,12 @@ The `fields` object will look like this :
 ```json
 {
   "username": "jalik",
+  "password": "secret",
+  "age": 35,
+  "gender": "male",
   "email": "jalik@mail.com",
-  "age": 30,
-  "subscribeToNewsletter": true,
   "phone": "067123456",
+  "subscribe": true,
   "token": "aZ7hYkl12mPx"
 }
 ```
@@ -93,9 +103,9 @@ behavior of the parsing function (pay attention to comments, values and attribut
   <input name="text_integer" type="text" data-type="number" value="01">
   <!-- select_number = 30 -->
   <select name="select_number" data-type="number">
-    <option value="10"></option>
-    <option value="20"></option>
-    <option value="30" selected></option>
+    <option>10</option>
+    <option>20</option>
+    <option selected>30</option>
   </select>
   <!-- float = 9.99 -->
   <input name="float" type="number" value="09.99">
@@ -134,9 +144,9 @@ behavior of the parsing function (pay attention to comments, values and attribut
   
   <!-- select_multiple = [20, 30] -->
   <select name="select_multiple" data-type="number" multiple>
-    <option value="10"></option>
-    <option value="20" selected></option>
-    <option value="30" selected></option>
+    <option>10</option>
+    <option selected>20</option>
+    <option selected>30</option>
   </select>
   <!-- array = ['A', 'B'] -->
   <input name="array[]" type="checkbox" value="A" checked>
@@ -188,7 +198,7 @@ The `fields` object will look like this :
 }
 ```
 
-## Parsing arrays
+## Building arrays
 
 To get an array of values, append `[]` to a field name:
 
@@ -234,7 +244,7 @@ The `fields` object will look like this :
 }
 ```
 
-## Parsing objects
+## Building objects
 
 To get an object, write attributes like `[attribute]`:
 
@@ -307,7 +317,7 @@ Instead of :
 }
 ```
 
-## Fields parsing
+## Parsing fields
 
 To define the type of field, you can use the attribute `data-type` or `type`.  
 The attribute `data-type` takes precedence over `type` if both of are defined.
