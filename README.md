@@ -16,10 +16,20 @@
 - Trim and nullify values
 - Filter values using a custom function
 - Clean values using a custom function
+* TypeScript declarations ♥
 
 ## Sandbox
 
 Play with the lib here: https://codesandbox.io/s/jalik-form-parser-demo-r29grh?file=/src/index.js
+
+## Installing
+
+```shell
+npm i -P @jalik/form-parser
+```
+```shell
+yarn add @jalik/form-parser
+```
 
 ## Getting started
 
