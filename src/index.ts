@@ -1,6 +1,6 @@
 /*
  * The MIT License (MIT)
- * Copyright (c) 2023 Karl STEIN
+ * Copyright (c) 2024 Karl STEIN
  */
 
 /**
@@ -9,7 +9,7 @@
  * @param value
  * @param context
  */
-export function buildObject (str: string, value: any, context?: Record<string, any>): Record<string, any> {
+export function buildObject (str: string, value: any, context?: Record<string, any> | null): Record<string, any> {
   if (str == null || str.length === 0) {
     return value
   }
@@ -308,7 +308,7 @@ export function trim (value: any): any {
  * Returns a boolean string.
  * @param value
  */
-export function parseBoolean (value: string): boolean | null {
+export function parseBoolean (value: string | null): boolean | null {
   if (value == null) {
     return null
   }
@@ -327,7 +327,7 @@ export function parseBoolean (value: string): boolean | null {
  * Parses a number string.
  * @param value
  */
-export function parseNumber (value: string): number | null {
+export function parseNumber (value: string | null): number | null {
   if (value == null) {
     return null
   }
@@ -354,7 +354,7 @@ export type ParsingType = 'auto' | 'boolean' | 'number'
  * @param value
  * @param type
  */
-export function parseValue (value?: string, type: ParsingType = 'auto'): string | number | boolean | null {
+export function parseValue (value: string | null, type: ParsingType = 'auto'): string | number | boolean | null {
   if (value == null) {
     return null
   }
@@ -424,7 +424,7 @@ export function parseField (element: Element, options?: ParseFieldOptions): any 
       // todo parse textarea
       !['textarea'].includes(element.localName)) {
       // Parse value based on "data-type" attribute.
-      if (dataType && (opts.parsing === 'auto' || opts.parsing === 'data-type')) {
+      if ((opts.parsing === 'auto' || opts.parsing === 'data-type') && dataType != null) {
         if (dataType === 'auto') {
           if (value instanceof Array) {
             for (let k = 0; k < value.length; k += 1) {

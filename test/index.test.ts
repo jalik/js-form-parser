@@ -1,6 +1,6 @@
 /*
  * The MIT License (MIT)
- * Copyright (c) 2023 Karl STEIN
+ * Copyright (c) 2024 Karl STEIN
  */
 
 import { describe, expect, it } from '@jest/globals'
@@ -89,7 +89,12 @@ describe('buildObject()', () => {
   })
 
   it('buildObject("a[b]", undefined, {a:{b:1,c:2}}) should return {a:{c:2}}', () => {
-    const r = buildObject('a[b]', undefined, { a: { b: 1, c: 2 } })
+    const r = buildObject('a[b]', undefined, {
+      a: {
+        b: 1,
+        c: 2
+      }
+    })
     expect(r).toEqual({ a: { c: 2 } })
   })
 
@@ -186,7 +191,10 @@ describe('buildObject()', () => {
   const obj2 = { a: [0, 1, 2] }
   it(`buildObject("[b][text]", "${STRING}", ${JSON.stringify(obj2)}) should return {a:[0,1,2],b:{text:"${STRING}"}}`, () => {
     const r = buildObject('[b][text]', STRING, obj2)
-    expect(r).toEqual({ a: [0, 1, 2], b: { text: STRING } })
+    expect(r).toEqual({
+      a: [0, 1, 2],
+      b: { text: STRING }
+    })
   })
 
   it('should interpret number as object attribute if surrounded by double quotes', () => {
@@ -216,8 +224,16 @@ describe('nullify()', () => {
   })
 
   it('should replace empty strings by null in object', () => {
-    expect(nullify({ a: '', b: 'b', c: null }))
-      .toEqual({ a: null, b: 'b', c: null })
+    expect(nullify({
+      a: '',
+      b: 'b',
+      c: null
+    }))
+      .toEqual({
+        a: null,
+        b: 'b',
+        c: null
+      })
   })
 })
 
@@ -282,10 +298,6 @@ describe('isMultipleField()', () => {
 describe('parseBoolean()', () => {
   it('parseBoolean(null) should return null', () => {
     expect(parseBoolean(null)).toEqual(null)
-  })
-
-  it('parseBoolean(undefined) should return null', () => {
-    expect(parseBoolean(undefined)).toEqual(null)
   })
 
   it(`parseBoolean("${TRUE}") should return true`, () => {
@@ -394,9 +406,18 @@ describe('parseField()', () => {
     describe('with attributes multiple="true" and data-type="number"', () => {
       it('should return an array of numbers', () => {
         const options = [
-          { value: '123', selected: true },
-          { value: '456', selected: true },
-          { value: '789', selected: true },
+          {
+            value: '123',
+            selected: true
+          },
+          {
+            value: '456',
+            selected: true
+          },
+          {
+            value: '789',
+            selected: true
+          },
           { value: '000' }
         ]
         const field = createSelect({
@@ -412,7 +433,7 @@ describe('parseField()', () => {
     })
   })
 
-  describe('with attribute multiple="true"', () => {
+  describe('with multiple="true"', () => {
     const form = createForm()
     const field1 = createCheckbox({
       name: 'numbers[]',
@@ -480,7 +501,7 @@ describe('parseField()', () => {
         name: 'hidden',
         value
       })
-      expect(parseField(hidden)).toBe(value)
+      expect(parseField(hidden, { trim: true })).toBe(value)
     })
 
     it('should not modify checkbox value', () => {
@@ -489,7 +510,7 @@ describe('parseField()', () => {
         name: 'checkbox',
         value
       })
-      expect(parseField(checkbox)).toBe(value)
+      expect(parseField(checkbox, { trim: true })).toBe(value)
     })
 
     it('should not modify radio value', () => {
@@ -498,7 +519,7 @@ describe('parseField()', () => {
         name: 'radio',
         value
       })
-      expect(parseField(radio)).toBe(value)
+      expect(parseField(radio, { trim: true })).toBe(value)
     })
 
     it('should not modify password value', () => {
@@ -506,12 +527,11 @@ describe('parseField()', () => {
         name: 'password',
         value
       })
-      expect(parseField(passwordInput)).toBe(value)
+      expect(parseField(passwordInput, { trim: true })).toBe(value)
     })
 
     it('should not modify select value', () => {
       const select = createSelect({
-        checked: true,
         name: 'select',
         options: [
           {
@@ -520,7 +540,7 @@ describe('parseField()', () => {
           }
         ]
       })
-      expect(parseField(select)).toBe(value)
+      expect(parseField(select, { trim: true })).toBe(value)
     })
   })
 })
@@ -598,7 +618,10 @@ describe('parseForm()', () => {
       name: 'select[]',
       options: [
         { value: '' },
-        { value: 'A', selected: true },
+        {
+          value: 'A',
+          selected: true
+        },
         { value: 'B' }
       ]
     }))
@@ -647,11 +670,11 @@ describe('parseForm()', () => {
     const form = createForm()
     form.appendChild(createCheckbox({
       name: 'items[]',
-      value: 0
+      value: '0'
     }))
     form.appendChild(createCheckbox({
       name: 'items[]',
-      value: 1
+      value: '1'
     }))
 
     const r = parseForm(form)
@@ -746,14 +769,17 @@ describe('parseForm()', () => {
     form.appendChild(d)
 
     const r = parseForm(form)
-    expect(r).toEqual({ radio: a.value, radio2: d.value })
+    expect(r).toEqual({
+      radio: a.value,
+      radio2: d.value
+    })
   })
 
   it('should return values of number fields', () => {
     const form = createForm()
     form.appendChild(createNumberInput({
       name: 'number',
-      value: INTEGER
+      value: String(INTEGER)
     }))
 
     const r = parseForm(form)
@@ -789,7 +815,10 @@ describe('parseForm()', () => {
       name: 'select',
       options: [
         { value: 'A' },
-        { value: 'B', selected: true }
+        {
+          value: 'B',
+          selected: true
+        }
       ]
     }))
 
@@ -804,8 +833,14 @@ describe('parseForm()', () => {
       name: 'select',
       options: [
         { value: 'A' },
-        { value: 'B', selected: true },
-        { value: 'C', selected: true }
+        {
+          value: 'B',
+          selected: true
+        },
+        {
+          value: 'C',
+          selected: true
+        }
       ]
     }))
 
@@ -1269,8 +1304,14 @@ describe('parseForm()', () => {
 
   describe('with filterFunction', () => {
     const form = createForm()
-    form.appendChild(createTextInput({ name: 'text', value: 'test' }))
-    form.appendChild(createNumberInput({ name: 'num', value: 2 }))
+    form.appendChild(createTextInput({
+      name: 'text',
+      value: 'test'
+    }))
+    form.appendChild(createNumberInput({
+      name: 'num',
+      value: '2'
+    }))
 
     it('should return filtered fields only', () => {
       const r = parseForm(form, {
@@ -1295,7 +1336,10 @@ describe('parseForm()', () => {
         value: ' '
       }))
 
-      const r = parseForm(form, { nullify: true, trim: true })
+      const r = parseForm(form, {
+        nullify: true,
+        trim: true
+      })
       expect(r).toEqual({ text: null })
     })
 
@@ -1306,7 +1350,10 @@ describe('parseForm()', () => {
         value: ' '
       }))
 
-      const r = parseForm(form, { nullify: false, trim: true })
+      const r = parseForm(form, {
+        nullify: false,
+        trim: true
+      })
       expect(r).toEqual({ text: '' })
     })
   })
@@ -1352,10 +1399,6 @@ describe('parseNumber()', () => {
     expect(parseNumber(null)).toEqual(null)
   })
 
-  it('parseNumber(undefined) should return null', () => {
-    expect(parseNumber(undefined)).toEqual(null)
-  })
-
   it(`parseNumber("${FLOAT_STRING}") should return a float`, () => {
     const r = parseNumber(FLOAT_STRING)
     expect(r).toEqual(FLOAT)
@@ -1365,15 +1408,11 @@ describe('parseNumber()', () => {
   it(`parseNumber("-${FLOAT_STRING}") should return a negative float`, () => {
     const r = parseNumber(`-${FLOAT_STRING}`)
     expect(r).toEqual(-FLOAT)
-    expect(r).not.toBeNaN()
-    expect(r < 0).toBe(true)
   })
 
   it(`parseNumber("+${FLOAT_STRING}") should return a positive float`, () => {
     const r = parseNumber(`+${FLOAT_STRING}`)
     expect(r).toEqual(parseFloat(FLOAT_STRING))
-    expect(r).not.toBeNaN()
-    expect(r > 0).toBe(true)
   })
 
   it(`parseNumber("${FLOAT_STRING_COMMA}") should return a float`, () => {
@@ -1517,7 +1556,15 @@ describe('trim()', () => {
   })
 
   it('should remove extra spaces in object', () => {
-    expect(trim({ a: ' a ', b: 'b ', c: ' c' }))
-      .toEqual({ a: 'a', b: 'b', c: 'c' })
+    expect(trim({
+      a: ' a ',
+      b: 'b ',
+      c: ' c'
+    }))
+      .toEqual({
+        a: 'a',
+        b: 'b',
+        c: 'c'
+      })
   })
 })
