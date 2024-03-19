@@ -442,8 +442,38 @@ describe('parseField()', () => {
     })
   })
 
-  describe('with trim = true', () => {
+  describe('with option nullify = true', () => {
+    describe('with value = ""', () => {
+      it('should return null', () => {
+        const textInput = createTextInput({
+          name: 'text',
+          value: ''
+        })
+        expect(parseField(textInput, { nullify: true })).toBe(null)
+      })
+    })
+    describe('with non empty value', () => {
+      it('should return value', () => {
+        const value = 'test'
+        const textInput = createTextInput({
+          name: 'text',
+          value
+        })
+        expect(parseField(textInput, { nullify: true })).toBe(value)
+      })
+    })
+  })
+
+  describe('with option trim = true', () => {
     const value = ' test '
+
+    it('should remove extra spaces around value', () => {
+      const textInput = createTextInput({
+        name: 'text',
+        value
+      })
+      expect(parseField(textInput, { trim: true })).toBe(value.trim())
+    })
 
     it('should not modify hidden value', () => {
       const hidden = createHiddenInput({

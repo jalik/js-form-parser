@@ -479,15 +479,13 @@ export function parseField (element: Element, options?: ParseFieldOptions): any 
     }
   }
 
-  if (isFieldValueEditable(element)) {
-    // Removes extra spaces.
-    if (opts.trim) {
-      value = trim(value)
-    }
-    // Replaces empty string by null.
-    if (opts.nullify) {
-      value = nullify(value)
-    }
+  // Removes extra spaces.
+  if (opts.trim && isFieldValueEditable(element)) {
+    value = trim(value)
+  }
+  // Replaces empty string by null.
+  if (opts.nullify) {
+    value = nullify(value)
   }
   return value
 }
