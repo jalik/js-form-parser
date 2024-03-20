@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.1 (2024-03-19)
+
+- Fixed option `nullify` in `parseField(element, options)`
+
 ## v3.1.0 (2023-06-26)
 
 - Added option `parser: (value, dataType, field)` to `parseForm()` and `parseField()` to handle custom `data-type`
