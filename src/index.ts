@@ -430,9 +430,7 @@ export function parseField (element: Element, options?: ParseFieldOptions): any 
   // Parse value only if parsing is enabled and data-type different of "string".
   if (opts.parsing !== 'none' && dataType !== 'string') {
     // Ignore values that must remain string.
-    if (!['email', 'file', 'password', 'search', 'url'].includes(element.type) &&
-      // todo parse textarea
-      !['textarea'].includes(element.localName)) {
+    if (!['email', 'file', 'password', 'search', 'url'].includes(element.type)) {
       // Parse value based on "data-type" attribute.
       if ((opts.parsing === 'auto' || opts.parsing === 'data-type') && dataType != null) {
         if (dataType === 'auto') {

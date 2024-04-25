@@ -422,6 +422,31 @@ describe('parseField()', () => {
     })
   })
 
+  describe('using textarea', () => {
+    describe('with attribute data-type="boolean"', () => {
+      const field = createTextarea({
+        dataset: { type: 'boolean' },
+        name: 'number_field',
+        value: 'true'
+      })
+
+      it('should return a boolean', () => {
+        expect(parseField(field)).toEqual(parseBoolean(field.value))
+      })
+    })
+    describe('with attribute data-type="number"', () => {
+      const field = createTextarea({
+        dataset: { type: 'number' },
+        name: 'number_field',
+        value: '1337'
+      })
+
+      it('should return a number', () => {
+        expect(parseField(field)).toEqual(parseNumber(field.value))
+      })
+    })
+  })
+
   describe('using select input', () => {
     describe('with attributes multiple="true" and data-type="number"', () => {
       it('should return an array of numbers', () => {
