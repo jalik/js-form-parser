@@ -130,20 +130,27 @@ export function getFieldsByName (name: string, form: HTMLFormElement): Array<HTM
  * @param element
  */
 export function getInputValue (element: HTMLInputElement): string | string[] | undefined {
-  let value: string | string[] | undefined = element.value
+  let value: string | string[] | undefined
+  const { form } = element
 
   if (isMultipleField(element)) {
-    const { form } = element
     let fields = form ? getFieldsByName(element.name, form) : [element]
 
     if (isCheckableField(element)) {
       fields = fields.filter((el) => el instanceof HTMLInputElement && el.checked)
     }
     value = getValuesFromFields(fields)
-  } else if (isCheckableField(element)) {
-    const { form } = element
-    const fields = (form ? getFieldsByName(element.name, form) : [element])
-    value = fields.find((el) => el instanceof HTMLInputElement && el.checked)?.value
+  } else if (element instanceof HTMLInputElement) {
+    if (element.type === 'radio') {
+      const fields = (form ? getFieldsByName(element.name, form) : [element])
+      value = fields.find((el) => el instanceof HTMLInputElement && el.checked)?.value
+    } else if (element.type === 'checkbox') {
+      if (element.checked) {
+        value = element.value
+      }
+    } else {
+      value = element.value
+    }
   }
   return value
 }
@@ -235,7 +242,8 @@ export function isFieldValueEditable (element: Element): boolean {
 }
 
 /**
- * Checks if field value is an array.
+ * Checks if field name describes an array
+ * or if the name is found multiple times in the form.
  * @param element
  */
 export function isMultipleField (element: Element): boolean {
@@ -247,8 +255,7 @@ export function isMultipleField (element: Element): boolean {
       return true
     }
     // Check if form contains other elements with the same name.
-    if (element.form &&
-      element.type === 'checkbox' &&
+    if (element.form && element.type !== 'radio' &&
       getFieldsByName(element.name, element.form).length > 1) {
       return true
     }
@@ -445,12 +452,6 @@ export function parseField (element: Element, options?: ParseFieldOptions): any 
           if (value instanceof Array) {
             for (let k = 0; k < value.length; k += 1) {
               value[k] = parseBoolean(value[k])
-            }
-          } else if (element instanceof HTMLInputElement && !element.checked) {
-            const bool = parseBoolean(element.value)
-
-            if (typeof bool === 'boolean') {
-              value = !bool
             }
           } else {
             value = parseBoolean(value)

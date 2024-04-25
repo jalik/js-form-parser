@@ -238,7 +238,7 @@ describe('nullify()', () => {
 })
 
 describe('isMultipleField()', () => {
-  describe('with element with name="items[]"', () => {
+  describe('with element having a name ending with []', () => {
     it('should return true', () => {
       const select = createSelect({ name: 'items[]' })
       expect(isMultipleField(select)).toBe(true)
@@ -253,14 +253,32 @@ describe('isMultipleField()', () => {
     })
   })
 
-  describe('with element with name="items[1]"', () => {
+  describe('with element having a name containing an index', () => {
     it('should return true', () => {
       const input = createTextInput({ name: 'items[1]' })
       expect(isMultipleField(input)).toBe(true)
     })
   })
 
-  describe('with several checkboxes with name="item"', () => {
+  describe('with inputs having the same name', () => {
+    it('should return true', () => {
+      const form = createForm()
+      const a = createTextInput({
+        name: 'item',
+        value: 'A'
+      })
+      form.appendChild(a)
+      const b = createCheckbox({
+        name: 'item',
+        value: 'B'
+      })
+      form.appendChild(b)
+      expect(isMultipleField(a)).toBe(true)
+      expect(isMultipleField(b)).toBe(true)
+    })
+  })
+
+  describe('with checkboxes having the same name', () => {
     it('should return true', () => {
       const form = createForm()
       const a = createCheckbox({
@@ -274,10 +292,11 @@ describe('isMultipleField()', () => {
       })
       form.appendChild(b)
       expect(isMultipleField(a)).toBe(true)
+      expect(isMultipleField(b)).toBe(true)
     })
   })
 
-  describe('with several radios with name="item"', () => {
+  describe('with radios having the same name', () => {
     it('should return false', () => {
       const form = createForm()
       const a = createRadio({
@@ -291,6 +310,7 @@ describe('isMultipleField()', () => {
       })
       form.appendChild(b)
       expect(isMultipleField(a)).toBe(false)
+      expect(isMultipleField(b)).toBe(false)
     })
   })
 })
@@ -300,12 +320,12 @@ describe('parseBoolean()', () => {
     expect(parseBoolean(null)).toEqual(null)
   })
 
-  it(`parseBoolean("${TRUE}") should return true`, () => {
-    expect(parseBoolean(TRUE)).toEqual(true)
+  it('parseBoolean("true") should return true', () => {
+    expect(parseBoolean('true')).toEqual(true)
   })
 
-  it(`parseBoolean("${FALSE}") should return false`, () => {
-    expect(parseBoolean(FALSE)).toEqual(false)
+  it('parseBoolean("false") should return false', () => {
+    expect(parseBoolean('false')).toEqual(false)
   })
 
   it('parseBoolean("1") should return true', () => {
@@ -348,40 +368,40 @@ describe('parseField()', () => {
             value: 'true',
             checked: true
           })
-          expect(parseField(field)).toEqual(true)
+          expect(parseField(field, { parsing: 'data-type' })).toEqual(true)
         })
       })
 
       describe('with checked = false', () => {
-        it('should return false', () => {
+        it('should return null', () => {
           const field = createCheckbox({
             dataset: { type: 'boolean' },
             name: 'boolean_field',
             value: 'true'
           })
-          expect(parseField(field)).toEqual(false)
+          expect(parseField(field, { parsing: 'data-type' })).toEqual(null)
         })
       })
 
       describe('without value', () => {
         describe('and checked = true', () => {
-          it('should return checked state', () => {
+          it('should return checkbox value', () => {
             const checkbox = createCheckbox({
               dataset: { type: 'boolean' },
               name: 'checkbox',
               checked: true
             })
-            expect(parseField(checkbox)).toBe(checkbox.checked)
+            expect(parseField(checkbox, { parsing: 'data-type' })).toBe(checkbox.checked)
           })
         })
 
         describe('and checked = false', () => {
-          it('should return checked state', () => {
+          it('should return null', () => {
             const checkbox = createCheckbox({
               dataset: { type: 'boolean' },
               name: 'checkbox'
             })
-            expect(parseField(checkbox)).toBe(checkbox.checked)
+            expect(parseField(checkbox, { parsing: 'data-type' })).toBe(null)
           })
         })
       })
@@ -973,15 +993,27 @@ describe('parseForm()', () => {
   describe('with parsing = "data-type"', () => {
     it('should parse values using "data-type" attribute', () => {
       const form = createForm()
-      form.appendChild(createTextInput({
+      form.appendChild(createCheckbox({
         dataset: { type: 'boolean' },
         name: 'bool_true',
         value: TRUE,
         checked: true
       }))
-      form.appendChild(createTextInput({
+      form.appendChild(createCheckbox({
         dataset: { type: 'boolean' },
         name: 'bool_false',
+        value: FALSE,
+        checked: true
+      }))
+      form.appendChild(createRadio({
+        dataset: { type: 'boolean' },
+        name: 'bool',
+        value: TRUE
+      }))
+      form.appendChild(createRadio({
+        dataset: { type: 'boolean' },
+        name: 'bool',
+        checked: true,
         value: FALSE
       }))
       form.appendChild(createNumberInput({
@@ -996,8 +1028,9 @@ describe('parseForm()', () => {
       }))
       const r = parseForm(form, { parsing: 'data-type' })
       expect(r).toEqual({
+        bool: false,
         bool_true: true,
-        bool_false: true,
+        bool_false: false,
         float: FLOAT,
         integer: INTEGER
       })
@@ -1064,21 +1097,20 @@ describe('parseForm()', () => {
         })
       })
 
-      it('should return the inverse of parsed value when field is not checked', () => {
+      it('should return the checked state when no value is defined', () => {
         const form = createForm()
         form.appendChild(createCheckbox({
           dataset: { type: 'boolean' },
-          name: 'a',
-          value: 'true'
+          name: 'a'
         }))
         form.appendChild(createCheckbox({
           dataset: { type: 'boolean' },
           name: 'b',
-          value: 'false'
+          checked: true
         }))
         const r = parseForm(form, { parsing: 'data-type' })
         expect(r).toEqual({
-          a: false,
+          a: null,
           b: true
         })
       })
@@ -1111,12 +1143,18 @@ describe('parseForm()', () => {
         name: 'radio_field',
         value: '2'
       }))
+      form.appendChild(createCheckbox({
+        dataset: { type: 'boolean' },
+        name: 'single_field',
+        checked: true
+      }))
 
       const r = parseForm(form, { parsing: 'data-type' })
       expect(r).toEqual({
-        boolean_field: false,
+        boolean_field: null,
         checkboxes_field: [],
-        radio_field: null
+        radio_field: null,
+        single_field: true
       })
     })
 
