@@ -16,7 +16,7 @@
 - Trim and nullify values
 - Filter values using a custom function
 - Clean values using a custom function
-* TypeScript declarations ♥
+- TypeScript declarations ♥
 
 ## Sandbox
 

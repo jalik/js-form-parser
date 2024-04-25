@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.1.2 (2024-04-25)
+
+- Fixed returned value of checkboxes without explicit value to be `null` when unchecked instead of `false`
+- Fixed returned value of empty (or unchecked) fields to be `null` instead of `undefined`
+
 ## v3.1.1 (2024-03-19)
 
 - Fixed option `nullify` in `parseField(element, options)`
