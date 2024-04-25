@@ -129,8 +129,8 @@ export function getFieldsByName (name: string, form: HTMLFormElement): Array<HTM
  * Returns input value.
  * @param element
  */
-export function getInputValue (element: HTMLInputElement): string | string[] | undefined {
-  let value: string | string[] | undefined
+export function getInputValue (element: HTMLInputElement): string | string[] | null {
+  let value: string | string[] | null = null
   const { form } = element
 
   if (isMultipleField(element)) {
@@ -143,7 +143,10 @@ export function getInputValue (element: HTMLInputElement): string | string[] | u
   } else if (element instanceof HTMLInputElement) {
     if (element.type === 'radio') {
       const fields = (form ? getFieldsByName(element.name, form) : [element])
-      value = fields.find((el) => el instanceof HTMLInputElement && el.checked)?.value
+      const field = fields.find((el) => el instanceof HTMLInputElement && el.checked)
+      if (field != null) {
+        value = field.value
+      }
     } else if (element.type === 'checkbox') {
       if (element.checked) {
         value = element.value

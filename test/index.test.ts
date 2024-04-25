@@ -590,6 +590,30 @@ describe('parseForm()', () => {
     expect(r).toEqual({})
   })
 
+  it('should return null for unchecked checkboxes and radios', () => {
+    const form = createForm()
+    const checkbox1 = createCheckbox({
+      name: 'checkbox',
+      value: '1'
+    })
+    form.appendChild(checkbox1)
+    const radio1 = createRadio({
+      name: 'radio',
+      value: '1'
+    })
+    form.appendChild(radio1)
+    const radio2 = createRadio({
+      name: 'radio',
+      value: '2'
+    })
+    form.appendChild(radio2)
+
+    expect(parseForm(form)).toEqual({
+      checkbox: null,
+      radio: null
+    })
+  })
+
   it('should return fields with a name containing dashes', () => {
     const form = createForm()
     form.appendChild(createTextarea({
