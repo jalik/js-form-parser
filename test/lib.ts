@@ -19,8 +19,8 @@ export function createCheckbox (attrs: Partial<HTMLInputElement>): HTMLInputElem
  * @param tagName
  * @param attrs
  */
-export function createElement<T> (tagName: string, attrs: Partial<T>): HTMLElement {
-  const element = document.createElement(tagName)
+export function createElement<T> (tagName: string, attrs: Partial<T>): T {
+  const element = document.createElement(tagName) as T
   const keys = Object.keys(attrs)
 
   for (let i = 0; i < keys.length; i += 1) {
@@ -108,23 +108,15 @@ export function createRadio (attrs: Partial<HTMLInputElement>): HTMLInputElement
 /**
  * Creates a select
  * @param attrs
+ * @param options
  */
-export function createSelect (attrs: Partial<Omit<HTMLSelectElement, 'options'> & {
-  options: Partial<HTMLOptionElement>[]
-}>): HTMLSelectElement {
-  const { options } = attrs || {}
-  const selectAttributes = { ...attrs }
-
-  if (typeof selectAttributes.options !== 'undefined') {
-    delete selectAttributes.options
-  }
-
-  const select = createElement('select', selectAttributes) as HTMLSelectElement
+export function createSelect (attrs: Partial<HTMLSelectElement>, options?: Partial<HTMLOptionElement>[]): HTMLSelectElement {
+  const select = createElement('select', attrs)
 
   if (options instanceof Array) {
     for (let i = 0; i < options.length; i += 1) {
       const option = createElement('option', options[i])
-      select.appendChild(option)
+      select.options.add(option)
     }
   }
   return select

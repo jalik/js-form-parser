@@ -406,6 +406,7 @@ describe('parseField()', () => {
     describe('with attributes multiple="true" and data-type="number"', () => {
       it('should return an array of numbers', () => {
         const options = [
+          { value: '000' },
           {
             value: '123',
             selected: true
@@ -417,18 +418,16 @@ describe('parseField()', () => {
           {
             value: '789',
             selected: true
-          },
-          { value: '000' }
+          }
         ]
         const field = createSelect({
           dataset: { type: 'number' },
-          multiple: true,
-          options
-        })
-        const expectation = options
+          multiple: true
+        }, options)
+        const values = options
           .filter((el) => el.selected)
           .map((el) => Number(el.value))
-        expect(parseField(field)).toEqual(expectation)
+        expect(parseField(field)).toEqual(values)
       })
     })
   })
@@ -532,14 +531,13 @@ describe('parseField()', () => {
 
     it('should not modify select value', () => {
       const select = createSelect({
-        name: 'select',
-        options: [
-          {
-            value,
-            selected: true
-          }
-        ]
-      })
+        name: 'select'
+      }, [
+        {
+          value,
+          selected: true
+        }
+      ])
       expect(parseField(select, { trim: true })).toBe(value)
     })
   })
@@ -615,16 +613,15 @@ describe('parseForm()', () => {
       checked: true
     }))
     form.appendChild(createSelect({
-      name: 'select[]',
-      options: [
-        { value: '' },
-        {
-          value: 'A',
-          selected: true
-        },
-        { value: 'B' }
-      ]
-    }))
+      name: 'select[]'
+    }, [
+      { value: '' },
+      {
+        value: 'A',
+        selected: true
+      },
+      { value: 'B' }
+    ]))
     form.appendChild(createCheckbox({
       name: 'items',
       value: 'A',
@@ -812,15 +809,14 @@ describe('parseForm()', () => {
   it('should return values of select fields', () => {
     const form = createForm()
     form.appendChild(createSelect({
-      name: 'select',
-      options: [
-        { value: 'A' },
-        {
-          value: 'B',
-          selected: true
-        }
-      ]
-    }))
+      name: 'select'
+    }, [
+      { value: 'A' },
+      {
+        value: 'B',
+        selected: true
+      }
+    ]))
 
     const r = parseForm(form)
     expect(r).toEqual({ select: 'B' })
@@ -830,19 +826,18 @@ describe('parseForm()', () => {
     const form = createForm()
     form.appendChild(createSelect({
       multiple: true,
-      name: 'select',
-      options: [
-        { value: 'A' },
-        {
-          value: 'B',
-          selected: true
-        },
-        {
-          value: 'C',
-          selected: true
-        }
-      ]
-    }))
+      name: 'select'
+    }, [
+      { value: 'A' },
+      {
+        value: 'B',
+        selected: true
+      },
+      {
+        value: 'C',
+        selected: true
+      }
+    ]))
 
     const r = parseForm(form)
     expect(r).toEqual({ select: ['B', 'C'] })
@@ -1289,14 +1284,13 @@ describe('parseForm()', () => {
     it('should not modify select value', () => {
       const form = createForm()
       form.appendChild(createSelect({
-        name: 'select',
-        options: [
-          {
-            value,
-            selected: true
-          }
-        ]
-      }))
+        name: 'select'
+      }, [
+        {
+          value,
+          selected: true
+        }
+      ]))
       const r = parseForm(form, { cleanFunction })
       expect(r).toStrictEqual({ select: value })
     })
