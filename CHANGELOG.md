@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.3 (2024-04-26)
+
+- Fixed parsing of textarea element
+
 ## v3.1.2 (2024-04-25)
 
 - Fixed returned value of checkboxes without explicit value to be `null` when unchecked instead of `false`
