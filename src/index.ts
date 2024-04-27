@@ -103,6 +103,23 @@ export function buildObject (str: string, value: any, context?: Record<string, a
 }
 
 /**
+ * Returns the value of a field (input, select or textarea).
+ * @param element
+ */
+function getFieldValue (element: HTMLElement) {
+  if (element instanceof HTMLInputElement) {
+    return getInputValue(element)
+  }
+  if (element instanceof HTMLSelectElement) {
+    return getSelectValue(element)
+  }
+  if (element instanceof HTMLTextAreaElement) {
+    return getTextareaValue(element)
+  }
+  throw new TypeError('element is not an instance of HTMLInputElement or HTMLSelectElement or HTMLTextAreaElement')
+}
+
+/**
  * Returns all fields in a form with the same name.
  * @param name
  * @param form
@@ -146,10 +163,14 @@ export function getInputValue (element: HTMLInputElement): string | string[] | n
       const field = fields.find((el) => el instanceof HTMLInputElement && el.checked)
       if (field != null) {
         value = field.value
+      } else {
+        // If radio is not checked, return null
       }
     } else if (element.type === 'checkbox') {
       if (element.checked) {
         value = element.value
+      } else {
+        // If checkbox is not checked, return null
       }
     } else {
       value = element.value
@@ -335,6 +356,7 @@ export function parseBoolean (value: string | null): boolean | null {
 
 /**
  * Parses a number string.
+ * Returns null instead of NaN if value is not a number.
  * @param value
  */
 export function parseNumber (value: string | null): number | null {
@@ -394,7 +416,7 @@ export type ParsingMode = 'none' | 'type' | 'data-type' | 'auto'
 
 export type ParseFieldOptions = {
   nullify?: boolean
-  parser?: (value: any, type: string, element: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) => any
+  parser?: (value: any, dataType: string, element: HTMLElement) => any
   parsing?: ParsingMode
   trim?: boolean
 }
@@ -404,7 +426,13 @@ export type ParseFieldOptions = {
  * @param element
  * @param options
  */
-export function parseField (element: Element, options?: ParseFieldOptions): any {
+export function parseField (element: HTMLElement, options?: ParseFieldOptions): any {
+  if (!(element instanceof HTMLInputElement) &&
+    !(element instanceof HTMLSelectElement) &&
+    !(element instanceof HTMLTextAreaElement)) {
+    throw new Error('Cannot parse element: it must be an instance of HTMLInputElement, HTMLSelectElement or HTMLTextAreaElement')
+  }
+
   // Set default options.
   const opts: ParseFieldOptions = {
     nullify: true,
@@ -413,81 +441,142 @@ export function parseField (element: Element, options?: ParseFieldOptions): any 
     ...options
   }
 
-  let value: any
+  let value = null
+  const { parsing } = opts
 
-  if (element instanceof HTMLInputElement) {
-    value = getInputValue(element)
-  } else if (element instanceof HTMLSelectElement) {
-    value = getSelectValue(element)
-  } else if (element instanceof HTMLTextAreaElement) {
-    value = getTextareaValue(element)
-  } else {
-    throw new TypeError('field is not an instance of HTMLInputElement or HTMLSelectElement or HTMLTextAreaElement')
-  }
+  if (parsing === 'auto') {
+    const dataType = element.dataset.type
 
-  const dataType = element.dataset.type
-
-  // Parse value only if parsing is enabled and data-type different of "string".
-  if (opts.parsing !== 'none' && dataType !== 'string') {
-    // Ignore values that must remain string.
-    if (!['email', 'file', 'password', 'search', 'url'].includes(element.type)) {
-      // Parse value based on "data-type" attribute.
-      if ((opts.parsing === 'auto' || opts.parsing === 'data-type') && dataType != null) {
-        if (dataType === 'auto') {
-          if (value instanceof Array) {
-            for (let k = 0; k < value.length; k += 1) {
-              value[k] = parseValue(value[k])
-            }
-          } else {
-            value = parseValue(value)
-          }
-        } else if (dataType === 'number') {
-          if (value instanceof Array) {
-            for (let k = 0; k < value.length; k += 1) {
-              value[k] = parseNumber(value[k])
-            }
-          } else {
-            value = parseNumber(value)
-          }
-        } else if (dataType === 'boolean') {
-          if (value instanceof Array) {
-            for (let k = 0; k < value.length; k += 1) {
-              value[k] = parseBoolean(value[k])
-            }
-          } else {
-            value = parseBoolean(value)
-          }
-        } else if (opts.parser != null) {
-          // Use custom parser.
-          value = opts.parser(value, dataType, element)
-        } else {
-          // eslint-disable-next-line no-console
-          console.warn(`unknown data-type "${dataType}" for field "${element.name}"`)
-        }
-      } else if (opts.parsing === 'auto' || opts.parsing === 'type') {
-        // Parse value based on "type" attribute.
-        if (element instanceof HTMLInputElement) {
-          if (['number', 'range'].includes(element.type)) {
-            if (value instanceof Array) {
-              for (let k = 0; k < value.length; k += 1) {
-                value[k] = parseNumber(value[k])
-              }
-            } else {
-              value = parseNumber(value)
-            }
-          }
-        }
-      }
+    if (dataType != null) {
+      value = parseFieldByDataType(element, opts.parser)
+    } else {
+      value = parseFieldByType(element)
     }
+  } else if (parsing === 'data-type') {
+    // Get parsed value based on "data-type" attribute.
+    value = parseFieldByDataType(element, opts.parser)
+  } else if (parsing === 'type') {
+    // Get parsed value based on "type" attribute.
+    value = parseFieldByType(element)
+  } else {
+    // Get value without parsing it.
+    value = getFieldValue(element)
   }
 
   // Removes extra spaces.
   if (opts.trim && isFieldValueEditable(element)) {
     value = trim(value)
   }
+
   // Replaces empty string by null.
   if (opts.nullify) {
     value = nullify(value)
+  }
+  return value
+}
+
+/**
+ * Returns the parsed value based on the "data-type" attribute.
+ * @param element
+ * @param parser
+ */
+function parseFieldByDataType (
+  element: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement,
+  parser?: (value: any, dataType: string, element: HTMLElement) => any
+) {
+  const value = getFieldValue(element)
+
+  // Ignore fields that should not be parsed.
+  if (['email', 'file', 'password', 'search', 'url'].includes(element.type)) {
+    return value
+  }
+
+  const dataType = element.dataset.type
+
+  if (value == null) {
+    return null
+  }
+  // Return string value if no datatype defined.
+  if (dataType == null) {
+    return value
+  }
+
+  if (dataType === 'auto') {
+    if (value instanceof Array) {
+      const result: (boolean | number | string | null)[] = []
+      for (let k = 0; k < value.length; k += 1) {
+        result[k] = parseValue(value[k])
+      }
+      return result
+    }
+    return parseValue(value)
+  }
+
+  if (dataType === 'boolean') {
+    if (value instanceof Array) {
+      const result: (boolean | null)[] = []
+      for (let k = 0; k < value.length; k += 1) {
+        result[k] = parseBoolean(value[k])
+      }
+      return result
+    }
+    return parseBoolean(value)
+  }
+
+  if (dataType === 'number') {
+    if (value instanceof Array) {
+      const result: (number | null)[] = []
+      for (let k = 0; k < value.length; k += 1) {
+        result[k] = parseNumber(value[k])
+      }
+      return result
+    }
+    return parseNumber(value)
+  }
+
+  if (dataType === 'string') {
+    return value
+  }
+
+  // Use custom parser.
+  if (parser != null) {
+    // todo execute parser on each value in the array
+    // if (value instanceof Array) {
+    //   const result = []
+    //   for (let k = 0; k < value.length; k += 1) {
+    //     result[k] = parser(value, dataType, element)
+    //   }
+    //   return result
+    // }
+    return parser(value, dataType, element)
+  }
+  return value
+}
+
+/**
+ * Returns value based on "type" attribute.
+ * @param element
+ */
+function parseFieldByType (element: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {
+  const value = getFieldValue(element)
+
+  if (value == null) {
+    return null
+  }
+
+  if (element instanceof HTMLInputElement) {
+    // Parse number.
+    if (element.type === 'number' || element.type === 'range') {
+      if (value instanceof Array) {
+        const result: (number | null)[] = []
+
+        for (let k = 0; k < value.length; k += 1) {
+          result[k] = parseNumber(value[k])
+        }
+        return result
+      }
+      return parseNumber(value)
+    }
   }
   return value
 }
@@ -496,7 +585,7 @@ export type ParseFormOptions = {
   cleanFunction?: (value: string, field: Element) => any
   filterFunction?: (element: Element, parsedValue: any) => boolean
   nullify?: boolean
-  parser?: (value: any, type: string, element: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) => any
+  parser?: (value: any, dataType: string, element: HTMLElement) => any
   parsing?: ParsingMode
   trim?: boolean
 }
