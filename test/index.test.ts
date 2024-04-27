@@ -408,6 +408,51 @@ describe('parseField()', () => {
     })
   })
 
+  describe('using radio input', () => {
+    describe('with attribute data-type="boolean"', () => {
+      describe('with checked = true', () => {
+        it('should return true', () => {
+          const field1 = createRadio({
+            dataset: { type: 'boolean' },
+            name: 'boolean_field',
+            value: 'false'
+          })
+          const field2 = createRadio({
+            dataset: { type: 'boolean' },
+            name: 'boolean_field',
+            value: 'true',
+            checked: true
+          })
+          const form = createForm()
+          form.appendChild(field1)
+          form.appendChild(field2)
+          expect(parseField(field1, { parsing: 'data-type' })).toEqual(true)
+          expect(parseField(field2, { parsing: 'data-type' })).toEqual(true)
+        })
+      })
+
+      describe('with checked = false', () => {
+        it('should return null', () => {
+          const field1 = createRadio({
+            dataset: { type: 'boolean' },
+            name: 'boolean_field',
+            value: 'false'
+          })
+          const field2 = createRadio({
+            dataset: { type: 'boolean' },
+            name: 'boolean_field',
+            value: 'true'
+          })
+          const form = createForm()
+          form.appendChild(field1)
+          form.appendChild(field2)
+          expect(parseField(field1, { parsing: 'data-type' })).toEqual(null)
+          expect(parseField(field2, { parsing: 'data-type' })).toEqual(null)
+        })
+      })
+    })
+  })
+
   describe('using text input', () => {
     describe('with attribute data-type="number"', () => {
       const field = createTextInput({
@@ -442,7 +487,7 @@ describe('parseField()', () => {
       })
 
       it('should return a number', () => {
-        expect(parseField(field)).toEqual(parseNumber(field.value))
+        expect(parseField(field)).toEqual(1337)
       })
     })
   })
@@ -1056,14 +1101,25 @@ describe('parseForm()', () => {
       }))
       form.appendChild(createRadio({
         dataset: { type: 'boolean' },
-        name: 'bool',
+        name: 'bool_radio',
         value: TRUE
       }))
       form.appendChild(createRadio({
         dataset: { type: 'boolean' },
-        name: 'bool',
+        name: 'bool_radio',
         checked: true,
         value: FALSE
+      }))
+      form.appendChild(createRadio({
+        dataset: { type: 'number' },
+        name: 'number_radio',
+        value: '1'
+      }))
+      form.appendChild(createRadio({
+        dataset: { type: 'number' },
+        name: 'number_radio',
+        checked: true,
+        value: '2'
       }))
       form.appendChild(createNumberInput({
         dataset: { type: 'number' },
@@ -1075,13 +1131,20 @@ describe('parseForm()', () => {
         name: 'integer',
         value: INTEGER_STRING
       }))
+      form.appendChild(createTextarea({
+        dataset: { type: 'number' },
+        name: 'number_textarea',
+        value: INTEGER_STRING
+      }))
       const r = parseForm(form, { parsing: 'data-type' })
       expect(r).toEqual({
-        bool: false,
+        bool_radio: false,
         bool_true: true,
         bool_false: false,
+        number_radio: 2,
         float: FLOAT,
-        integer: INTEGER
+        integer: INTEGER,
+        number_textarea: INTEGER
       })
     })
 

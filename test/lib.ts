@@ -8,10 +8,10 @@
  * @param attrs
  */
 export function createCheckbox (attrs: Partial<HTMLInputElement>): HTMLInputElement {
-  return createElement('input', {
+  return createElement<HTMLInputElement>('input', {
     ...attrs,
     type: 'checkbox'
-  }) as HTMLInputElement
+  })
 }
 
 /**
@@ -19,7 +19,7 @@ export function createCheckbox (attrs: Partial<HTMLInputElement>): HTMLInputElem
  * @param tagName
  * @param attrs
  */
-export function createElement<T> (tagName: string, attrs: Partial<T>): T {
+export function createElement<T extends HTMLElement> (tagName: string, attrs: Partial<T>): T {
   const element = document.createElement(tagName) as T
   const keys = Object.keys(attrs)
 
@@ -48,10 +48,10 @@ export function createElement<T> (tagName: string, attrs: Partial<T>): T {
  * @param attrs
  */
 export function createFileInput (attrs: Partial<HTMLInputElement>): HTMLInputElement {
-  return createElement('input', {
+  return createElement<HTMLInputElement>('input', {
     ...attrs,
     type: 'file'
-  }) as HTMLInputElement
+  })
 }
 
 /**
@@ -66,10 +66,10 @@ export function createForm (): HTMLFormElement {
  * @param attrs
  */
 export function createHiddenInput (attrs: Partial<HTMLInputElement>): HTMLInputElement {
-  return createElement('input', {
+  return createElement<HTMLInputElement>('input', {
     ...attrs,
     type: 'hidden'
-  }) as HTMLInputElement
+  })
 }
 
 /**
@@ -77,10 +77,10 @@ export function createHiddenInput (attrs: Partial<HTMLInputElement>): HTMLInputE
  * @param attrs
  */
 export function createNumberInput (attrs: Partial<HTMLInputElement>): HTMLInputElement {
-  return createElement('input', {
+  return createElement<HTMLInputElement>('input', {
     ...attrs,
     type: 'number'
-  }) as HTMLInputElement
+  })
 }
 
 /**
@@ -88,10 +88,10 @@ export function createNumberInput (attrs: Partial<HTMLInputElement>): HTMLInputE
  * @param attrs
  */
 export function createPasswordInput (attrs: Partial<HTMLInputElement>): HTMLInputElement {
-  return createElement('input', {
+  return createElement<HTMLInputElement>('input', {
     ...attrs,
     type: 'password'
-  }) as HTMLInputElement
+  })
 }
 
 /**
@@ -99,10 +99,10 @@ export function createPasswordInput (attrs: Partial<HTMLInputElement>): HTMLInpu
  * @param attrs
  */
 export function createRadio (attrs: Partial<HTMLInputElement>): HTMLInputElement {
-  return createElement('input', {
+  return createElement<HTMLInputElement>('input', {
     ...attrs,
     type: 'radio'
-  }) as HTMLInputElement
+  })
 }
 
 /**
@@ -127,7 +127,7 @@ export function createSelect (attrs: Partial<HTMLSelectElement>, options?: Parti
  * @param attrs
  */
 export function createTextarea (attrs: Partial<HTMLTextAreaElement>): HTMLTextAreaElement {
-  const element = createElement('textarea', { ...attrs }) as HTMLTextAreaElement
+  const element = createElement<HTMLTextAreaElement>('textarea', { ...attrs })
 
   if (typeof attrs.value !== 'undefined') {
     element.appendChild(document.createTextNode(attrs.value))
@@ -140,8 +140,8 @@ export function createTextarea (attrs: Partial<HTMLTextAreaElement>): HTMLTextAr
  * @param attrs
  */
 export function createTextInput (attrs: Partial<HTMLInputElement>): HTMLInputElement {
-  return createElement('input', {
+  return createElement<HTMLInputElement>('input', {
     type: 'text',
     ...attrs
-  }) as HTMLInputElement
+  })
 }
