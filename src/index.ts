@@ -551,7 +551,7 @@ export function parseFieldByDataType (
     }
     return parser(value, dataType, element)
   }
-  return value
+  throw new Error(`data-type="${dataType}" not supported, specify a customer parser.`)
 }
 
 /**
