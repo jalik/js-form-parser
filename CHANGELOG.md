@@ -2,7 +2,10 @@
 
 ## v3.1.4 (2024-04-29)
 
+- Throws an error when field's "data-type" is unsupported and no `parser` is passed to `parseField()` or `parseForm()` options
+- Fixed TypeScript declaration of `ParsingType` to allow `"string"` and custom type like `phone`
 - Fixed `parseForm()` returning radio input value as string instead of boolean or number when the last field does not have a `data-type`
+- Fixed `parseField()` to execute custom parser on each value of an array instead of the array itself
 
 ## v3.1.3 (2024-04-26)
 
