@@ -620,12 +620,17 @@ export function parseForm (form: HTMLFormElement, options?: ParseFormOptions): R
       !(field instanceof HTMLTextAreaElement)) {
       continue
     }
+    // Ignore disabled element.
+    if (field.disabled) {
+      continue
+    }
     // Ignore element without a name.
     if (field.name == null || field.name.length === 0) {
       continue
     }
-    // Ignore disabled element.
-    if (field.disabled) {
+    // Ignore fields that have been collected.
+    // Mostly radios having the same name.
+    if (typeof fields[field.name] !== 'undefined') {
       continue
     }
 

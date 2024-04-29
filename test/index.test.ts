@@ -429,6 +429,26 @@ describe('parseField()', () => {
           expect(parseField(field1, { parsing: 'data-type' })).toEqual(true)
           expect(parseField(field2, { parsing: 'data-type' })).toEqual(true)
         })
+
+        describe('with unchecked value=""', () => {
+          it('should return a boolean', () => {
+            const field1 = createRadio({
+              dataset: { type: 'boolean' },
+              name: 'field',
+              value: 'true',
+              checked: true
+            })
+            const field2 = createRadio({
+              dataset: { type: 'boolean' },
+              name: 'field',
+              value: ''
+            })
+            const form = createForm()
+            form.appendChild(field1)
+            form.appendChild(field2)
+            expect(parseField(field2, { parsing: 'data-type' })).toEqual(true)
+          })
+        })
       })
 
       describe('with checked = false', () => {
@@ -442,6 +462,69 @@ describe('parseField()', () => {
             dataset: { type: 'boolean' },
             name: 'boolean_field',
             value: 'true'
+          })
+          const form = createForm()
+          form.appendChild(field1)
+          form.appendChild(field2)
+          expect(parseField(field1, { parsing: 'data-type' })).toEqual(null)
+          expect(parseField(field2, { parsing: 'data-type' })).toEqual(null)
+        })
+      })
+    })
+
+    describe('with data-type="number"', () => {
+      describe('with checked=true', () => {
+        it('should return a number', () => {
+          const field1 = createRadio({
+            dataset: { type: 'number' },
+            name: 'field',
+            value: '100'
+          })
+          const field2 = createRadio({
+            dataset: { type: 'number' },
+            name: 'field',
+            value: '200',
+            checked: true
+          })
+          const form = createForm()
+          form.appendChild(field1)
+          form.appendChild(field2)
+          expect(parseField(field1, { parsing: 'data-type' })).toEqual(200)
+          expect(parseField(field2, { parsing: 'data-type' })).toEqual(200)
+        })
+
+        describe('with unchecked value=""', () => {
+          it('should return a number', () => {
+            const field1 = createRadio({
+              dataset: { type: 'number' },
+              name: 'field',
+              value: '200',
+              checked: true
+            })
+            const field2 = createRadio({
+              dataset: { type: 'number' },
+              name: 'field',
+              value: ''
+            })
+            const form = createForm()
+            form.appendChild(field1)
+            form.appendChild(field2)
+            expect(parseField(field2, { parsing: 'data-type' })).toEqual(200)
+          })
+        })
+      })
+
+      describe('with checked=false', () => {
+        it('should return null', () => {
+          const field1 = createRadio({
+            dataset: { type: 'number' },
+            name: 'field',
+            value: '100'
+          })
+          const field2 = createRadio({
+            dataset: { type: 'number' },
+            name: 'field',
+            value: '200'
           })
           const form = createForm()
           form.appendChild(field1)
