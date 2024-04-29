@@ -6,6 +6,7 @@
 import { describe, expect, it } from '@jest/globals'
 import {
   buildObject,
+  getFieldValue,
   isMultipleField,
   nullify,
   parseBoolean,
@@ -13,10 +14,13 @@ import {
   parseForm,
   parseNumber,
   parseValue,
+  ParsingMode,
+  ParsingType,
   trim
 } from '../src'
 import {
   createCheckbox,
+  createElement,
   createFileInput,
   createForm,
   createHiddenInput,
@@ -40,6 +44,17 @@ const PASSWORD = ' sEcr3t '
 const STRING = 'hello'
 
 describe('buildObject()', () => {
+  describe('with invalid path', () => {
+    it('should throw a SyntaxError', () => {
+      expect(() => {
+        buildObject('items[0.name', null)
+      }).toThrow(SyntaxError)
+      expect(() => {
+        buildObject('items0].name', null)
+      }).toThrow(SyntaxError)
+    })
+  })
+
   // Testing with arrays
   it(`buildObject("[]", "${STRING}", null) should return ["${STRING}"]`, () => {
     const r = buildObject('[]', STRING, null)
@@ -212,6 +227,16 @@ describe('buildObject()', () => {
   })
 })
 
+describe('getFieldValue()', () => {
+  describe('with unsupported element', () => {
+    it('should throw a TypeError', () => {
+      expect(() => {
+        getFieldValue(createElement('div'))
+      }).toThrow(TypeError)
+    })
+  })
+})
+
 describe('nullify()', () => {
   it('should replace empty string by null', () => {
     expect(nullify(''))
@@ -352,28 +377,39 @@ describe('parseField()', () => {
     expect(typeof parseField).toEqual('function')
   })
 
+  describe('with unsupported element', () => {
+    it('should throw a TypeError', () => {
+      expect(() => {
+        parseField(createElement('div'))
+      }).toThrow(TypeError)
+    })
+  })
+
   describe('using checkbox input', () => {
     describe('with attribute data-type="boolean"', () => {
+      const parsing: ParsingMode = 'data-type'
+      const dataType = 'boolean'
+
       describe('with checked = true', () => {
         it('should return true', () => {
           const field = createCheckbox({
-            dataset: { type: 'boolean' },
+            dataset: { type: dataType },
             name: 'boolean_field',
             value: 'true',
             checked: true
           })
-          expect(parseField(field, { parsing: 'data-type' })).toEqual(true)
+          expect(parseField(field, { parsing })).toEqual(true)
         })
       })
 
       describe('with checked = false', () => {
         it('should return null', () => {
           const field = createCheckbox({
-            dataset: { type: 'boolean' },
+            dataset: { type: dataType },
             name: 'boolean_field',
             value: 'true'
           })
-          expect(parseField(field, { parsing: 'data-type' })).toEqual(null)
+          expect(parseField(field, { parsing })).toEqual(null)
         })
       })
 
@@ -381,21 +417,21 @@ describe('parseField()', () => {
         describe('and checked = true', () => {
           it('should return checkbox value', () => {
             const checkbox = createCheckbox({
-              dataset: { type: 'boolean' },
+              dataset: { type: dataType },
               name: 'checkbox',
               checked: true
             })
-            expect(parseField(checkbox, { parsing: 'data-type' })).toBe(checkbox.checked)
+            expect(parseField(checkbox, { parsing })).toBe(checkbox.checked)
           })
         })
 
         describe('and checked = false', () => {
           it('should return null', () => {
             const checkbox = createCheckbox({
-              dataset: { type: 'boolean' },
+              dataset: { type: dataType },
               name: 'checkbox'
             })
-            expect(parseField(checkbox, { parsing: 'data-type' })).toBe(null)
+            expect(parseField(checkbox, { parsing })).toBe(null)
           })
         })
       })
@@ -404,39 +440,42 @@ describe('parseField()', () => {
 
   describe('using radio input', () => {
     describe('with data-type="boolean"', () => {
+      const parsing: ParsingMode = 'data-type'
+      const dataType = 'boolean'
+
       describe('with checked=true', () => {
         it('should return a boolean', () => {
           const field1 = createRadio({
-            dataset: { type: 'boolean' },
+            dataset: { type: dataType },
             name: 'field',
             value: 'false'
           })
           const field2 = createRadio({
-            dataset: { type: 'boolean' },
+            dataset: { type: dataType },
             name: 'field',
             value: 'true',
             checked: true
           })
           createForm(undefined, [field1, field2])
-          expect(parseField(field1, { parsing: 'data-type' })).toEqual(true)
-          expect(parseField(field2, { parsing: 'data-type' })).toEqual(true)
+          expect(parseField(field1, { parsing })).toEqual(true)
+          expect(parseField(field2, { parsing })).toEqual(true)
         })
 
         describe('with unchecked value=""', () => {
           it('should return a boolean', () => {
             const field1 = createRadio({
-              dataset: { type: 'boolean' },
+              dataset: { type: dataType },
               name: 'field',
               value: 'true',
               checked: true
             })
             const field2 = createRadio({
-              dataset: { type: 'boolean' },
+              dataset: { type: dataType },
               name: 'field',
               value: ''
             })
             createForm(undefined, [field1, field2])
-            expect(parseField(field2, { parsing: 'data-type' })).toEqual(true)
+            expect(parseField(field2, { parsing })).toEqual(true)
           })
         })
       })
@@ -444,56 +483,59 @@ describe('parseField()', () => {
       describe('with checked=false', () => {
         it('should return null', () => {
           const field1 = createRadio({
-            dataset: { type: 'boolean' },
+            dataset: { type: dataType },
             name: 'field',
             value: 'false'
           })
           const field2 = createRadio({
-            dataset: { type: 'boolean' },
+            dataset: { type: dataType },
             name: 'field',
             value: 'true'
           })
           createForm(undefined, [field1, field2])
-          expect(parseField(field1, { parsing: 'data-type' })).toEqual(null)
-          expect(parseField(field2, { parsing: 'data-type' })).toEqual(null)
+          expect(parseField(field1, { parsing })).toEqual(null)
+          expect(parseField(field2, { parsing })).toEqual(null)
         })
       })
     })
 
     describe('with data-type="number"', () => {
+      const parsing: ParsingMode = 'data-type'
+      const dataType = 'number'
+
       describe('with checked=true', () => {
         it('should return a number', () => {
           const field1 = createRadio({
-            dataset: { type: 'number' },
+            dataset: { type: dataType },
             name: 'field',
             value: '100'
           })
           const field2 = createRadio({
-            dataset: { type: 'number' },
+            dataset: { type: dataType },
             name: 'field',
             value: '200',
             checked: true
           })
           createForm(undefined, [field1, field2])
-          expect(parseField(field1, { parsing: 'data-type' })).toEqual(200)
-          expect(parseField(field2, { parsing: 'data-type' })).toEqual(200)
+          expect(parseField(field1, { parsing })).toEqual(200)
+          expect(parseField(field2, { parsing })).toEqual(200)
         })
 
         describe('with unchecked value=""', () => {
           it('should return a number', () => {
             const field1 = createRadio({
-              dataset: { type: 'number' },
+              dataset: { type: dataType },
               name: 'field',
               value: '200',
               checked: true
             })
             const field2 = createRadio({
-              dataset: { type: 'number' },
+              dataset: { type: dataType },
               name: 'field',
               value: ''
             })
             createForm(undefined, [field1, field2])
-            expect(parseField(field2, { parsing: 'data-type' })).toEqual(200)
+            expect(parseField(field2, { parsing })).toEqual(200)
           })
         })
       })
@@ -501,18 +543,18 @@ describe('parseField()', () => {
       describe('with checked=false', () => {
         it('should return null', () => {
           const field1 = createRadio({
-            dataset: { type: 'number' },
+            dataset: { type: dataType },
             name: 'field',
             value: '100'
           })
           const field2 = createRadio({
-            dataset: { type: 'number' },
+            dataset: { type: dataType },
             name: 'field',
             value: '200'
           })
           createForm(undefined, [field1, field2])
-          expect(parseField(field1, { parsing: 'data-type' })).toEqual(null)
-          expect(parseField(field2, { parsing: 'data-type' })).toEqual(null)
+          expect(parseField(field1, { parsing })).toEqual(null)
+          expect(parseField(field2, { parsing })).toEqual(null)
         })
       })
     })
@@ -520,45 +562,58 @@ describe('parseField()', () => {
 
   describe('using text input', () => {
     describe('with attribute data-type="number"', () => {
+      const parsing: ParsingMode = 'data-type'
+      const dataType = 'number'
+
       const field = createTextInput({
-        dataset: { type: 'number' },
+        dataset: { type: dataType },
         name: 'number_field',
         value: '1'
       })
 
       it('should return a number', () => {
-        expect(parseField(field)).toEqual(Number(field.value))
+        expect(parseField(field, { parsing })).toEqual(Number(field.value))
       })
     })
   })
 
   describe('using textarea', () => {
     describe('with attribute data-type="boolean"', () => {
+      const parsing: ParsingMode = 'data-type'
+      const dataType = 'boolean'
+
       const field = createTextarea({
-        dataset: { type: 'boolean' },
+        dataset: { type: dataType },
         name: 'number_field',
         value: 'true'
       })
 
       it('should return a boolean', () => {
-        expect(parseField(field)).toEqual(parseBoolean(field.value))
+        expect(parseField(field, { parsing })).toEqual(parseBoolean(field.value))
       })
     })
+
     describe('with attribute data-type="number"', () => {
+      const parsing: ParsingMode = 'data-type'
+      const dataType = 'number'
+
       const field = createTextarea({
-        dataset: { type: 'number' },
+        dataset: { type: dataType },
         name: 'number_field',
         value: '1337'
       })
 
       it('should return a number', () => {
-        expect(parseField(field)).toEqual(1337)
+        expect(parseField(field, { parsing })).toEqual(1337)
       })
     })
   })
 
   describe('using select input', () => {
     describe('with attributes multiple="true" and data-type="number"', () => {
+      const parsing: ParsingMode = 'data-type'
+      const dataType = 'number'
+
       it('should return an array of numbers', () => {
         const options = [
           { value: '000' },
@@ -576,18 +631,18 @@ describe('parseField()', () => {
           }
         ]
         const field = createSelect({
-          dataset: { type: 'number' },
+          dataset: { type: dataType },
           multiple: true
         }, options)
         const values = options
           .filter((el) => el.selected)
           .map((el) => Number(el.value))
-        expect(parseField(field)).toEqual(values)
+        expect(parseField(field, { parsing })).toEqual(values)
       })
     })
   })
 
-  describe('with multiple="true"', () => {
+  describe('with element having multiple="true"', () => {
     const field1 = createCheckbox({
       name: 'numbers[]',
       value: '1'
@@ -604,18 +659,139 @@ describe('parseField()', () => {
     })
   })
 
-  describe('with data-type="string"', () => {
-    it('should not parse value', () => {
-      const field = createNumberInput({
-        dataset: { type: 'string' },
-        name: 'number',
-        value: INTEGER_STRING
+  describe('with element having data-type="auto"', () => {
+    const parsing: ParsingMode = 'data-type'
+    const dataType = 'auto'
+
+    describe('with single field', () => {
+      describe('with value like a boolean', () => {
+        it('should return a boolean', () => {
+          const field = createTextInput({
+            dataset: { type: dataType },
+            name: 'field',
+            value: 'true'
+          })
+          expect(parseField(field, { parsing })).toBe(true)
+        })
       })
-      expect(parseField(field, { parsing: 'auto' })).toBe(INTEGER_STRING)
+      describe('with value like a number', () => {
+        it('should return a number', () => {
+          const field = createNumberInput({
+            dataset: { type: dataType },
+            name: 'field',
+            value: '100'
+          })
+          expect(parseField(field, { parsing })).toBe(100)
+        })
+      })
+    })
+
+    describe('from multiple fields', () => {
+      describe('with values like boolean', () => {
+        it('should return booleans', () => {
+          const field1 = createTextInput({
+            dataset: { type: dataType },
+            name: 'booleans',
+            value: 'true'
+          })
+          const field2 = createTextInput({
+            dataset: { type: dataType },
+            name: 'booleans',
+            value: 'false'
+          })
+          createForm(undefined, [field1, field2])
+          expect(parseField(field1, { parsing })).toStrictEqual([true, false])
+        })
+      })
+      describe('with values like number', () => {
+        it('should return numbers', () => {
+          const field1 = createTextInput({
+            dataset: { type: dataType },
+            name: 'numbers',
+            value: '100'
+          })
+          const field2 = createTextInput({
+            dataset: { type: dataType },
+            name: 'numbers',
+            value: '200'
+          })
+          createForm(undefined, [field1, field2])
+          expect(parseField(field1, { parsing })).toStrictEqual([100, 200])
+        })
+      })
     })
   })
 
-  describe('with option nullify = true', () => {
+  describe('with element having data-type="boolean"', () => {
+    const parsing: ParsingMode = 'data-type'
+    const dataType: ParsingType = 'boolean'
+
+    describe('with single field', () => {
+      it('should return a boolean', () => {
+        const field = createTextInput({
+          dataset: { type: dataType },
+          name: 'boolean',
+          value: 'true'
+        })
+        expect(parseField(field, { parsing })).toBe(true)
+      })
+    })
+
+    describe('from multiple fields', () => {
+      it('should return booleans', () => {
+        const field1 = createTextInput({
+          dataset: { type: dataType },
+          name: 'booleans',
+          value: 'true'
+        })
+        const field2 = createTextInput({
+          dataset: { type: dataType },
+          name: 'booleans',
+          value: 'false'
+        })
+        createForm(undefined, [field1, field2])
+        expect(parseField(field1, { parsing })).toStrictEqual([true, false])
+      })
+    })
+  })
+
+  describe('with element having data-type="string"', () => {
+    const parsing: ParsingMode = 'data-type'
+    const dataType: ParsingType = 'string'
+
+    it('should not parse value', () => {
+      const field = createNumberInput({
+        dataset: { type: dataType },
+        name: 'number',
+        value: '100'
+      })
+      expect(parseField(field, { parsing })).toBe('100')
+    })
+  })
+
+  describe('with parsing="type"', () => {
+    const parsing: ParsingMode = 'type'
+
+    describe('with element having type="number"', () => {
+      it('should return a number', () => {
+        const field = createNumberInput({ value: '100' })
+        createForm(undefined, [field])
+        expect(parseField(field, { parsing })).toBe(100)
+      })
+    })
+
+    describe('with several elements having type="number"', () => {
+      it('should return an array of numbers', () => {
+        const field1 = createNumberInput({ value: '100' })
+        const field2 = createNumberInput({ value: '200' })
+        createForm(undefined, [field1, field2])
+        expect(parseField(field1, { parsing })).toStrictEqual([100, 200])
+        expect(parseField(field2, { parsing })).toStrictEqual([100, 200])
+      })
+    })
+  })
+
+  describe('with option nullify=true', () => {
     describe('with value = ""', () => {
       it('should return null', () => {
         const textInput = createTextInput({
@@ -637,7 +813,7 @@ describe('parseField()', () => {
     })
   })
 
-  describe('with option trim = true', () => {
+  describe('with option trim=true', () => {
     const value = ' test '
 
     it('should remove extra spaces around value', () => {
@@ -694,11 +870,114 @@ describe('parseField()', () => {
       expect(parseField(select, { trim: true })).toBe(value)
     })
   })
+
+  describe('with option parser', () => {
+    const parsing: ParsingMode = 'data-type'
+    const dataType: ParsingType = 'phone'
+
+    describe('on single value', () => {
+      it('should return the parsed value', () => {
+        const field1 = createTextInput({
+          dataset: { type: dataType },
+          name: 'phone',
+          value: '689.87000000'
+        })
+        const result = parseField(field1, {
+          parsing,
+          parser: (value, type) => {
+            if (type === 'phone') {
+              const [code, number] = value.split(/\./)
+              return {
+                code,
+                number
+              }
+            }
+            return null
+          }
+        })
+        expect(result).toStrictEqual({
+          code: '689',
+          number: '87000000'
+        })
+      })
+    })
+
+    describe('on multiple values', () => {
+      it('should return the parsed values', () => {
+        const field1 = createTextInput({
+          dataset: { type: dataType },
+          name: 'phones',
+          value: '689.87000000'
+        })
+        const field2 = createTextInput({
+          dataset: { type: dataType },
+          name: 'phones',
+          value: '689.88000000'
+        })
+        const form = createForm(undefined, [field1, field2])
+        const r = parseForm(form, {
+          parsing,
+          parser: (value, type) => {
+            if (type === 'phone') {
+              const [code, number] = value.split(/\./)
+              return {
+                code,
+                number
+              }
+            }
+            return null
+          }
+        })
+        expect(r).toStrictEqual({
+          phones: [
+            {
+              code: '689',
+              number: '87000000'
+            },
+            {
+              code: '689',
+              number: '88000000'
+            }
+          ]
+        })
+      })
+    })
+
+    describe('with unsupported data-type', () => {
+      it('should throw an Error', () => {
+        expect(() => {
+          const field = createTextInput({
+            dataset: { type: 'binary' },
+            value: '01100'
+          })
+          parseField(field, { parsing })
+        }).toThrow()
+      })
+    })
+  })
 })
 
 describe('parseForm()', () => {
   it('should be importable from package', () => {
     expect(typeof parseForm).toEqual('function')
+  })
+
+  describe('with unsupported element', () => {
+    it('should throw a TypeError', () => {
+      expect(() => {
+        parseForm(createElement('div'))
+      }).toThrow(TypeError)
+    })
+  })
+
+  it('should ignore non input fields', () => {
+    const field = createTextInput({
+      name: 'text',
+      value: 'hello'
+    })
+    const button = createElement('button')
+    const form = createForm(undefined, [field, button])
+    expect(parseForm(form)).toStrictEqual({ text: 'hello' })
   })
 
   it('should not return disabled fields', () => {
@@ -1021,80 +1300,9 @@ describe('parseForm()', () => {
     expect(r).toEqual({ textarea: STRING })
   })
 
-  describe('with parser', () => {
-    describe('on single value', () => {
-      it('should return the parsed value', () => {
-        const field1 = createTextInput({
-          dataset: { type: 'phone' },
-          name: 'phone',
-          value: '689.12345678'
-        })
-        const form = createForm(undefined, [field1])
-        const r = parseForm(form, {
-          parsing: 'auto',
-          parser: (value, type) => {
-            if (type === 'phone') {
-              const [code, number] = value.split(/\./)
-              return {
-                code,
-                number
-              }
-            }
-            return null
-          }
-        })
-        expect(r).toStrictEqual({
-          phone: {
-            code: '689',
-            number: '12345678'
-          }
-        })
-      })
-    })
-
-    describe('on multiple values', () => {
-      it('should return the parsed values', () => {
-        const field1 = createTextInput({
-          dataset: { type: 'phone' },
-          name: 'phones',
-          value: '689.87000000'
-        })
-        const field2 = createTextInput({
-          dataset: { type: 'phone' },
-          name: 'phones',
-          value: '689.88000000'
-        })
-        const form = createForm(undefined, [field1, field2])
-        const r = parseForm(form, {
-          parsing: 'auto',
-          parser: (value, type) => {
-            if (type === 'phone') {
-              const [code, number] = value.split(/\./)
-              return {
-                code,
-                number
-              }
-            }
-            return null
-          }
-        })
-        expect(r).toStrictEqual({
-          phones: [
-            {
-              code: '689',
-              number: '87000000'
-            },
-            {
-              code: '689',
-              number: '88000000'
-            }
-          ]
-        })
-      })
-    })
-  })
-
   describe('with parsing = "none"', () => {
+    const parsing: ParsingMode = 'none'
+
     it('should not parse any value', () => {
       const boolField1 = createTextInput({
         dataset: { type: 'boolean' },
@@ -1117,7 +1325,7 @@ describe('parseForm()', () => {
         value: INTEGER_STRING
       })
       const form = createForm(undefined, [boolField1, boolField2, numberField1, numberField2])
-      const r = parseForm(form, { parsing: 'none' })
+      const r = parseForm(form, { parsing })
       expect(r).toEqual({
         bool_true: TRUE,
         bool_false: FALSE,
@@ -1128,6 +1336,8 @@ describe('parseForm()', () => {
   })
 
   describe('with parsing = "type"', () => {
+    const parsing: ParsingMode = 'type'
+
     it('should parse values using "type" attribute', () => {
       const trueField = createTextInput({
         name: 'string_true',
@@ -1154,7 +1364,7 @@ describe('parseForm()', () => {
         value: INTEGER_STRING
       })
       const form = createForm(undefined, [trueField, falseField, floatField, floatStringField, integerField, integerStringField])
-      const r = parseForm(form, { parsing: 'type' })
+      const r = parseForm(form, { parsing })
       expect(r).toEqual({
         string_true: 'true',
         string_false: 'false',
@@ -1167,6 +1377,8 @@ describe('parseForm()', () => {
   })
 
   describe('with parsing = "data-type"', () => {
+    const parsing: ParsingMode = 'data-type'
+
     it('should parse values using "data-type" attribute', () => {
       const checkboxTrue = createCheckbox({
         dataset: { type: 'boolean' },
@@ -1228,7 +1440,7 @@ describe('parseForm()', () => {
         integerNumber,
         integerTextarea
       ])
-      const r = parseForm(form, { parsing: 'data-type' })
+      const r = parseForm(form, { parsing })
       expect(r).toEqual({
         bool_radio: false,
         bool_true: true,
@@ -1270,52 +1482,11 @@ describe('parseForm()', () => {
         checked: true
       })
       const form = createForm(undefined, [bool, checkbox1, checkbox2, radio1, radio2])
-      const r = parseForm(form, { parsing: 'data-type' })
+      const r = parseForm(form, { parsing })
       expect(r).toEqual({
         boolean_field: true,
         checkboxes_field: [2],
         radio_field: 2
-      })
-    })
-
-    describe('with data-type="boolean"', () => {
-      it('should return the parsed value when field is checked', () => {
-        const field1 = createCheckbox({
-          dataset: { type: 'boolean' },
-          name: 'a',
-          value: 'true',
-          checked: true
-        })
-        const field2 = createCheckbox({
-          dataset: { type: 'boolean' },
-          name: 'b',
-          value: 'false',
-          checked: true
-        })
-        const form = createForm(undefined, [field1, field2])
-        const r = parseForm(form, { parsing: 'data-type' })
-        expect(r).toEqual({
-          a: true,
-          b: false
-        })
-      })
-
-      it('should return the checked state when no value is defined', () => {
-        const field1 = createCheckbox({
-          dataset: { type: 'boolean' },
-          name: 'a'
-        })
-        const field2 = createCheckbox({
-          dataset: { type: 'boolean' },
-          name: 'b',
-          checked: true
-        })
-        const form = createForm(undefined, [field1, field2])
-        const r = parseForm(form, { parsing: 'data-type' })
-        expect(r).toEqual({
-          a: null,
-          b: true
-        })
       })
     })
 
@@ -1351,7 +1522,7 @@ describe('parseForm()', () => {
         checked: true
       })
       const form = createForm(undefined, [boolField, checkboxField1, checkboxField2, radioField1, radioField2, checkboxField])
-      const r = parseForm(form, { parsing: 'data-type' })
+      const r = parseForm(form, { parsing })
       expect(r).toEqual({
         boolean_field: null,
         checkboxes_field: [],
@@ -1367,7 +1538,7 @@ describe('parseForm()', () => {
         value: INTEGER_STRING
       })
       const form = createForm(undefined, [field])
-      const r = parseForm(form, { parsing: 'data-type' })
+      const r = parseForm(form, { parsing })
       expect(r).toEqual({ email: INTEGER_STRING })
     })
 
@@ -1376,7 +1547,7 @@ describe('parseForm()', () => {
         name: 'file'
       })
       const form = createForm(undefined, [field])
-      const r = parseForm(form, { parsing: 'data-type' })
+      const r = parseForm(form, { parsing })
       expect(r).toEqual({ file: null })
     })
 
@@ -1386,7 +1557,7 @@ describe('parseForm()', () => {
         value: INTEGER_STRING
       })
       const form = createForm(undefined, [field])
-      const r = parseForm(form, { parsing: 'data-type' })
+      const r = parseForm(form, { parsing })
       expect(r).toEqual({ password: INTEGER_STRING })
     })
 
@@ -1397,7 +1568,7 @@ describe('parseForm()', () => {
         value: INTEGER_STRING
       })
       const form = createForm(undefined, [field])
-      const r = parseForm(form, { parsing: 'data-type' })
+      const r = parseForm(form, { parsing })
       expect(r).toEqual({ search: INTEGER_STRING })
     })
 
@@ -1408,7 +1579,7 @@ describe('parseForm()', () => {
         value: INTEGER_STRING
       })
       const form = createForm(undefined, [field])
-      const r = parseForm(form, { parsing: 'data-type' })
+      const r = parseForm(form, { parsing })
       expect(r).toEqual({ url: INTEGER_STRING })
     })
 
@@ -1418,12 +1589,14 @@ describe('parseForm()', () => {
         value: INTEGER_STRING
       })
       const form = createForm(undefined, [field])
-      const r = parseForm(form, { parsing: 'data-type' })
+      const r = parseForm(form, { parsing })
       expect(r).toEqual({ textarea: INTEGER_STRING })
     })
   })
 
   describe('with parsing = "auto"', () => {
+    const parsing: ParsingMode = 'auto'
+
     it('should parse values using "data-type" and "type" attributes', () => {
       const trueField = createTextInput({
         dataset: { type: 'boolean' },
@@ -1446,7 +1619,7 @@ describe('parseForm()', () => {
         value: INTEGER_STRING
       })
       const form = createForm(undefined, [trueField, falseField, floatField, integerField])
-      const r = parseForm(form, { parsing: 'auto' })
+      const r = parseForm(form, { parsing })
       expect(r).toEqual({
         bool_true: true,
         bool_false: false,
@@ -1457,20 +1630,35 @@ describe('parseForm()', () => {
   })
 
   describe('with cleanFunction', () => {
+    const value = 'test'
+    const CLEANED = 'CLEANED'
+    const cleanFunction = () => CLEANED
+
     it('should clean string values', () => {
-      const field = createTextInput({
+      const field1 = createTextInput({
         name: 'text',
         value: '<script src="http://hacked.net"></script>'
       })
-      const form = createForm(undefined, [field])
-      const r = parseForm(form, {
-        cleanFunction: (value) => value.replace(/<\/?[^>]+>/gm, '')
+      const field2 = createTextInput({
+        name: 'emails',
+        value: 'perso@mail.com'
       })
-      expect(r).toEqual({ text: '' })
+      const field3 = createTextInput({
+        name: 'emails',
+        value: 'pro@mail.com'
+      })
+      const form = createForm(undefined, [field1, field2, field3])
+      const result = parseForm(form, {
+        cleanFunction
+      })
+      expect(result).toEqual({
+        text: CLEANED,
+        emails: [
+          CLEANED,
+          CLEANED
+        ]
+      })
     })
-
-    const value = 'test'
-    const cleanFunction = () => 'CLEANED'
 
     it('should not modify hidden value', () => {
       const field = createHiddenInput({

@@ -106,7 +106,7 @@ export function buildObject (str: string, value: any, context?: Record<string, a
  * Returns the value of a field (input, select or textarea).
  * @param element
  */
-function getFieldValue (element: HTMLElement) {
+export function getFieldValue (element: HTMLElement) {
   if (element instanceof HTMLInputElement) {
     return getInputValue(element)
   }
@@ -151,7 +151,9 @@ export function getInputValue (element: HTMLInputElement): string | string[] | n
   const { form } = element
 
   if (isMultipleField(element)) {
-    let fields = form ? getFieldsByName(element.name, form) : [element]
+    let fields = form
+      ? getFieldsByName(element.name, form)
+      : [element]
 
     if (isCheckableField(element)) {
       fields = fields.filter((el) => el instanceof HTMLInputElement && el.checked)
@@ -159,7 +161,9 @@ export function getInputValue (element: HTMLInputElement): string | string[] | n
     value = getValuesFromFields(fields)
   } else if (element instanceof HTMLInputElement) {
     if (element.type === 'radio') {
-      const fields = (form ? getFieldsByName(element.name, form) : [element])
+      const fields = (form
+        ? getFieldsByName(element.name, form)
+        : [element])
       const field = fields.find((el) => el instanceof HTMLInputElement && el.checked)
       if (field != null) {
         value = field.value
@@ -188,7 +192,9 @@ export function getSelectValue (element: HTMLSelectElement): string | string[] {
 
   if (isMultipleField(element)) {
     const { form } = element
-    value = form ? getValuesFromFields(getFieldsByName(element.name, form)) : [value]
+    value = form
+      ? getValuesFromFields(getFieldsByName(element.name, form))
+      : [value]
   } else if (element.multiple) {
     value = []
 
@@ -430,7 +436,7 @@ export function parseField (element: HTMLElement, options?: ParseFieldOptions): 
   if (!(element instanceof HTMLInputElement) &&
     !(element instanceof HTMLSelectElement) &&
     !(element instanceof HTMLTextAreaElement)) {
-    throw new Error('Cannot parse element: it must be an instance of HTMLInputElement, HTMLSelectElement or HTMLTextAreaElement')
+    throw new TypeError('element is not an instance of HTMLInputElement or HTMLSelectElement or HTMLTextAreaElement')
   }
 
   // Set default options.
@@ -480,7 +486,7 @@ export function parseField (element: HTMLElement, options?: ParseFieldOptions): 
  * @param element
  * @param parser
  */
-function parseFieldByDataType (
+export function parseFieldByDataType (
   element: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement,
   parser?: (value: any, dataType: string, element: HTMLElement) => any
 ) {
@@ -552,7 +558,7 @@ function parseFieldByDataType (
  * Returns value based on "type" attribute.
  * @param element
  */
-function parseFieldByType (element: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {
+export function parseFieldByType (element: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {
   const value = getFieldValue(element)
 
   if (value == null) {
@@ -609,7 +615,7 @@ export function parseForm (form: HTMLFormElement, options?: ParseFormOptions): R
   for (let i = 0; i < elements.length; i += 1) {
     const field = elements[i]
 
-    // Ignore non-form element.
+    // Ignore non-input elements.
     if (!(field instanceof HTMLInputElement) &&
       !(field instanceof HTMLSelectElement) &&
       !(field instanceof HTMLTextAreaElement)) {
