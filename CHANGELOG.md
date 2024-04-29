@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.4 (2024-04-29)
+
+- Fixed `parseForm()` returning radio input value as string instead of boolean or number when the last field does not have a `data-type`
+
 ## v3.1.3 (2024-04-26)
 
 - Fixed parsing of textarea element

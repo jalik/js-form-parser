@@ -7,7 +7,7 @@
  * Creates a checkbox input
  * @param attrs
  */
-export function createCheckbox (attrs: Partial<HTMLInputElement>): HTMLInputElement {
+export function createCheckbox (attrs?: Partial<HTMLInputElement>): HTMLInputElement {
   return createElement<HTMLInputElement>('input', {
     ...attrs,
     type: 'checkbox'
@@ -19,24 +19,26 @@ export function createCheckbox (attrs: Partial<HTMLInputElement>): HTMLInputElem
  * @param tagName
  * @param attrs
  */
-export function createElement<T extends HTMLElement> (tagName: string, attrs: Partial<T>): T {
+export function createElement<T extends HTMLElement> (tagName: string, attrs?: Partial<T>): T {
   const element = document.createElement(tagName) as T
-  const keys = Object.keys(attrs)
+  if (attrs != null) {
+    const keys = Object.keys(attrs)
 
-  for (let i = 0; i < keys.length; i += 1) {
-    const attr = keys[i]
+    for (let i = 0; i < keys.length; i += 1) {
+      const attr = keys[i]
 
-    // @ts-ignore
-    if (typeof attrs[attr] !== 'undefined') {
-      if (attr === 'dataset' || attr === 'style') {
-        // @ts-ignore
-        Object.entries(attrs[attr]).forEach(([k, v]) => {
+      // @ts-ignore
+      if (typeof attrs[attr] !== 'undefined') {
+        if (attr === 'dataset' || attr === 'style') {
           // @ts-ignore
-          element[attr][k] = v
-        })
-      } else {
-        // @ts-ignore
-        element.setAttribute(attr, attrs[attr])
+          Object.entries(attrs[attr]).forEach(([k, v]) => {
+            // @ts-ignore
+            element[attr][k] = v
+          })
+        } else {
+          // @ts-ignore
+          element.setAttribute(attr, attrs[attr])
+        }
       }
     }
   }
@@ -47,7 +49,7 @@ export function createElement<T extends HTMLElement> (tagName: string, attrs: Pa
  * Creates a file input
  * @param attrs
  */
-export function createFileInput (attrs: Partial<HTMLInputElement>): HTMLInputElement {
+export function createFileInput (attrs?: Partial<HTMLInputElement>): HTMLInputElement {
   return createElement<HTMLInputElement>('input', {
     ...attrs,
     type: 'file'
@@ -57,15 +59,21 @@ export function createFileInput (attrs: Partial<HTMLInputElement>): HTMLInputEle
 /**
  * Creates a form element
  */
-export function createForm (): HTMLFormElement {
-  return document.createElement('form')
+export function createForm (attrs?: Partial<HTMLFormElement>, elements?: HTMLElement[]): HTMLFormElement {
+  const form = createElement('form', attrs)
+  if (elements != null) {
+    elements.forEach((el) => {
+      form.appendChild(el)
+    })
+  }
+  return form
 }
 
 /**
  * Creates a hidden input
  * @param attrs
  */
-export function createHiddenInput (attrs: Partial<HTMLInputElement>): HTMLInputElement {
+export function createHiddenInput (attrs?: Partial<HTMLInputElement>): HTMLInputElement {
   return createElement<HTMLInputElement>('input', {
     ...attrs,
     type: 'hidden'
@@ -76,7 +84,7 @@ export function createHiddenInput (attrs: Partial<HTMLInputElement>): HTMLInputE
  * Creates a number input
  * @param attrs
  */
-export function createNumberInput (attrs: Partial<HTMLInputElement>): HTMLInputElement {
+export function createNumberInput (attrs?: Partial<HTMLInputElement>): HTMLInputElement {
   return createElement<HTMLInputElement>('input', {
     ...attrs,
     type: 'number'
@@ -98,7 +106,7 @@ export function createPasswordInput (attrs: Partial<HTMLInputElement>): HTMLInpu
  * Creates a radio input
  * @param attrs
  */
-export function createRadio (attrs: Partial<HTMLInputElement>): HTMLInputElement {
+export function createRadio (attrs?: Partial<HTMLInputElement>): HTMLInputElement {
   return createElement<HTMLInputElement>('input', {
     ...attrs,
     type: 'radio'
@@ -110,7 +118,7 @@ export function createRadio (attrs: Partial<HTMLInputElement>): HTMLInputElement
  * @param attrs
  * @param options
  */
-export function createSelect (attrs: Partial<HTMLSelectElement>, options?: Partial<HTMLOptionElement>[]): HTMLSelectElement {
+export function createSelect (attrs?: Partial<HTMLSelectElement>, options?: Partial<HTMLOptionElement>[]): HTMLSelectElement {
   const select = createElement('select', attrs)
 
   if (options instanceof Array) {
@@ -126,10 +134,10 @@ export function createSelect (attrs: Partial<HTMLSelectElement>, options?: Parti
  * Creates a textarea
  * @param attrs
  */
-export function createTextarea (attrs: Partial<HTMLTextAreaElement>): HTMLTextAreaElement {
+export function createTextarea (attrs?: Partial<HTMLTextAreaElement>): HTMLTextAreaElement {
   const element = createElement<HTMLTextAreaElement>('textarea', { ...attrs })
 
-  if (typeof attrs.value !== 'undefined') {
+  if (typeof attrs?.value !== 'undefined') {
     element.appendChild(document.createTextNode(attrs.value))
   }
   return element
@@ -139,7 +147,7 @@ export function createTextarea (attrs: Partial<HTMLTextAreaElement>): HTMLTextAr
  * Creates a text input
  * @param attrs
  */
-export function createTextInput (attrs: Partial<HTMLInputElement>): HTMLInputElement {
+export function createTextInput (attrs?: Partial<HTMLInputElement>): HTMLInputElement {
   return createElement<HTMLInputElement>('input', {
     type: 'text',
     ...attrs
