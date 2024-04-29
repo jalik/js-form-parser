@@ -385,7 +385,7 @@ export function parseNumber (value: string | null): number | null {
   return Number.isNaN(number) ? null : number
 }
 
-export type ParsingType = 'auto' | 'boolean' | 'number'
+export type ParsingType = 'auto' | 'boolean' | 'number' | 'string' | string
 
 /**
  * Parses a value based on type.
@@ -422,7 +422,7 @@ export type ParsingMode = 'none' | 'type' | 'data-type' | 'auto'
 
 export type ParseFieldOptions = {
   nullify?: boolean
-  parser?: (value: any, dataType: string, element: HTMLElement) => any
+  parser?: (value: any, dataType?: string, element?: HTMLElement) => any
   parsing?: ParsingMode
   trim?: boolean
 }
@@ -488,7 +488,7 @@ export function parseField (element: HTMLElement, options?: ParseFieldOptions): 
  */
 export function parseFieldByDataType (
   element: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement,
-  parser?: (value: any, dataType: string, element: HTMLElement) => any
+  parser?: (value: any, dataType?: string, element?: HTMLElement) => any
 ) {
   const value = getFieldValue(element)
 
@@ -586,7 +586,7 @@ export type ParseFormOptions = {
   cleanFunction?: (value: string, field: Element) => any
   filterFunction?: (element: Element, parsedValue: any) => boolean
   nullify?: boolean
-  parser?: (value: any, dataType: string, element: HTMLElement) => any
+  parser?: (value: any, dataType?: string, element?: HTMLElement) => any
   parsing?: ParsingMode
   trim?: boolean
 }
