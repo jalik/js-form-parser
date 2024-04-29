@@ -1022,31 +1022,74 @@ describe('parseForm()', () => {
   })
 
   describe('with parser', () => {
-    it('should return the parsed values', () => {
-      const field1 = createTextInput({
-        dataset: { type: 'phone' },
-        name: 'phone',
-        value: '689.12345678'
-      })
-      const form = createForm(undefined, [field1])
-      const r = parseForm(form, {
-        parsing: 'auto',
-        parser: (value, type) => {
-          if (type === 'phone') {
-            const [code, number] = value.split(/\./)
-            return {
-              code,
-              number
+    describe('on single value', () => {
+      it('should return the parsed value', () => {
+        const field1 = createTextInput({
+          dataset: { type: 'phone' },
+          name: 'phone',
+          value: '689.12345678'
+        })
+        const form = createForm(undefined, [field1])
+        const r = parseForm(form, {
+          parsing: 'auto',
+          parser: (value, type) => {
+            if (type === 'phone') {
+              const [code, number] = value.split(/\./)
+              return {
+                code,
+                number
+              }
             }
+            return null
           }
-          return null
-        }
+        })
+        expect(r).toStrictEqual({
+          phone: {
+            code: '689',
+            number: '12345678'
+          }
+        })
       })
-      expect(r).toStrictEqual({
-        phone: {
-          code: '689',
-          number: '12345678'
-        }
+    })
+
+    describe('on multiple values', () => {
+      it('should return the parsed values', () => {
+        const field1 = createTextInput({
+          dataset: { type: 'phone' },
+          name: 'phones',
+          value: '689.87000000'
+        })
+        const field2 = createTextInput({
+          dataset: { type: 'phone' },
+          name: 'phones',
+          value: '689.88000000'
+        })
+        const form = createForm(undefined, [field1, field2])
+        const r = parseForm(form, {
+          parsing: 'auto',
+          parser: (value, type) => {
+            if (type === 'phone') {
+              const [code, number] = value.split(/\./)
+              return {
+                code,
+                number
+              }
+            }
+            return null
+          }
+        })
+        expect(r).toStrictEqual({
+          phones: [
+            {
+              code: '689',
+              number: '87000000'
+            },
+            {
+              code: '689',
+              number: '88000000'
+            }
+          ]
+        })
       })
     })
   })

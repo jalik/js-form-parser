@@ -496,8 +496,8 @@ function parseFieldByDataType (
   if (value == null) {
     return null
   }
-  // Return string value if no datatype defined.
-  if (dataType == null) {
+  // Return string value if no datatype defined or forced to be string.
+  if (dataType == null || dataType === 'string') {
     return value
   }
 
@@ -534,20 +534,15 @@ function parseFieldByDataType (
     return parseNumber(value)
   }
 
-  if (dataType === 'string') {
-    return value
-  }
-
   // Use custom parser.
   if (parser != null) {
-    // todo execute parser on each value in the array
-    // if (value instanceof Array) {
-    //   const result = []
-    //   for (let k = 0; k < value.length; k += 1) {
-    //     result[k] = parser(value, dataType, element)
-    //   }
-    //   return result
-    // }
+    if (value instanceof Array) {
+      const result = []
+      for (let k = 0; k < value.length; k += 1) {
+        result[k] = parser(value[k], dataType, element)
+      }
+      return result
+    }
     return parser(value, dataType, element)
   }
   return value
