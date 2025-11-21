@@ -1,7 +1,12 @@
 /*
  * The MIT License (MIT)
- * Copyright (c) 2024 Karl STEIN
+ * Copyright (c) 2025 Karl STEIN
  */
+
+// Use the global JSDOM environment provided by Vitest
+// Creating a separate JSDOM instance would produce elements from another realm,
+// making instanceof checks (e.g., HTMLFormElement) fail.
+const { document } = globalThis as unknown as { window: Window, document: Document }
 
 /**
  * Creates a checkbox input

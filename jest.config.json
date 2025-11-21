@@ -1,6 +1,0 @@
-{
-  "testEnvironment": "jsdom",
-  "roots": [
-    "test"
-  ]
-}
