@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.5 (2025-11-21)
+
+- deps: upgrade dependencies
+
 ## v3.1.4 (2024-04-29)
 
 - Throws an error when field's "data-type" is unsupported and no `parser` is passed to `parseField()` or `parseForm()` options
